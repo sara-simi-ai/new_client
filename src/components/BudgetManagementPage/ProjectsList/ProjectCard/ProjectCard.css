@@ -1,0 +1,102 @@
+/* src/components/ProjectsList/Project/ProjectCard.css */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+}
+
+.card:hover {
+  border-color: var(--border2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
+}
+
+.card.sel {
+  border: 2px solid var(--blue);
+  box-shadow: 0 0 0 3px rgba(24, 95, 165, .12);
+}
+
+.card-accent {
+  height: 3px;
+  background: var(--blue);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.card-accent--kiyum { background: var(--blue); }
+.card-accent--hit { background: #378ADD; }
+
+.card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 6px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  /* allow multi-line Hebrew titles, align RTL and avoid clipping */
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
+  text-align: right;
+  direction: rtl;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.card-meta {
+  font-size: 11px;
+  color: var(--text2);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.card-unit {
+  color: var(--text);
+  font-weight: 350;
+}
+
+.card-desc {
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 33px;
+}
+
+.card-desc--empty {
+  color: var(--text3);
+  font-style: italic;
+}

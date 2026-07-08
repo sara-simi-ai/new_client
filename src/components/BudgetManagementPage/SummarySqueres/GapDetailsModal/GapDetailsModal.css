@@ -1,0 +1,141 @@
+.gdm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.gdm-modal {
+  background: var(--bg);
+  border-radius: var(--radius);
+  max-width: 640px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  direction: rtl;
+}
+
+.gdm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gdm-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.gdm-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text2);
+  line-height: 1;
+  padding: 4px;
+}
+
+.gdm-close:hover {
+  color: var(--text);
+}
+
+.gdm-body {
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.gdm-empty {
+  text-align: center;
+  color: var(--text2);
+  padding: 24px 0;
+}
+
+.gdm-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: right;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+}
+
+.gdm-table thead th {
+  color: var(--text2);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 11px 14px;
+  background: var(--bg2);
+  border-bottom: 2px solid var(--border2, var(--border));
+  border-left: 1px solid var(--border);
+}
+
+.gdm-table thead th:first-child {
+  border-right: none;
+}
+
+.gdm-table thead th:last-child {
+  border-left: none;
+}
+
+.gdm-table tbody tr {
+  background: var(--bg);
+  transition: background .1s ease;
+  cursor: default;
+}
+
+.gdm-table tbody tr:nth-child(even) {
+  background: var(--bg2, rgba(0,0,0,.015));
+}
+
+.gdm-table tbody td {
+  padding: 10px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  position: relative;
+}
+
+.gdm-table tbody td:first-child {
+  border-right: none;
+}
+
+.gdm-table tbody td:last-child {
+  border-left: none;
+}
+
+.gdm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.gdm-table tfoot td {
+  font-weight: 600;
+  font-size: 12px;
+  padding: 11px 14px;
+  border-top: 2px solid var(--border2, var(--border));
+  border-bottom: none;
+  border-left: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.gdm-table tfoot td:first-child {
+  border-right: none;
+}
+
+.gdm-table tfoot td:last-child {
+  border-left: none;
+}

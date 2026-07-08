@@ -1,89 +1,37 @@
-import { formatMoney } from './formatMoney';
-
-const GAP_STATUS_THRESHOLD_PERCENT = Number(process.env.REACT_APP_GAP_STATUS_THRESHOLD_PERCENT) || 10;
-export const GAP_STATUS_THRESHOLD = GAP_STATUS_THRESHOLD_PERCENT / 100;
-
-export const computeProjectTotalBudget = (project) =>
-  (project?.totalTakzivCoachAdam || 0) + (project?.totalTakzivRechesh || 0);
-
-export const computeBudgetMinusPlanned = (project) =>
-  (project?.totalTakzivCoachAdam || 0) - (project?.coachAdam || 0);
-
-export const computeRelativeGap = (project) => {
-  const gap = computeBudgetMinusPlanned(project);
-  const budget = project?.totalTakzivCoachAdam || 0;
-  return budget > 0 ? Math.abs(gap) / budget : 0;
-};
-
-export const isGapStatusExceeded = (project) => {
-  const gap = computeBudgetMinusPlanned(project);
-  return gap !== 0 && computeRelativeGap(project) >= GAP_STATUS_THRESHOLD;
-};
-
-export const compareByRelativeGap = (a, b) => {
-  const gapDiff = computeRelativeGap(b) - computeRelativeGap(a);
-  if (gapDiff !== 0) return gapDiff;
-
-  const absA = Math.abs(computeBudgetMinusPlanned(a));
-  const absB = Math.abs(computeBudgetMinusPlanned(b));
-  if (absB !== absA) return absB - absA;
-
-  return String(a.projectName || '').localeCompare(String(b.projectName || ''), 'he');
-};
-
 /**
- * קביעת סטטוס הפער (takin/geraon/odef)
- * @param {number} gapValue - ערך הפער
- * @param {number} totalBudget - סכום התקציב הכולל
- * @returns {string} - 'takin' (ללא חריגה) | 'geraon' (חריגה במינוס) | 'odef' (חריגה בפלוס)
+ * מחשב תקציבים, סך הכל ופערים עבור פרויקט בודד ומאחד שמות שדות
  */
-export const getGapStatus = (gapValue, totalBudget) => {
-  if (gapValue === 0) return 'takin';
-  
-  const relativePercent = totalBudget > 0 ? Math.abs(gapValue) / totalBudget : 0;
-  if (relativePercent >= GAP_STATUS_THRESHOLD) {
-    return gapValue < 0 ? 'geraon' : 'odef';
-  }
-  
-  return 'takin';
-};
 
-/**
- * פורמט אחיד להצגת פערים
- * @param {number} gapValue - ערך הפער
- * @param {number} totalBudget - סכום התקציב (לחישוב %)
- * @returns {string} - בפורמט: ₪0 (0%) או ▲ ₪100 (5%) או ▼ ₪50 (10%)
- */
-export const formatGapDisplay = (gapValue, totalBudget) => {
-  const absValue = Math.abs(gapValue);
-  const displayValue = gapValue === 0
-    ? `₪${formatMoney(absValue)}`
-    : `${gapValue > 0 ? '▲ ' : '▼ '}₪${formatMoney(absValue)}`;
-  
-  if (totalBudget && totalBudget > 0) {
-    const percent = Math.round(Math.abs(gapValue) / totalBudget * 100);
-    return `${displayValue} (${percent}%)`;
-  }
-  
-  return displayValue;
-};
+import { STATUS_PAAR } from '../constants/constants';
+
+const ACHUZEY_PEARIM = Number(process.env.REACT_APP_STATUS_PAAR_THRESHOLD_PERCENT) || 10;
 
 export const calculateProjectFinance = (project) => {
-  const totalTakzivCoachAdam = project?.totalTakzivCoachAdam ?? 0;
-  const totalTakzivRechesh = project?.totalTakzivRechesh || 0;
-  const coachAdam = project?.coachAdam || 0;
+
+  const totalTakzivCoachAdam = project?.totalTakzivCoachAdam || project?.totalTakzuvCoachAdam || 0;
+  const totalTakzivRechesh   = project?.totalTakzivRechesh || 0;
+  const coachAdam            = project?.coachAdam || 0;
 
   const totalTaktziv = totalTakzivCoachAdam + totalTakzivRechesh;
+
   const pearim = totalTakzivCoachAdam - coachAdam;
 
+  // avoid division by zero / exploding percentages
   const achuzPearim = (coachAdam > 0 && totalTakzivCoachAdam > 0)
     ? (pearim / totalTakzivCoachAdam) * 100
     : 0;
 
-  const statusPearim = getGapStatus(pearim, totalTakzivCoachAdam);
+  let statusPearim = STATUS_PAAR.TAKIN;
+
+  if (pearim === 0) {
+    statusPearim = STATUS_PAAR.TAKIN;
+  } else if (Math.abs(achuzPearim) >= ACHUZEY_PEARIM || coachAdam === 0) {
+    statusPearim = pearim < 0 ? STATUS_PAAR.GERAON : STATUS_PAAR.ODEF;
+  }
 
   return {
     totalTakzivCoachAdam,
+    totalTakzuvCoachAdam: totalTakzivCoachAdam,
     totalTakzivRechesh,
     coachAdam,
     totalTaktziv,

@@ -1,11 +1,10 @@
 import React from 'react';
 import './PageTitle.css';
 import YearSelector from '../YearSelector/YearSelector';
-// import ViewToggle from '../ViewToggle/ViewToggle';
-// import NewProjectButton from '../NewProjectButton/NewProjectButton';
+import CopyProjectsButton from '../CopyProjectsButton/CopyProjectsButton';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 
-const PageTitle = ({ view = 'split', onViewChange }) => {
+const PageTitle = () => {
 	const { selectedYear, summaryData } = useProjects();
 	const displayYear = selectedYear ?? new Date().getFullYear();
 	const projectCount = summaryData?.totalCount ?? 0;
@@ -28,6 +27,7 @@ const PageTitle = ({ view = 'split', onViewChange }) => {
 
 				<div className="page-title-left">
 					<div className="page-title-controls">
+						<CopyProjectsButton />
 						<YearSelector />
 					</div>
 				</div>

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
-import { MASLOL_LABELS } from "../../../constants/constants";
+import { MASLOL_OPTIONS } from "../../../constants/constants"; //========= CHANGED: import MASLOL_OPTIONS instead of MASLOL_LABELS/MASLOL_VALUES
 import "./FilterBar.css";
 
 function CheckListDropdown({ label, allLabel, options, selected, onChange }) {
@@ -156,8 +156,9 @@ export default function FilterBar({
         onChange={(e) => updateFilter("maslol", e.target.value)}
       >
         <option value="">כל המסלולים</option>
-        <option value="KIYUM">{MASLOL_LABELS.KIYUM}</option>
-        <option value="HITAZMUT">{MASLOL_LABELS.HITAZMUT}</option>
+        {MASLOL_OPTIONS.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
       </select>
 
       <select

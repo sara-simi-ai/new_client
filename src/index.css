@@ -50,24 +50,9 @@ body {
 
 /* App container sizing */
 .App {
-  width: min(100%, 1520px);
-  max-width: 1520px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: clamp(1.4rem, 2.2vw, 2.2rem) clamp(1.2rem, 3vw, 3rem) 3rem;
-}
-
-@media (min-width: 1440px) {
-  .App {
-    padding-inline: clamp(1.6rem, 3vw, 3.5rem);
-  }
-}
-
-@media (max-width: 768px) {
-  .App { padding: 1.5rem 0.75rem 2.5rem; }
-}
-
-@media (max-width: 640px) {
-  .App { padding: 1rem 0.5rem 2rem; }
+  padding: 1.5rem 1rem 3rem;
 }
 
 button {

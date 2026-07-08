@@ -82,7 +82,7 @@
 .gap-action-btn:hover,
 .gap-action-btn:focus-visible {
   background: #eff6ff;
-  border-color: var(--color-planned);
+  border-color: #93c5fd;
   color: #1e40af;
 }
 
@@ -140,7 +140,7 @@
 .gap-detail-btn:hover,
 .gap-detail-btn:focus-visible {
   background: #eff6ff;
-  border-color: var(--color-planned);
+  border-color: #93c5fd;
   color: #1e40af;
 }
 

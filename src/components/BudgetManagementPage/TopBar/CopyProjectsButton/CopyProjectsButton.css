@@ -1,0 +1,20 @@
+.copy-projects-btn {
+  background-color: #10b981;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.copy-projects-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.copy-projects-btn:hover:not(:disabled) {
+  background-color: #059669;
+}

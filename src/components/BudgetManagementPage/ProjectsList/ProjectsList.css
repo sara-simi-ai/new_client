@@ -1,26 +1,17 @@
-/* src/components/ProjectsList/ProjectsList.css */
-.p-list {
-  padding: 10px 0 16px;
-  max-width: min(100%, 1520px);
-  margin: 0 auto;
-}
-
-.p-list--load, .p-list--empty {
+/* src/components/Projectstable/Projectstable.css */
+.p-list-section { padding: 8px 0 16px; }
+.p-table--load, .p-table--empty {
   text-align: center;
   color: var(--text2);
   font-size: 14px;
   padding: 40px 0;
 }
 
-.p-split {
+.p-table-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.95fr);
-  gap: 16px;
-  align-items: start;
-}
-
-.p-split--no-det {
   grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
 }
 
 .p-rows {
@@ -40,27 +31,14 @@
   flex-shrink: 0;
 }
 
-.p-split--no-det .p-side-det { display: none; }
-
 .p-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
 }
 
-@media (min-width: 1400px) {
-  .p-split {
-    gap: 20px;
-  }
-
-  .p-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .p-split {
+@media (max-width: 700px) {
+  .p-table-layout {
     grid-template-columns: 1fr;
   }
 }

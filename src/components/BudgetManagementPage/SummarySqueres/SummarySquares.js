@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
-import { GapIndicator } from "../ProjectsList/Project/ProjectElements/ProjectElements";
+import { GapIndicator } from "../ProjectElements/ProjectElements";
 import { formatMoney } from "../../../utils/formatMoney";
-import { getGapStatus } from "../../../utils/calculateProjectFinance";
-import GapDetailsModal from "../GapDetailsModal/GapDetailsModal";
+import { STATUS_PAAR_THRESHOLD } from "../Dashboard/dashUtils/dashUtils";
+import GapDetailsModal from "./GapDetailsModal/GapDetailsModal";
+import { STATUS_PAAR } from "../../../constants/constants";
 import "./SummarySquares.css";
 
 export default function SummarySquares() {
@@ -12,11 +13,16 @@ export default function SummarySquares() {
   const [isGapOpen, setIsGapOpen] = useState(false);
 
   const totalGapStatus = useMemo(() => {
-    return getGapStatus(totalGap, totalHR);
+    if (!totalHR) return STATUS_PAAR.TAKIN;
+    const percent = Math.abs(totalGap) / totalHR;
+    if (percent >= STATUS_PAAR_THRESHOLD) {
+      return totalGap < 0 ? STATUS_PAAR.GERAON : STATUS_PAAR.ODEF;
+    }
+    return STATUS_PAAR.TAKIN;
   }, [totalGap, totalHR]);
 
   const summaryCards = [
-    { label: "פרויקטים", value: totalCount },
+    { label: "פרויקטים", value: totalCount, subText: `פעילים: ${totalActive}` },
     { label: `תקציב כ"א`, value: formatMoney(totalHR) },
     { label: "תקציב רכש", value: formatMoney(totalProc) },
     { label: "סה''כ תקציב", value: formatMoney(totalBudget) },
@@ -27,10 +33,11 @@ export default function SummarySquares() {
   return (
     <div className="ss-wrapper">
       <div className="ss-grid">
-        {summaryCards.map(({ label, value }) => (
+        {summaryCards.map(({ label, value, subText }) => (
           <div key={label} className="ss-card">
             <div className="ss-title">{label}</div>
             <div className="ss-value">{value}</div>
+            {subText && <div className="ss-sub">{subText}</div>}
           </div>
         ))}
 

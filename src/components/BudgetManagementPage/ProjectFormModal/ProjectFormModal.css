@@ -1,5 +1,5 @@
 .pfm-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(4px) saturate(0.9);-webkit-backdrop-filter:blur(4px) saturate(0.9);display:flex;align-items:center;justify-content:center;z-index:1000}
-.pfm-modal{background:#fff;color:#000;padding:16px;border-radius:6px;min-width:320px;max-width:min(92vw, 1000px);width:min(100%, 1000px);z-index:1001;box-shadow:0 10px 30px rgba(2,6,23,0.18)}
+.pfm-modal{background:#fff;color:#000;padding:16px;border-radius:6px;min-width:320px;max-width:720px;z-index:1001;box-shadow:0 10px 30px rgba(2,6,23,0.18)}
 .pfm-header{display:flex;justify-content:space-between;align-items:center}
 .pfm-body{margin-top:12px}
 .pfm-footer{display:flex;justify-content:flex-end;margin-top:12px}
@@ -7,15 +7,15 @@
 .pfm-modal .np-tabs{display:flex;justify-content:flex-start;gap:1.5rem;border-bottom:1px solid #e5e7eb;margin-bottom:1.5rem}
 .pfm-modal .np-tab{padding:.8rem 0;font-size:.94rem;font-weight:500;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;color:#64748b;margin-bottom:-1px;transition:color .2s,border-color .2s}
 .pfm-modal .np-tab:hover{color:#1e293b}
-.pfm-modal .np-tab--active{color:var(--color-proc);border-bottom-color:var(--color-proc);font-weight:700}
+.pfm-modal .np-tab--active{color:#2563eb;border-bottom-color:#2563eb;font-weight:700}
 
 .np-panels{position:relative}
 .np-panel{opacity:0;transform:translateX(10px);max-height:0;overflow:hidden;pointer-events:none;transition:opacity .25s ease,transform .25s ease,max-height .25s ease}
 .np-panel--active{opacity:1;transform:translateX(0);max-height:2000px;pointer-events:auto}
 
-.np-input,.np-select,.np-textarea{width:100%;border:1px solid #d1d5db;border-radius:.25rem;padding:.55rem .75rem;font-size:.94rem;box-sizing:border-box;outline:none}
+.np-input,.np-select,.np-textarea{width:100%;border:1px solid #d1d5db;border-radius:.5rem;padding:.55rem .75rem;font-size:.94rem;box-sizing:border-box;outline:none}
 .np-input:focus,.np-select:focus,.np-textarea:focus{box-shadow:0 0 0 1px #1e5f8e;border-color:#1e5f8e}
-.np-select{appearance:none}
+.np-select{appearance:none; background-color:#fff; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:left 0.85rem center; background-size:0.75rem 0.5rem; padding-left:2.2rem;}
 .np-textarea{resize:vertical}
 
 .np-row{display:flex;gap:.75rem;margin-bottom:1rem}
@@ -29,12 +29,3 @@
 .np-btn-submit{background:#1e5f8e;color:#fff;font-size:.875rem;padding:.55rem 1.2rem;border-radius:.25rem;border:none;cursor:pointer}
 .np-btn-submit:hover{background:#174f78}
 .np-input--error{border-color:#dc2626!important}
-
-@media (min-width: 1200px) {
-  .pfm-modal { padding: 24px; }
-}
-
-@media (max-width: 640px) {
-	.pfm-modal { padding: 12px; }
-	.np-input, .np-select, .np-textarea { font-size: 0.9rem; }
-}

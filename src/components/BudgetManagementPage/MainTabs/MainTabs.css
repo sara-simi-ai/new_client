@@ -30,8 +30,8 @@
 }
 
 .main-tabs-btn--active {
-  color: var(--color-proc);
-  border-bottom-color: var(--color-proc);
+  color: #2563eb;
+  border-bottom-color: #2563eb;
 }
 
 .main-tabs-content {

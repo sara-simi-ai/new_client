@@ -1,48 +1,44 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import './GapByProjectChart.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-import Modal from '../../Modal/Modal';
-import ProjectDetail from '../../ProjectDetail/ProjectDetail';
-import { computeBudgetMinusPlanned, computeRelativeGap, compareByRelativeGap, isGapStatusExceeded } from '../../../../utils/calculateProjectFinance';
-import { useExpandableProjectList } from '../dashUtils/useExpandableProjectList';
-
-const MAX_VISIBLE_PROJECTS = 4;
-const MAX_BAR_PERCENT = 42;
-const LABEL_OFFSET_REM = 1.1;
-
-const GAP_COLORS = {
-  negative: '#dc2626',
-  positive: '#f97316',
-  none: 'var(--blue)',
-};
-
-const gapLegend = [
-  { label: 'חריגה במינוס', color: GAP_COLORS.negative },
-  { label: 'חריגה בפלוס', color: GAP_COLORS.positive },
-  { label: 'ללא חריגה', color: GAP_COLORS.none },
-];
+import ProjectDetailModal from '../../../Common/ProjectDetailModal';
+import { computeBudgetMinusPlanned, computeRelativeGap, isProjectShownInGapChart, isGapStatusExceeded } from '../dashUtils/dashUtils';
 
 export default function GapByProjectChart() {
   const { projects } = useProjects();
+  const [showMore, setShowMore] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
   const openProjectDetail = (id) => setSelectedProjectId(id);
   const closeProjectDetail = () => setSelectedProjectId(null);
 
-  const {
-    sorted,
-    showMore,
-    toggleShowMore,
-    visibleProjects,
-    hiddenCount,
-    hasExpandableProjects,
-  } = useExpandableProjectList(projects, compareByRelativeGap, MAX_VISIBLE_PROJECTS);
+  const sorted = [...projects].sort((a, b) => {
+    const relDiff = computeRelativeGap(b) - computeRelativeGap(a);
+    return relDiff !== 0 ? relDiff : computeBudgetMinusPlanned(b) - computeBudgetMinusPlanned(a);
+  });
 
-  const maxRelativeGap = useMemo(
-    () => Math.max(...sorted.map((p) => computeRelativeGap(p)), 1),
-    [sorted],
-  );
+  const maxRelativeGap = Math.max(...sorted.map((p) => computeRelativeGap(p)), 1);
+  const MAX_BAR_PCT = 42;
+  const GAP_COLORS = {
+    negative: '#dc2626',
+    positive: '#f97316',
+    none: 'var(--blue)',
+  };
+
+  const gapLegend = [
+    { label: 'חריגה במינוס', color: GAP_COLORS.negative },
+    { label: 'חריגה בפלוס', color: GAP_COLORS.positive },
+    { label: 'ללא חריגה', color: GAP_COLORS.none },
+  ];
+
+  const highGapProjects = sorted.filter((p) => isProjectShownInGapChart(p));
+
+  const lowGapProjects = sorted.filter((p) => !highGapProjects.includes(p));
+
+  const visibleProjects = showMore ? [...highGapProjects, ...lowGapProjects] : highGapProjects;
+  const hiddenCount = lowGapProjects.length;
+  const hasExpandableProjects = lowGapProjects.length > 0;
 
   return (
     <div className="gap-card">
@@ -59,10 +55,12 @@ export default function GapByProjectChart() {
       </div>
 
       <div className="gap-info flex flex-col gap-2 mb-3">
-        {sorted.length === 0 ? (
-          <div className="text-right text-sm text-slate-600">אין כרגע פרויקטים להצגה.</div>
+        {highGapProjects.length === 0 ? (
+          <div className="text-right text-sm text-slate-600">
+            אין כרגע פרויקטים עם פער של יותר מ‑40%. לחץ על ההרחבה כדי לראות את כל הפרויקטים.
+          </div>
         ) : (
-          <div className="text-right text-sm text-slate-600">הפרויקטים מוצגים לפי הפער היחסי הגדול ביותר. לחץ על פרויקט לקבלת פרטים נוספים.</div>
+          <div className="text-right text-sm text-slate-600">לחץ על פרויקט כדי לראות פרטים נוספים.</div>
         )}
       </div>
 
@@ -70,11 +68,11 @@ export default function GapByProjectChart() {
         {visibleProjects.map((p) => {
           const g = computeBudgetMinusPlanned(p);
           const rel = computeRelativeGap(p);
-          const pct = Math.round((rel / maxRelativeGap) * MAX_BAR_PERCENT);
+          const pct = Math.round((rel / maxRelativeGap) * MAX_BAR_PCT);
           const isPos = g >= 0;
           const isExceed = isGapStatusExceeded(p);
-          let barColor = GAP_COLORS.none;
-          if (isExceed) barColor = isPos ? GAP_COLORS.positive : GAP_COLORS.negative;
+          let barColor = 'var(--blue)'; // default blue
+          if (isExceed) barColor = isPos ? '#f97316' : '#dc2626';
 
           const relativePercent = Math.round(rel * 100);
           let valueLabel;
@@ -86,7 +84,8 @@ export default function GapByProjectChart() {
             valueLabel = `${isPos ? '+' : '−'}${relativePercent}%`;
           }
 
-          const effPct = Math.min(pct, MAX_BAR_PERCENT);
+          const effPct = Math.min(pct, MAX_BAR_PCT);
+          const offset = 1.1;
 
           return (
             <div
@@ -117,7 +116,7 @@ export default function GapByProjectChart() {
                 <span
                   className="gap-val"
                   style={{
-                    [isPos ? 'left' : 'right']: `calc(50% + ${effPct}% + ${LABEL_OFFSET_REM}rem)`,
+                    [isPos ? 'left' : 'right']: `calc(50% + ${effPct}% + ${offset}rem)`,
                   }}
                 >
                   {valueLabel}
@@ -129,9 +128,7 @@ export default function GapByProjectChart() {
       </div>
 
       {selectedProject && (
-        <Modal onClose={closeProjectDetail}>
-          <ProjectDetail project={selectedProject} onClose={closeProjectDetail} />
-        </Modal>
+        <ProjectDetailModal project={selectedProject} onClose={closeProjectDetail} />
       )}
 
       {hasExpandableProjects && (
@@ -144,7 +141,7 @@ export default function GapByProjectChart() {
           <button
             type="button"
             className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white p-2 text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-            onClick={toggleShowMore}
+            onClick={() => setShowMore((prev) => !prev)}
             aria-label={showMore ? 'הצג פחות פרויקטים' : 'הצג פרויקטים נוספים'}
           >
             <span

@@ -19,7 +19,7 @@
   background: var(--bg);
   color: var(--text);
   direction: rtl;
-  height: 40px;
+  height: 36px;
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -38,7 +38,7 @@
 
 .toolbar input:not([type="checkbox"]) {
   flex: 1;
-  min-width: 140px;
+  min-width: 200px;
 }
 
 .filter-dropdown {
@@ -61,7 +61,7 @@
   cursor: pointer;
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
-  height: 40px;
+  height: 36px;
 }
 
 .filter-button:hover {
@@ -226,7 +226,7 @@
 
 .toolbar .btn {
   font-size: 13px;
-  height: 40px;
+  height: 36px;
   padding: 0 14px;
   border: 1px solid var(--border2);
   border-radius: 6px;
@@ -267,13 +267,4 @@
 
 .filter-options::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
-}
-
-@media (max-width: 640px) {
-  .toolbar { align-items: stretch; }
-  .toolbar input,
-  .toolbar select,
-  .filter-button,
-  .toolbar .btn { width: 100%; min-width: 0; flex: 1 1 100%; height: 44px; }
-  .filter-dropdown { width: 100%; }
 }

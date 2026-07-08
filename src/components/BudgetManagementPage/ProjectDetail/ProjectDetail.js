@@ -1,7 +1,6 @@
-// src/components/ProjectDetail/ProjectDetail.js
 import React from "react";
-import { MASLOL_LABELS } from "../../../constants/constants";
-import ProjectFinanceLayout from "../ProjectsList/Project/ProjectFinanceLayout/ProjectFinanceLayout";
+import ProjectFinanceLayout from "../../ProjectFinanceLayout/ProjectFinanceLayout";
+import { MaslolElement, HemsheciElement } from "../ProjectElements/ProjectElements";
 import "./ProjectDetail.css";
 import { useProjects } from "../../../services/context/ProjectsContext";
 
@@ -12,7 +11,6 @@ export default function ProjectDetail({ project, onClose, onEdit }) {
   if (!project) return null;
 
   const financeData = projectFinanceMap[project.id];
-  const maslolLabel = MASLOL_LABELS[project.maslol] || project.maslol || "לא ידוע";
 
   return (
     <div className="det" dir="rtl">
@@ -20,13 +18,11 @@ export default function ProjectDetail({ project, onClose, onEdit }) {
         <div>
           <h3 className="det-name">{project.projectName}</h3>
           <div className="det-badges">
-            <span className={`badge ${project.maslol === "KIYUM" ? "b-kioom" : "b-hit"}`}>
-              {maslolLabel}
-            </span>
+            <MaslolElement maslol={project.maslol} />
             {project.yechidaMevatzat && <span className="badge b-unit">{project.yechidaMevatzat}</span>}
             {project.agaff           && <span className="badge b-sector">{project.agaff}</span>}
             {project.logHemsheci !== undefined && (
-              <span className={`badge ${project.logHemsheci ? "b-yes" : "b-no"}`}>{project.logHemsheci ? "המשכי" : "חדש"}</span>
+              <HemsheciElement isHemshechi={project.logHemsheci} />
             )}
           </div>
         </div>

@@ -94,3 +94,24 @@ export async function deleteProject(id) {
 
   return response.json();
 }
+
+export async function copyProjectsFromPreviousYear(year) {
+  if (!year || isNaN(Number(year))) {
+    throw new Error("A valid year must be provided.");
+  }
+
+  const response = await apiFetch(`/${RESOURCE}/copyProjectsFromPreviousYear/${encodeURIComponent(year)}`, {
+    method: "POST",
+  });
+
+  if (response.status === 404) {
+    throw new Error(`No projects were found for year ${Number(year) - 1} to copy.`);
+  }
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Failed to copy projects.");
+  }
+
+  return response.json();
+}

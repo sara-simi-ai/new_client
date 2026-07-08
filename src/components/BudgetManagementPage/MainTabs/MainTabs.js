@@ -1,8 +1,6 @@
 import React from 'react';
 import './MainTabs.css';
 import { useProjects } from '../../../services/context/ProjectsContext';
-// import ProjectsTab from './ProjectsTab/ProjectsTab';
-// import DashboardTab from './DashboardTab/DashboardTab';
 import ProjectsPage from '../ProjectPage/ProjectPage';
 import DashboardModule from '../Dashboard/DashboardModule/DashboardModule';
 

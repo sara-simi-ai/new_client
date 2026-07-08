@@ -3,7 +3,7 @@
   position: static;
   width: 100%;
   background: transparent;
-  padding: 12px clamp(12px, 2vw, 28px);
+  padding: 12px 18px;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   font-family: inherit;
 }
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  max-width: min(100%, 1520px);
+  max-width: 1180px;
   margin: 0 auto;
 }
 
@@ -23,7 +23,7 @@
 
 .page-title-title {
   margin: 0;
-  font-size: clamp(24px, 2vw, 34px);
+  font-size: 28px;
   font-weight: 600;
   line-height: 1.05;
   color: #0f172a; /* darker gray */

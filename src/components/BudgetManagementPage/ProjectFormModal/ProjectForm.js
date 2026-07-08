@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { formatGapDisplay } from "../../../utils/calculateProjectFinance";
 import "./ProjectFormModal.css";
+import { AGAF_OPTIONS, MASLOL_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../../constants/constants"; 
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
   const [form, setForm] = useState({
     projectName: "",
     agaff: "",
     yechidaMevatzat: "",
-    maslol: "0",
+    maslol: MASLOL_OPTIONS[0].value,
     logHemsheci: false,
     teur: "",
     hearot: "",
-    totalTakzivCoachAdam: 0,
+    totalTakzuvCoachAdam: 0,
     totalTakzivRechesh: 0,
     coachAdam: 0,
   });
@@ -25,11 +25,11 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         projectName: initialData.projectName || "",
         agaff: initialData.agaff || "",
         yechidaMevatzat: initialData.yechidaMevatzat || "",
-        maslol: initialData.maslol || "0",
+        maslol: initialData.maslol || MASLOL_OPTIONS[0].value, 
         logHemsheci: initialData.logHemsheci || false,
         teur: initialData.teur || "",
         hearot: initialData.hearot || "",
-        totalTakzivCoachAdam: initialData.totalTakzivCoachAdam || 0,
+        totalTakzuvCoachAdam: initialData.totalTakzuvCoachAdam || 0,
         totalTakzivRechesh: initialData.totalTakzivRechesh || 0,
         coachAdam: initialData.coachAdam || 0,
       }));
@@ -46,10 +46,10 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     if (form[field] === "" || form[field] === null || form[field] === undefined) set(field, 0);
   };
 
-  const totalBudget = Number(form.totalTakzivCoachAdam) + Number(form.totalTakzivRechesh);
-  const gaps = Number(form.totalTakzivCoachAdam) - Number(form.coachAdam);
+  const totalBudget = Number(form.totalTakzuvCoachAdam) + Number(form.totalTakzivRechesh);
+  const gaps = Number(form.totalTakzuvCoachAdam) - Number(form.coachAdam);
   const gapNum = Number(gaps) || 0;
-  const gapDisplay = formatGapDisplay(gapNum, Number(form.totalTakzivCoachAdam));
+  const gapDisplay = gapNum === 0 ? `₪0` : (gapNum > 0 ? `▲ ₪${gapNum}+` : `▼ ₪${Math.abs(gapNum)}-`);
   const gapColor = gapNum === 0 ? "#1e5f8e" : (gapNum > 0 ? "#059669" : "#dc2626");
 
   const handleSubmit = async () => {
@@ -58,24 +58,9 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     if (!form.yechidaMevatzat.trim()) newErrors.yechidaMevatzat = true;
     if (!form.agaff.trim()) newErrors.agaff = true;
     if (Number(form.totalTakzivRechesh) === 0) newErrors.totalTakzivRechesh = true;
-    if (Number(form.totalTakzivCoachAdam) === 0) newErrors.totalTakzivCoachAdam = true;
+    if (Number(form.totalTakzuvCoachAdam) === 0) newErrors.totalTakzuvCoachAdam = true;
     if (Number(form.coachAdam) === 0) newErrors.coachAdam = true;
-
-    const detailFields = ['projectName', 'yechidaMevatzat', 'agaff'];
-    const budgetFields = ['totalTakzivRechesh', 'totalTakzivCoachAdam', 'coachAdam'];
-    const hasDetailError = Object.keys(newErrors).some((field) => detailFields.includes(field));
-    const hasBudgetError = Object.keys(newErrors).some((field) => budgetFields.includes(field));
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      if (hasDetailError) {
-        setTab('פרטים');
-      } else if (hasBudgetError) {
-        setTab('תקציב');
-      }
-      return;
-    }
-
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
     setErrors({});
     await onSubmit({ ...initialData, ...form });
   };
@@ -106,11 +91,21 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
           <div className="np-row">
             <div className="np-field">
               <label className="np-label">יחידת פיתוח *</label>
-              <input className={`np-input${errors.yechidaMevatzat ? ' np-input--error' : ''}`} value={form.yechidaMevatzat} onChange={(e) => set('yechidaMevatzat', e.target.value)} />
+              <select className={`np-select${errors.yechidaMevatzat ? ' np-input--error' : ''}`} value={form.yechidaMevatzat} onChange={(e) => set('yechidaMevatzat', e.target.value)}>
+                <option value="">בחר יחידת פיתוח</option>
+                {YECHIDA_MEVATSAAT_OPTIONS.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
             </div>
             <div className="np-field">
               <label className="np-label">אגף מבצע *</label>
-              <input className={`np-input${errors.agaff ? ' np-input--error' : ''}`} value={form.agaff} onChange={(e) => set('agaff', e.target.value)} />
+              <select className={`np-select${errors.agaff ? ' np-input--error' : ''}`} value={form.agaff} onChange={(e) => set('agaff', e.target.value)}>
+                <option value="">בחר אגף</option>
+                {AGAF_OPTIONS.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -125,8 +120,9 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
             <div className="np-field">
               <label className="np-label">מסלול *</label>
               <select className="np-select" value={form.maslol} onChange={(e) => set('maslol', e.target.value)}>
-                <option value="0">קיום</option>
-                <option value="1">פיתוח</option>
+                {MASLOL_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -150,7 +146,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
             </div>
             <div className="np-field">
               <label className="np-label">תקציב כ"א (₪) *</label>
-              <input type="number" className={`np-input${errors.totalTakzivCoachAdam ? ' np-input--error' : ''}`} value={form.totalTakzivCoachAdam} onFocus={() => handleNumFocus('totalTakzivCoachAdam')} onBlur={() => handleNumBlur('totalTakzivCoachAdam')} onChange={(e) => set('totalTakzivCoachAdam', e.target.value)} />
+              <input type="number" className={`np-input${errors.totalTakzuvCoachAdam ? ' np-input--error' : ''}`} value={form.totalTakzuvCoachAdam} onFocus={() => handleNumFocus('totalTakzuvCoachAdam')} onBlur={() => handleNumBlur('totalTakzuvCoachAdam')} onChange={(e) => set('totalTakzuvCoachAdam', e.target.value)} />
             </div>
           </div>
 

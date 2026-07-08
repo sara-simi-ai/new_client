@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './TrackDistributionDonut.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
+import { MASLOL } from '../../../../constants/constants'; 
 import { DASH_COLORS } from '../dashUtils/dashUtils';
 import DonutChart from '../DonutChart/DonutChart';
 import SegmentProjectsModal from '../SegmentProjectsModal/SegmentProjectsModal';
@@ -9,8 +10,8 @@ export default function MaslolTrackDistributionDonut() {
   const { projects } = useProjects();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalIndex, setModalIndex] = useState(0);
-  const kiyumCount = projects.filter(project => project.maslol === 'KIYUM').length;
-  const hitazmutCount = projects.filter(project => project.maslol === 'HITAZMUT').length;
+  const kiyumCount = projects.filter(project => project.maslol === MASLOL.KIYUM.value).length;
+  const hitazmutCount = projects.filter(project => project.maslol === MASLOL.HITAZMUT.value).length;
 
   const chartSegments = [
     { value: kiyumCount, color: DASH_COLORS[0] },
@@ -18,8 +19,8 @@ export default function MaslolTrackDistributionDonut() {
   ];
 
   const legendItems = [
-    { label: 'קיום', color: DASH_COLORS[0] },
-    { label: 'התעצמות', color: DASH_COLORS[1] },
+    { label: MASLOL.KIYUM.label, color: DASH_COLORS[0] },
+    { label: MASLOL.HITAZMUT.label, color: DASH_COLORS[1] },
   ];
 
   const handleSegmentClick = (i) => {
@@ -28,9 +29,9 @@ export default function MaslolTrackDistributionDonut() {
   };
 
   const modalTitle = legendItems[modalIndex]?.label || 'פרויקטים';
-  const modalProjects = projects.filter((project) => {
-    if (modalIndex === 0) return project.maslol === 'KIYUM';
-    if (modalIndex === 1) return project.maslol === 'HITAZMUT';
+  const modalProjects = projects.filter((project) => { //========= CHANGED: named comparisons via MASLOL.KIYUM/MASLOL.HITAZMUT instead of index-based kiyumOption/hitazmutOption
+    if (modalIndex === 0) return project.maslol === MASLOL.KIYUM.value;
+    if (modalIndex === 1) return project.maslol === MASLOL.HITAZMUT.value;
     return Boolean(project.logHemsheci);
   });
 

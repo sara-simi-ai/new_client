@@ -1,0 +1,21 @@
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.b-sector { background: var(--blue-bg); color: var(--blue-text); }
+.b-unit    { background: var(--purple-bg); color: var(--purple-text); }
+.b-kioom   { background: var(--green-bg); color: var(--green-text); }
+.b-hit     { background: var(--amber-bg); color: var(--amber-text); }
+.b-yes     { background: var(--green-bg); color: var(--ok); }
+.b-no      { background: #FCEBEB; color: #791F1F; }
+
+.pc-gap {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}

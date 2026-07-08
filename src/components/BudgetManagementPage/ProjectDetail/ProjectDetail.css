@@ -87,15 +87,9 @@
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--text);
-  max-height: clamp(90px, 30vh, 240px);
+  max-height: 180px;
   overflow-y: auto;
   border: 1px solid var(--border);
 }
 
-.det-desc--short { max-height: clamp(60px, 12vh, 120px); }
-
-@media (max-width: 640px) {
-  .det-head { padding: 10px 12px; }
-  .det-body { padding: 10px 12px; }
-  .det-name { font-size: 15px; }
-}
+.det-desc--short { max-height: 70px; }
