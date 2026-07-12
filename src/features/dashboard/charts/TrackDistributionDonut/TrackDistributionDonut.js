@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './TrackDistributionDonut.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-import { MASLOL } from '../../../../constants/constants.js';
+import { MASLOL } from '../../../../dec/Dec.js';
 import { DASH_COLORS } from '../../constans/dashConstants';
 import DonutChart from '../DonutChart/DonutChart';
 import SegmentProjectsModal from '../../SegmentProjectsModal/SegmentProjectsModal';

@@ -1,0 +1,180 @@
+import React, { useState } from "react";
+import { useProjects } from "../../../services/context/ProjectsContext";
+import { formatMoney } from "../../../utils/formatMoney";
+import { MASLOL_OPTIONS } from "../../../dec/Dec";
+import { saveAs } from "file-saver";
+import ExcelJS from "exceljs";
+import "./ExportToExcelButton.css";
+
+export default function ExportToExcelButton() {
+  const { selectedYear, filteredProjects, projectFinanceMap, summaryData } = useProjects();
+  const [loading, setLoading] = useState(false);
+
+  const THIN_BORDER = {
+    top: { style: "thin" },
+    left: { style: "thin" },
+    bottom: { style: "thin" },
+    right: { style: "thin" },
+  };
+
+  const getMaslolLabel = (value) => {
+    return MASLOL_OPTIONS.find((item) => item.value === value)?.label || value || "";
+  };
+
+  const formatGapWithSigns = (gapValue, totalBudget) => {
+    const absValue = Math.abs(gapValue);
+    const displayValue = gapValue === 0
+      ? `₪${formatMoney(absValue)}`
+      : `${gapValue > 0 ? "+" : "-"} ₪${formatMoney(absValue)}`;
+
+    if (totalBudget && totalBudget > 0) {
+      const percent = Math.round(Math.abs(gapValue) / totalBudget * 100);
+      return `${displayValue} (${percent}%)`;
+    }
+
+    return displayValue;
+  };
+
+  const handleExport = async () => {
+    try {
+      setLoading(true);
+
+      const workbook = new ExcelJS.Workbook();
+
+      const projectsSheet = workbook.addWorksheet("טבלת פרויקטים");
+      projectsSheet.views = [{ rightToLeft: true }];
+
+      const fileName = `פרויקטים לשנת ${selectedYear}`;
+
+      const titleRow = projectsSheet.addRow([fileName]);
+      const titleCell = titleRow.getCell(1);
+      titleCell.font = { bold: true, size: 14 };
+      titleCell.alignment = { horizontal: "center", vertical: "center" };
+      titleCell.border = THIN_BORDER;
+
+      projectsSheet.mergeCells("A1:H1");
+
+      const headers = [
+        "שם הפרויקט",
+        "אגף",
+        "יחידה מבצעת",
+        "המשכיות",
+        "מסלול",
+        'תקציב כ"א',
+        "תקציב רכש",
+        "פערים",
+      ];
+
+      const headerRow = projectsSheet.addRow(headers);
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFE0E0E0" } };
+        cell.alignment = { horizontal: "center", vertical: "center" };
+        cell.border = THIN_BORDER;
+      });
+
+      filteredProjects.forEach((project) => {
+        const financeData = projectFinanceMap[project.id] || {};
+        const {
+          pearim = 0,
+          totalTakzivCoachAdam = 0,
+          totalTakzivRechesh = 0,
+        } = financeData;
+
+        const row = projectsSheet.addRow([
+          project.projectName || "",
+          project.agaff || "",
+          project.yechidaMevatzat || "",
+          project.logHemsheci ? "המשכי: כן" : "חדש",
+          getMaslolLabel(project.maslol),
+          formatMoney(totalTakzivCoachAdam),
+          formatMoney(totalTakzivRechesh),
+          formatGapWithSigns(pearim, totalTakzivCoachAdam),
+        ]);
+
+        row.eachCell((cell, colNumber) => {
+          if (row.number % 2 === 0) {
+            cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFF5F5F5" } };
+          }
+          cell.border = THIN_BORDER;
+          if (colNumber >= 6) {
+            cell.alignment = { horizontal: "center" };
+          }
+        });
+      });
+
+      projectsSheet.columns = [
+        { width: 25 }, // projectName
+        { width: 15 }, // agaff
+        { width: 15 }, // yechidaMevatzat
+        { width: 15 }, // hemsheci
+        { width: 15 }, // maslol
+        { width: 15 }, // hrBudget
+        { width: 15 }, // procBudget
+        { width: 20 }, // gaps
+      ];
+
+      const sheet2 = workbook.addWorksheet("תמונת מצב");
+      sheet2.views = [{ rightToLeft: true }];
+
+      const summaryTitle = `תמונת מצב לשנת ${selectedYear}`;
+      const summaryTitleRow = sheet2.addRow([summaryTitle]);
+      const summaryTitleCell = summaryTitleRow.getCell(1);
+      summaryTitleCell.font = { bold: true, size: 14 };
+      summaryTitleCell.alignment = { horizontal: "center", vertical: "center" };
+      summaryTitleCell.border = THIN_BORDER;
+      sheet2.mergeCells("A1:B1");
+
+      const summaryHeaderRow = sheet2.addRow(["מדד", "ערך"]);
+      summaryHeaderRow.eachCell((cell) => {
+        cell.font = { bold: true };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFE0E0E0" } };
+        cell.alignment = { horizontal: "center", vertical: "center" };
+        cell.border = THIN_BORDER;
+      });
+
+      const summaryItems = [
+        ["סה\"כ פרויקטים", summaryData?.totalCount || 0],
+        ['תקציב כ"א', formatMoney(summaryData?.totalHR || 0)],
+        ["תקציב רכש", formatMoney(summaryData?.totalProc || 0)],
+        ["סה\"כ תקציב", formatMoney(summaryData?.totalBudget || 0)],
+        ["סה\"כ פערים", formatGapWithSigns(summaryData?.totalGap || 0, summaryData?.totalBudget || 0)],
+      ];
+
+      summaryItems.forEach((item) => {
+        const row = sheet2.addRow(item);
+        row.eachCell((cell, colNumber) => {
+          cell.border = THIN_BORDER;
+          cell.alignment = { horizontal: colNumber === 1 ? "right" : "center" };
+        });
+      });
+
+      sheet2.columns = [
+        { width: 20 },
+        { width: 20 },
+      ];
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, `${fileName}.xlsx`);
+    } catch (err) {
+      console.error("Error exporting to Excel:", err);
+      alert("שגיאה בעת ייצוא לאקסל: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      className="export-excel-btn"
+      onClick={handleExport}
+      disabled={loading}
+      title="ייצא פרויקטים לקובץ אקסל"
+    >
+      {loading ? "מייצא..." : "ייצא לאקסל"}
+    </button>
+  );
+}

@@ -1,6 +1,6 @@
 import React from "react";
-import { formatGapDisplay } from "../../../utils/calculateProjectFinance";
-import { STATUS_PAAR, MASLOL_OPTIONS, MASLOL } from "../../../constants/constants"; 
+import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinance";
+import { MASLOL_OPTIONS, MASLOL } from "../../../dec/Dec"; 
 import "./ProjectElements.css";
 
 export const isKiyumMaslol = (maslol) => maslol === MASLOL.KIYUM.value; 
@@ -31,18 +31,17 @@ export const HemsheciElement = ({
 };
 
 
-const normalizeGapStatus = (value, statusPearim) => {
+const normalizeGapStatus = (value, statusPearim, totalTakzivCoachAdam) => {
   if (typeof statusPearim === "string" && statusPearim) {
     return statusPearim;
   }
 
-  if (value === 0) return STATUS_PAAR.TAKIN.value;
-  return value < 0 ? STATUS_PAAR.GERAON.value : STATUS_PAAR.ODEF.value;
+  return getGapStatus(value, totalTakzivCoachAdam);
 };
 
 export const PearimElement = ({ financeData }) => {
   const { pearim, statusPearim, totalTakzivCoachAdam } = financeData;
-  const status = normalizeGapStatus(pearim, statusPearim);
+  const status = normalizeGapStatus(pearim, statusPearim, totalTakzivCoachAdam);
 
   return (
     <span className={`pc-gap pc-gap--${status}`}>

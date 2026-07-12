@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from "
 import { getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/generalApi";
 import { calculateProjectFinance } from "../../utils/calculateProjectFinance";
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFilters";
-import { STATUS_PEARIM_MAP } from "../../constants/constants";
 
 const ProjectsContext = createContext();
 

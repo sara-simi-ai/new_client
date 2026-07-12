@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { formatGapDisplay } from "../../../utils/calculateProjectFinance";
+import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinance";
 import "./ProjectFormModal.css";
-import { AGAF_OPTIONS, MASLOL_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../../constants/constants"; 
+import { AGAF_OPTIONS, MASLOL_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../../dec/Dec"; 
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
   const [form, setForm] = useState({
@@ -51,7 +51,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   const gaps = Number(form.totalTakzivCoachAdam) - Number(form.coachAdam);
   const gapNum = Number(gaps) || 0;
   const gapDisplay = formatGapDisplay(gapNum, Number(form.totalTakzivCoachAdam));
-  const gapColor = gapNum === 0 ? "#1e5f8e" : (gapNum > 0 ? "#059669" : "#dc2626");
+  const gapStatus = getGapStatus(gapNum, Number(form.totalTakzivCoachAdam));
 
   const handleSubmit = async () => {
     const newErrors = {};
@@ -175,7 +175,12 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
           <div className="np-row np-field--last">
             <div className="np-field" style={{ marginBottom: 0 }}>
               <label className="np-label">פערים (אוטומטי)</label>
-              <input className="np-input" readOnly value={gapDisplay} style={{ backgroundColor: "#f9fafb", color: gapColor }} />
+              <input
+                className={`np-input pc-gap pc-gap--${gapStatus}`}
+                readOnly
+                value={gapDisplay}
+                style={{ backgroundColor: "#f9fafb" }}
+              />
             </div>
             <div className="np-field" style={{ marginBottom: 0 }}>
               <label className="np-label">תכנון כ"א (₪) *</label>

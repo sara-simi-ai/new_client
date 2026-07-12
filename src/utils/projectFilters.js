@@ -1,5 +1,5 @@
 import { calculateProjectFinance } from "./calculateProjectFinance";
-import { STATUS_PAAR_OPTIONS } from "../constants/constants";
+import { STATUS_PAAR_OPTIONS, AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../dec/Dec";
 
 export const DEFAULT_PROJECT_FILTERS = {
   search: "",
@@ -11,10 +11,9 @@ export const DEFAULT_PROJECT_FILTERS = {
 };
 
 export function getProjectFilterOptions(projects) {
-  const uniq = (key) => Array.from(new Set(projects.map((project) => project[key]).filter(Boolean))).sort();
   return {
-    agaff: uniq("agaff"),
-    yechidaMevatzat: uniq("yechidaMevatzat"),
+    agaff: AGAF_OPTIONS,
+    yechidaMevatzat: YECHIDA_MEVATSAAT_OPTIONS,
     statusPearim: STATUS_PAAR_OPTIONS,
   };
 }

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
-import { MASLOL_OPTIONS } from "../../../constants/constants";
+import { MASLOL_OPTIONS } from "../../../dec/Dec";
 import "./FilterBar.css";
 
 function CheckListDropdown({ label, allLabel, options, selected, onChange }) {

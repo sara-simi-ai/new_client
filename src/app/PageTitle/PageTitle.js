@@ -2,6 +2,7 @@ import React from 'react';
 import './PageTitle.css';
 import YearSelector from './YearSelector/YearSelector';
 import CopyProjectsButton from './CopyProjectsButton/CopyProjectsButton';
+import ExportToExcelButton from './ExportToExcelButton/ExportToExcelButton';
 import { useProjects } from '../../services/context/ProjectsContext';
 
 const PageTitle = () => {
@@ -27,6 +28,7 @@ const PageTitle = () => {
 
 				<div className="page-title-left">
 					<div className="page-title-controls">
+						<ExportToExcelButton />
 						<CopyProjectsButton />
 						<YearSelector />
 					</div>
