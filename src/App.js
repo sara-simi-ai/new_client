@@ -1,7 +1,7 @@
 import './App.css';
-import PageTitle from './components/BudgetManagementPage/TopBar/PageTitle/PageTitle';
-import MainTabs from './components/BudgetManagementPage/MainTabs/MainTabs';
-import SummarySquares from './components/BudgetManagementPage/SummarySqueres/SummarySquares';
+import PageTitle from './app/PageTitle/PageTitle';
+import MainTabs from './app/MainTabs/MainTabs';
+import SummarySquares from './app/SummarySqueres/SummarySquares';
 
 export default function App() {
   return (
