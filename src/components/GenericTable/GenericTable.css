@@ -1,0 +1,123 @@
+.generic-table,
+.gdm-table,
+.p-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: right;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+}
+
+.generic-table thead th,
+.gdm-table thead th,
+.p-table thead th {
+  color: var(--text2);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 11px 14px;
+  background: var(--bg2);
+  border-bottom: 2px solid var(--border2, var(--border));
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.generic-table thead th:first-child,
+.gdm-table thead th:first-child,
+.p-table thead th:first-child {
+  border-right: none;
+}
+
+.generic-table thead th:last-child,
+.gdm-table thead th:last-child,
+.p-table thead th:last-child {
+  border-left: none;
+}
+
+.generic-table tbody tr,
+.gdm-table tbody tr,
+.p-table tbody tr {
+  background: var(--bg);
+  transition: background .1s ease;
+  cursor: default;
+}
+
+.generic-table tbody tr:nth-child(even),
+.gdm-table tbody tr:nth-child(even),
+.p-table tbody tr:nth-child(even) {
+  background: var(--bg2, rgba(0,0,0,.015));
+}
+
+.generic-table tbody td,
+.gdm-table tbody td,
+.p-table tbody td {
+  padding: 10px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  position: relative;
+}
+
+.generic-table tbody td:first-child,
+.gdm-table tbody td:first-child,
+.p-table tbody td:first-child {
+  border-right: none;
+}
+
+.generic-table tbody td:last-child,
+.gdm-table tbody td:last-child,
+.p-table tbody td:last-child {
+  border-left: none;
+}
+
+.generic-table tbody tr:last-child td,
+.gdm-table tbody tr:last-child td,
+.p-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.generic-table tfoot td,
+.gdm-table tfoot td,
+.p-table tfoot td {
+  font-weight: 600;
+  font-size: 12px;
+  padding: 11px 14px;
+  border-top: 2px solid rgba(0, 0, 0, .16);
+  border-bottom: none;
+  border-left: 1px solid var(--border);
+}
+
+.generic-table tfoot tr.footer-row td,
+.gdm-table tfoot tr.footer-row td,
+.p-table tfoot tr.footer-row td {
+  background: var(--bg2);
+}
+
+.generic-table tfoot tr.footer-row--white td,
+.gdm-table tfoot tr.footer-row--white td,
+.p-table tfoot tr.footer-row--white td {
+  background: var(--bg);
+}
+
+.generic-table tfoot tr.footer-row--gray td,
+.gdm-table tfoot tr.footer-row--gray td,
+.p-table tfoot tr.footer-row--gray td {
+  background: var(--bg2);
+}
+
+.generic-table tfoot td:first-child,
+.gdm-table tfoot td:first-child,
+.p-table tfoot td:first-child {
+  border-right: none;
+}
+
+.generic-table tfoot td:last-child,
+.gdm-table tfoot td:last-child,
+.p-table tfoot td:last-child {
+  border-left: none;
+}

@@ -1,5 +1,5 @@
 import { calculateProjectFinance } from "./calculateProjectFinance";
-import { STATUS_PAAR_OPTIONS, AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../dec/Dec";
+import { GAP_STATUS_OPTIONS, AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../dec/Dec";
 
 export const DEFAULT_PROJECT_FILTERS = {
   search: "",
@@ -14,7 +14,7 @@ export function getProjectFilterOptions(projects) {
   return {
     agaff: AGAF_OPTIONS,
     yechidaMevatzat: YECHIDA_MEVATSAAT_OPTIONS,
-    statusPearim: STATUS_PAAR_OPTIONS,
+    statusPearim: GAP_STATUS_OPTIONS,
   };
 }
 

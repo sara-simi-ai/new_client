@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import { useProjects } from "../../services/context/ProjectsContext";
 import { formatMoney } from "../../utils/formatMoney";
 import { formatGapDisplay, getGapStatus } from "../../utils/calculateProjectFinance";
+import { GapElement } from "../../components/GapElement/GapElement";
+import { GAP_CLASSES, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL } from "../../dec/Dec";
 import GapDetailsModal from "./GapDetailsModal/GapDetailsModal";
 import "./SummarySquares.css";
 
@@ -20,9 +22,9 @@ export default function SummarySquares() {
 
   const summaryCards = [
     { label: "פרויקטים", value: totalCount },
-    { label: `תקציב כ"א`, value: formatMoney(totalHR) },
-    { label: "תקציב רכש", value: formatMoney(totalProc) },
-    { label: "סה''כ תקציב", value: formatMoney(totalBudget) },
+    { label: HR_BUDGET_LABEL, value: formatMoney(totalHR) },
+    { label: PROCUREMENT_BUDGET_LABEL, value: formatMoney(totalProc) },
+    { label: TOTAL_BUDGET_LABEL, value: formatMoney(totalBudget) },
   ];
 
   if (isLoading) return <div className="ss-wrapper">טוען סיכומים...</div>;
@@ -46,11 +48,9 @@ export default function SummarySquares() {
             if (e.key === "Enter" || e.key === " ") setIsGapOpen(true);
           }}
         >
-          <div className="ss-title">פערים</div>
+          <div className="ss-title">{GAPS_LABEL}</div>
           <div className="ss-value">
-            <span className={`pc-gap pc-gap--${totalGapStatus}`}>
-              {formatGapDisplay(totalGap, totalHR)}
-            </span>
+            <GapElement financeData={{ pearim: totalGap, statusPearim: totalGapStatus, totalTakzivCoachAdam: totalHR }} />
           </div>
         </div>
       </div>

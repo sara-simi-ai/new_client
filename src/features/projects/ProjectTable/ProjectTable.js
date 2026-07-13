@@ -1,7 +1,10 @@
 import React from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
-import { MaslolElement, PearimElement, HemsheciElement } from "../ProjectElements/ProjectElements";
+import { MaslolElement, HemsheciElement } from "../ProjectElements/ProjectElements";
+import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoney";
+import { getGapStatus } from "../../../utils/calculateProjectFinance";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL } from "../../../dec/Dec";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "../ProjectsList/Project.css";
 import "./ProjectTable.css";
@@ -10,28 +13,29 @@ import "./ProjectTable.css";
 const columns = [
   {
     key: "name",
-    label: "שם הפרויקט",
+    label: PROJECT_NAME_LABEL,
     headerClassName: "pt-th-name",
     cellClassName: "tr-name-cell",
     render: (row) => (
       <div className="tr-name" title={row.projectName}>{row.projectName}</div>
     ),
+    renderTotal: () => "סה\"כ",
   },
   {
     key: "sector",
-    label: "אגף",
+    label: AGAF_LABEL,
     cellClassName: "tr-sector",
     render: (row) => row.agaff,
   },
   {
     key: "unit",
-    label: "יחידה מבצעת",
+    label: UNIT_LABEL,
     cellClassName: "tr-unit",
     render: (row) => row.yechidaMevatzat,
   },
   {
     key: "continuation",
-    label: "המשכיות",
+    label: CONTINUATION_LABEL,
     cellClassName: "tr-continuation",
     render: (row) => (
       <HemsheciElement
@@ -43,28 +47,39 @@ const columns = [
   },
   {
     key: "status",
-    label: "מסלול",
+    label: MASLOL_LABEL,
     headerClassName: "pt-th-status",
     cellClassName: "tr-status",
     render: (row) => <MaslolElement maslol={row.maslol} />,
   },
   {
     key: "hrBudget",
-    label: 'תקציב כ"א',
+    label: HR_BUDGET_LABEL,
     cellClassName: "tr-num",
     render: (row) => formatMoney(row.financeData?.totalTakzivCoachAdam || 0),
+    renderTotal: (totals) => formatMoney(totals.totalHR),
   },
   {
     key: "procBudget",
-    label: "תקציב רכש",
+    label: PROCUREMENT_BUDGET_LABEL,
     cellClassName: "tr-num",
     render: (row) => formatMoney(row.financeData?.totalTakzivRechesh || 0),
+    renderTotal: (totals) => formatMoney(totals.totalProcurement),
   },
   {
     key: "gaps",
-    label: "פערים",
+    label: GAPS_LABEL,
     cellClassName: "tr-num",
-    render: (row) => <PearimElement financeData={row.financeData || {}} />,
+    render: (row) => <GapElement financeData={row.financeData || {}} />,
+    renderTotal: (totals) => (
+      <GapElement
+        financeData={{
+          pearim: totals.totalGap,
+          statusPearim: getGapStatus(totals.totalGap, totals.totalHR),
+          totalTakzivCoachAdam: totals.totalHR,
+        }}
+      />
+    ),
   },
 ];
 
@@ -75,6 +90,17 @@ export default function ProjectTable({ projects }) {
     ...project,
     financeData: projectFinanceMap[project.id] || {},
   }));
+
+  const totals = rowsWithFinance.reduce(
+    (acc, project) => {
+      const financeData = project.financeData || {};
+      acc.totalHR += financeData.totalTakzivCoachAdam || 0;
+      acc.totalProcurement += financeData.totalTakzivRechesh || 0;
+      acc.totalGap += financeData.pearim || 0;
+      return acc;
+    },
+    { totalHR: 0, totalProcurement: 0, totalGap: 0 }
+  );
 
   const handleRowClick = (row) => {
     const isSelected = selectedProjectId === row.id;
@@ -94,6 +120,7 @@ export default function ProjectTable({ projects }) {
       wrapperClassName="p-table-wrap"
       rowClassName={getRowClassName}
       onRowClick={handleRowClick}
+      footerData={totals}
     />
   );
 }

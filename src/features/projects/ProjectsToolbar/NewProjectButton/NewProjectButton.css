@@ -1,5 +1,5 @@
 .np-trigger {
-  background-color: #1e5f8e;
+  background-color: var(--accent);
   color: white;
   font-size: 0.875rem;
   font-weight: 500;
@@ -10,7 +10,7 @@
 }
 
 .np-trigger:hover {
-  background-color: #174f78;
+  background-color: var(--accent-hover);
 }
 
 .np-overlay {
@@ -125,8 +125,8 @@
 .np-input:focus,
 .np-select:focus,
 .np-textarea:focus {
-  box-shadow: 0 0 0 1px #1e5f8e;
-  border-color: #1e5f8e;
+  box-shadow: 0 0 0 1px var(--accent);
+  border-color: var(--accent);
 }
 
 @media (max-width: 640px) {
@@ -173,7 +173,7 @@
 }
 
 .np-btn-submit {
-  background-color: #1e5f8e;
+  background-color: var(--accent);
   color: white;
   font-size: 0.875rem;
   padding: 0.5rem 1.25rem;
@@ -183,10 +183,10 @@
 }
 
 .np-btn-submit:hover {
-  background-color: #174f78;
+  background-color: var(--accent-hover);
 }
 
 .np-input--error {
-  border-color: #dc2626 !important;
+  border-color: var(--gap-negative) !important;
   outline: none;
 }

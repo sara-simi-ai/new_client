@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import './GapByProjectChart.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 import Modal from '../../../../components/Modal/Modal';
 import ProjectDetail from '../../../projects/ProjectDetail/ProjectDetail';
 import { computeBudgetMinusPlanned, computeRelativeGap, compareByRelativeGap, isGapStatusExceeded, formatGapDisplay } from '../../../../utils/calculateProjectFinance';
 import { useExpandableProjectList } from '../../hooks/useExpandableProjectList';
+import { useProjectDetail } from '../../hooks/useProjectDetail';
 import { INITIAL_VISIBLE_PROJECTS_COUNT } from '../../constans/chartConstants';
 
 const MAX_VISIBLE_PROJECTS = INITIAL_VISIBLE_PROJECTS_COUNT;
@@ -12,9 +13,9 @@ const MAX_BAR_PERCENT = 42;
 const LABEL_OFFSET_REM = 1.1;
 
 const GAP_COLORS = {
-  negative: '#dc2626',
-  positive: '#f97316',
-  none: 'var(--blue)',
+  negative: 'var(--gap-negative)',
+  positive: 'var(--gap-positive)',
+  none: 'var(--gap-neutral)',
 };
 
 const gapLegend = [
@@ -25,11 +26,7 @@ const gapLegend = [
 
 export default function GapByProjectChart() {
   const { filteredProjects } = useProjects();
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
-
-  const selectedProject = filteredProjects.find((p) => p.id === selectedProjectId);
-  const openProjectDetail = (id) => setSelectedProjectId(id);
-  const closeProjectDetail = () => setSelectedProjectId(null);
+  const { selectedProject, openProjectDetail, closeProjectDetail } = useProjectDetail(filteredProjects);
 
   const {
     sorted,

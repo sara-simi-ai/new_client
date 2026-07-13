@@ -1,4 +1,5 @@
 import React from "react";
+import "./GenericTable.css";
 
 /**
  * Reusable generic table component
@@ -55,7 +56,7 @@ export default function GenericTable({
           </tbody>
           {footerData && (
             <tfoot>
-              <tr>
+              <tr className={data.length % 2 === 1 ? "footer-row footer-row--gray" : "footer-row footer-row--white"}>
                 {columns.map((col) => (
                   <td key={col.key} className={col.cellClassName}>
                     {col.renderTotal?.(footerData)}

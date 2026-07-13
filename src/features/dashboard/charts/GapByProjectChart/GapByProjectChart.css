@@ -120,7 +120,7 @@
 }
 
 .gap-row:focus-visible {
-  outline: 2px solid #1e5f8e;
+  outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
 

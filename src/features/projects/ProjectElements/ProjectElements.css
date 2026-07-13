@@ -1,6 +1,3 @@
-.pc-gap--geraon { color: #dc2626 !important; font-weight: 600; font-size: inherit; }
-.pc-gap--odef   { color: #f97316; font-weight: 600; font-size: inherit; }
-.pc-gap--takin  { color: var(--blue); font-weight: 600; font-size: inherit; }
 
 .pc-gap-alert {
   position: absolute;
@@ -26,6 +23,6 @@
 }
 
 .pc-gap-alert--orange {
-  border: 1.5px solid #f59e0b;
-  color: #f59e0b;
+  border: 1.5px solid var(--gap-positive);
+  color: var(--gap-positive);
 }

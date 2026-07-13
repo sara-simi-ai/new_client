@@ -101,10 +101,4 @@
   align-items: center;
 }
 
-.bbs-gap {
-  font-weight: 600;
-}
-
-.bbs-gap--surplus { color: #f97316; }
-.bbs-gap--over    { color: #dc2626; }
-.bbs-gap--neutral { color: var(--color-proc); }
+.bbs-gap { font-weight: 600; }

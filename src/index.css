@@ -13,6 +13,13 @@
   --purple-bg:#EEEDFE;--purple-text:#534AB7;
   --red:#A32D2D;--ok:#0F6E56;
   --radius:8px;--radius-lg:12px;
+
+  /* Project / global brand + gap colors (single source of truth) */
+  --accent: #1e5f8e;           /* primary brand accent */
+  --accent-hover: #174f78;     /* accent hover */
+  --gap-positive: #f97316;     /* gap in surplus / orange */
+  --gap-negative: #dc2626;     /* gap in deficit / red */
+  --gap-neutral: var(--accent);
 }
 @media (prefers-color-scheme: dark){
   :root{
@@ -21,6 +28,11 @@
     --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
     --blue-bg:#0c3460;--blue-text:#85B7EB;--green-bg:#083428;--green-text:#5DCAA5;
     --amber-bg:#3d2800;--amber-text:#EF9F27;--purple-bg:#26215C;--purple-text:#AFA9EC;
+    --accent: #1e5f8e;
+    --accent-hover: #174f78;
+    --gap-positive: #f97316;
+    --gap-negative: #dc2626;
+    --gap-neutral: var(--accent);
   }
 }
 
@@ -100,3 +112,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.gap--neutral { color: var(--gap-neutral); }
+.gap--surplus { color: var(--gap-positive); }
+.gap--over    { color: var(--gap-negative); }
+

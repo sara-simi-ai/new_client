@@ -14,7 +14,7 @@
 .np-panel--active{opacity:1;transform:translateX(0);max-height:2000px;pointer-events:auto}
 
 .np-input,.np-select,.np-textarea{width:100%;border:1px solid #d1d5db;border-radius:.25rem;padding:.55rem .75rem;font-size:.94rem;box-sizing:border-box;outline:none}
-.np-input:focus,.np-select:focus,.np-textarea:focus{box-shadow:0 0 0 1px #1e5f8e;border-color:#1e5f8e}
+.np-input:focus,.np-select:focus,.np-textarea:focus{box-shadow:0 0 0 1px var(--accent);border-color:var(--accent)}
 .np-select{appearance:none}
 .np-textarea{resize:vertical}
 
@@ -26,9 +26,9 @@
 .np-actions{display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem}
 .np-btn-cancel{border:1px solid #d1d5db;color:#374151;font-size:.875rem;padding:.55rem 1.2rem;border-radius:.25rem;background:#fff;cursor:pointer}
 .np-btn-cancel:hover{background:#f9fafb}
-.np-btn-submit{background:#1e5f8e;color:#fff;font-size:.875rem;padding:.55rem 1.2rem;border-radius:.25rem;border:none;cursor:pointer}
-.np-btn-submit:hover{background:#174f78}
-.np-input--error{border-color:#dc2626!important}
+.np-btn-submit{background:var(--accent);color:#fff;font-size:.875rem;padding:.55rem 1.2rem;border-radius:.25rem;border:none;cursor:pointer}
+.np-btn-submit:hover{background:var(--accent-hover)}
+.np-input--error{border-color:var(--gap-negative)!important}
 
 @media (min-width: 1200px) {
   .pfm-modal { padding: 24px; }

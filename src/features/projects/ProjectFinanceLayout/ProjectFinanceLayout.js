@@ -1,6 +1,7 @@
 import React from "react";
 import { formatMoney } from "../../../utils/formatMoney";
-import { PearimElement } from "../ProjectElements/ProjectElements";
+import { GapElement } from "../../../components/GapElement/GapElement";
+import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, TOTAL_BUDGET_LABEL } from "../../../dec/Dec";
 import "./ProjectFinanceLayout.css";
 
 export default function ProjectFinanceLayout({ financeData, mode = "card", onEdit, onDelete }) {
@@ -12,12 +13,12 @@ export default function ProjectFinanceLayout({ financeData, mode = "card", onEdi
     : { container: "pd-fc", label: "pd-fc-lbl", value: "pd-fc-val" };
 
   const baseFields = [
-    { label: 'תקציב כ"א', value: totalTakzivCoachAdam },
-    { label: "תקציב רכש", value: totalTakzivRechesh },
-    { label: 'תכנון כ"א', value: coachAdam },
+    { label: HR_BUDGET_LABEL, value: totalTakzivCoachAdam },
+    { label: PROCUREMENT_BUDGET_LABEL, value: totalTakzivRechesh },
+    { label: PLANNED_HR_LABEL, value: coachAdam },
     {
-      label: "פערים",
-      renderValue: () => <PearimElement financeData={financeData} />,
+      label: GAPS_LABEL,
+      renderValue: () => <GapElement financeData={financeData} />,
     },
   ];
 
@@ -26,7 +27,7 @@ export default function ProjectFinanceLayout({ financeData, mode = "card", onEdi
     : [
         baseFields[0],
         baseFields[1],
-        { label: 'סה"כ תקציב', value: totalTaktziv },
+        { label: TOTAL_BUDGET_LABEL, value: totalTaktziv },
         baseFields[2],
         baseFields[3],
       ];
@@ -48,7 +49,7 @@ export default function ProjectFinanceLayout({ financeData, mode = "card", onEdi
           <div className="cf-actions">
             {onDelete && (
               <button className="cf-delete-btn" onClick={onDelete} aria-label="מחק" title="מחק">
-                <span> ❌ </span>
+                <span> 🗑️ </span>
               </button>
             )}
             {onEdit && (

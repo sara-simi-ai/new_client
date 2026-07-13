@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinance";
+import { AGAF_OPTIONS, GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL, YECHIDA_MEVATSAAT_OPTIONS } from "../../../dec/Dec";
 import "./ProjectFormModal.css";
-import { AGAF_OPTIONS, MASLOL_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../../dec/Dec"; 
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
   const [form, setForm] = useState({
@@ -158,32 +158,32 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         <div className={`np-panel${tab === 'תקציב' ? ' np-panel--active' : ''}`} aria-hidden={tab !== 'תקציב'}>
           <div className="np-row">
             <div className="np-field">
-              <label className="np-label">תקציב רכש (₪) *</label>
+              <label className="np-label">{PROCUREMENT_BUDGET_LABEL} (₪) *</label>
               <input type="number" className={`np-input${errors.totalTakzivRechesh ? ' np-input--error' : ''}`} value={form.totalTakzivRechesh} onFocus={() => handleNumFocus('totalTakzivRechesh')} onBlur={() => handleNumBlur('totalTakzivRechesh')} onChange={(e) => set('totalTakzivRechesh', e.target.value)} />
             </div>
             <div className="np-field">
-              <label className="np-label">תקציב כ"א (₪) *</label>
+              <label className="np-label">{HR_BUDGET_LABEL} (₪) *</label>
               <input type="number" className={`np-input${errors.totalTakzivCoachAdam ? ' np-input--error' : ''}`} value={form.totalTakzivCoachAdam} onFocus={() => handleNumFocus('totalTakzivCoachAdam')} onBlur={() => handleNumBlur('totalTakzivCoachAdam')} onChange={(e) => set('totalTakzivCoachAdam', e.target.value)} />
             </div>
           </div>
 
           <div className="np-field">
-            <label className="np-label">סה"כ תקציב (אוטומטי)</label>
+            <label className="np-label">{TOTAL_BUDGET_LABEL} (אוטומטי)</label>
             <input className="np-input" readOnly value={`₪${totalBudget}`} style={{ backgroundColor: "#f9fafb", color: "#374151" }} />
           </div>
 
           <div className="np-row np-field--last">
             <div className="np-field" style={{ marginBottom: 0 }}>
-              <label className="np-label">פערים (אוטומטי)</label>
+              <label className="np-label">{GAPS_LABEL} (אוטומטי)</label>
               <input
-                className={`np-input pc-gap pc-gap--${gapStatus}`}
+                className={`np-input pc-gap ${GAP_CLASSES[gapStatus]}`}
                 readOnly
                 value={gapDisplay}
                 style={{ backgroundColor: "#f9fafb" }}
               />
             </div>
             <div className="np-field" style={{ marginBottom: 0 }}>
-              <label className="np-label">תכנון כ"א (₪) *</label>
+              <label className="np-label">{PLANNED_HR_LABEL} (₪) *</label>
               <input type="number" className={`np-input${errors.coachAdam ? ' np-input--error' : ''}`} value={form.coachAdam} onFocus={() => handleNumFocus('coachAdam')} onBlur={() => handleNumBlur('coachAdam')} onChange={(e) => set('coachAdam', e.target.value)} />
             </div>
           </div>

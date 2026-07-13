@@ -1,7 +1,6 @@
-import React from "react";
-import { PearimElement } from "../../../features/projects/ProjectElements/ProjectElements";
+import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoney";
-import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinance";
+import {  getGapStatus } from "../../../utils/calculateProjectFinance";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "./GapDetailsModal.css";
 
@@ -27,11 +26,9 @@ const columns = [
   {
     key: "gap",
     header: "פער",
-    render: (row) => <PearimElement financeData={row.financeData} />,
+    render: (row) => <GapElement financeData={row.financeData} />,
     renderTotal: (totals) => (
-      <span className={`pc-gap pc-gap--${getGapStatus(totals.totalGap, totals.totalHR)}`}>
-        {formatGapDisplay(totals.totalGap, totals.totalHR)}
-      </span>
+      <GapElement financeData={{ pearim: totals.totalGap, statusPearim: getGapStatus(totals.totalGap, totals.totalHR), totalTakzivCoachAdam: totals.totalHR }} />
     ),
   },
 ];

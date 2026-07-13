@@ -68,9 +68,9 @@
 }
 
 .cf-edit-btn {
-  background: rgb(228, 244, 204);
-  border: 1px solid rgb(156, 213, 70);
-  color: rgb(80, 113, 19);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
 .cf-edit-icon {
@@ -82,8 +82,15 @@
 }
 
 .cf-delete-btn {
-  background: #fee2e2;
-  border: 1px solid #fca5a5;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.cf-edit-btn:hover,
+.cf-delete-btn:hover {
+  background: var(--bg3);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 600px) {
@@ -100,15 +107,11 @@
   }
 }
 
-.cf-edit-btn:hover {
-  background: rgb(215, 247, 168);
-  border-color: rgb(113, 185, 4);
-  transform: translateY(-1px);
-}
-
+.cf-edit-btn:hover,
 .cf-delete-btn:hover {
-  background: #fecaca;
-  border-color: #f87171;
+  background: var(--bg3);
+  border-color: rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 .cf-delete-btn:disabled {

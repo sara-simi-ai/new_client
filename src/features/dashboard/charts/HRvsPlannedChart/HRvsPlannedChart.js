@@ -2,8 +2,11 @@ import React, { useMemo } from 'react';
 import './HRvsPlannedChart.css';
 import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-import { compareByRelativeGap } from '../../../../utils/calculateProjectFinance';
+import Modal from '../../../../components/Modal/Modal';
+import ProjectDetail from '../../../projects/ProjectDetail/ProjectDetail';
+import { compareByRelativeGap, getGapStatus } from '../../../../utils/calculateProjectFinance';
 import { useExpandableProjectList } from '../../hooks/useExpandableProjectList';
+import { useProjectDetail } from '../../hooks/useProjectDetail';
 import { formatGapDisplay } from '../../../../utils/calculateProjectFinance';
 import { BUDGET_COLORS, INITIAL_VISIBLE_PROJECTS_COUNT } from '../../constans/chartConstants';
 
@@ -15,6 +18,7 @@ const HRP_LEGEND_ITEMS = [
 
 export default function HrVsPlannedChart() {
   const { filteredProjects } = useProjects();
+  const { selectedProject, openProjectDetail, closeProjectDetail } = useProjectDetail(filteredProjects);
   const {
     sorted,
     showMore,
@@ -57,11 +61,25 @@ export default function HrVsPlannedChart() {
           const procBudget = project.totalTakzivRechesh || 0;
           const planned = project.coachAdam || 0;
           const difference = hrBudget - planned;
-          const differenceClass = difference > 0 ? 'hrp-surplus' : difference < 0 ? 'hrp-over' : '';
+          const gapStatus = getGapStatus(difference, hrBudget); // 'takin' | 'odef' | 'geraon'
+          const differenceClass = gapStatus === 'takin' ? 'hrp-neutral' : gapStatus === 'odef' ? 'hrp-surplus' : 'hrp-over';
           const differenceLabel = formatGapDisplay(difference, hrBudget);
 
           return (
-            <div key={project.id} className="hrp-row">
+            <div
+              key={project.id}
+              className="hrp-row"
+              role="button"
+              tabIndex={0}
+              onClick={() => openProjectDetail(project.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  openProjectDetail(project.id);
+                }
+              }}
+              aria-label={`פתח פרטי פרויקט ${project.projectName}`}
+            >
               <div className="hrp-lbl" title={project.projectName}>{project.projectName}</div>
               <div className="hrp-bars">
                 {[[hrBudget, BUDGET_COLORS.HR], [procBudget, BUDGET_COLORS.PROC], [planned, BUDGET_COLORS.PLANNED]].map(([val, color]) => (
@@ -81,6 +99,12 @@ export default function HrVsPlannedChart() {
           );
         })}
       </div>
+
+      {selectedProject && (
+        <Modal onClose={closeProjectDetail}>
+          <ProjectDetail project={selectedProject} onClose={closeProjectDetail} />
+        </Modal>
+      )}
 
       {hasExpandableProjects && (
         <div className="hrp-footer">

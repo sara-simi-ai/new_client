@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { formatMoney } from "../../../utils/formatMoney";
-import { MASLOL_OPTIONS } from "../../../dec/Dec";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../dec/Dec";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
 import "./ExportToExcelButton.css";
@@ -55,14 +55,14 @@ export default function ExportToExcelButton() {
       projectsSheet.mergeCells("A1:H1");
 
       const headers = [
-        "שם הפרויקט",
-        "אגף",
-        "יחידה מבצעת",
-        "המשכיות",
-        "מסלול",
-        'תקציב כ"א',
-        "תקציב רכש",
-        "פערים",
+        PROJECT_NAME_LABEL,
+        AGAF_LABEL,
+        UNIT_LABEL,
+        CONTINUATION_LABEL,
+        MASLOL_LABEL,
+        HR_BUDGET_LABEL,
+        PROCUREMENT_BUDGET_LABEL,
+        GAPS_LABEL,
       ];
 
       const headerRow = projectsSheet.addRow(headers);
@@ -135,10 +135,10 @@ export default function ExportToExcelButton() {
 
       const summaryItems = [
         ["סה\"כ פרויקטים", summaryData?.totalCount || 0],
-        ['תקציב כ"א', formatMoney(summaryData?.totalHR || 0)],
-        ["תקציב רכש", formatMoney(summaryData?.totalProc || 0)],
-        ["סה\"כ תקציב", formatMoney(summaryData?.totalBudget || 0)],
-        ["סה\"כ פערים", formatGapWithSigns(summaryData?.totalGap || 0, summaryData?.totalBudget || 0)],
+        [HR_BUDGET_LABEL, formatMoney(summaryData?.totalHR || 0)],
+        [PROCUREMENT_BUDGET_LABEL, formatMoney(summaryData?.totalProc || 0)],
+        [TOTAL_BUDGET_LABEL, formatMoney(summaryData?.totalBudget || 0)],
+        [TOTAL_GAPS_LABEL, formatGapWithSigns(summaryData?.totalGap || 0, summaryData?.totalBudget || 0)],
       ];
 
       summaryItems.forEach((item) => {

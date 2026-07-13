@@ -40,11 +40,16 @@
 }
 
 .hrp-surplus {
-  color: #ea580c;
+  color: var(--gap-positive);
   font-weight: 600;
 }
 
 .hrp-over {
-  color: #dc2626;
+  color: var(--gap-negative);
+  font-weight: 600;
+}
+
+.hrp-neutral {
+  color: var(--gap-neutral);
   font-weight: 600;
 }

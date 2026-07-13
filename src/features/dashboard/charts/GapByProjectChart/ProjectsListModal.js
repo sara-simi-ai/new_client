@@ -3,6 +3,7 @@ import Modal from '../../Modal/Modal';
 import ProjectDetailModal from '../../../Common/ProjectDetailModal';
 import { MASLOL_OPTIONS } from '../../../../constants/constants';
 import { computeBudgetMinusPlanned, formatGapDisplay } from '../../../../../utils/calculateProjectFinance';
+import { GapElement } from '../../../../components/GapElement/GapElement';
 import { formatMoney } from '../../../../../utils/formatMoney';
 import './ProjectsListModal.css';
 
@@ -88,7 +89,7 @@ export default function ProjectsListModal({ projects, onClose, initialFilters = 
                         <div className="pl-name">{p.projectName}</div>
                         <div className="pl-meta">{MASLOL_OPTIONS.find((o) => o.value === p.maslol)?.label || ''} • {p.yechidaMevatzat || ''}</div>
                       </div>
-                      <div className="pl-row-right">{formatGapDisplay(gap, p.totalTakzivCoachAdam)}</div>
+                      <div className="pl-row-right"><GapElement financeData={{ pearim: gap, totalTakzivCoachAdam: p.totalTakzivCoachAdam }} /></div>
                     </div>
                   );
                 })

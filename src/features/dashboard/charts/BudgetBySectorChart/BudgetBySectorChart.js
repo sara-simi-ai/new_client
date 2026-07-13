@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import './BudgetBySectorChart.css';
 import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 import { formatGapDisplay, getGapStatus } from '../../../../utils/calculateProjectFinance';
 import { BUDGET_COLORS } from '../../constans/chartConstants';
+import { GAP_CLASSES } from '../../../../dec/Dec';
+import SectorProjectsModal from './SectorProjectsModal/SectorProjectsModal';
 
 const legendItems = [
   { label: 'כ"א', color: BUDGET_COLORS.HR },
@@ -11,14 +13,9 @@ const legendItems = [
   { label: 'תכנון', color: BUDGET_COLORS.PLANNED }
 ];
 
-const gapClassMap = {
-  takin: 'bbs-gap--neutral',
-  geraon: 'bbs-gap--over',
-  odef: 'bbs-gap--surplus'
-};
-
 export default function BudgetBySectorChart() {
   const { filteredProjects } = useProjects();
+  const [activeSector, setActiveSector] = useState(null);
 
   const sectorsData = useMemo(() => {
     const sectorMap = new Map();
@@ -84,7 +81,13 @@ export default function BudgetBySectorChart() {
       </div>
       <div className="bbs-rows">
         {sectorsData.map(sectorItem => (
-          <div key={sectorItem.sector} className="bbs-row">
+          <div
+            key={sectorItem.sector}
+            className="bbs-row"
+            onClick={() => setActiveSector(sectorItem.sector)}
+            role="button"
+            tabIndex={0}
+          >
             <div className="bbs-lbl" title={sectorItem.sector}>{sectorItem.sector}</div>
             <div className="bbs-bars">
               {[
@@ -104,7 +107,7 @@ export default function BudgetBySectorChart() {
               })}
                 <BudgetNumbers
                   gapLabel={sectorItem.gapLabel}
-                  gapClass={gapClassMap[sectorItem.gapStatus]}
+                  gapClass={GAP_CLASSES[sectorItem.gapStatus]}
                   hrBudget={sectorItem.hrBudget}
                   procurementBudget={sectorItem.procurementBudget}
                   planningBudget={sectorItem.planningBudget}
@@ -113,6 +116,14 @@ export default function BudgetBySectorChart() {
           </div>
         ))}
       </div>
+      {activeSector && (
+        <SectorProjectsModal
+          sectorName={activeSector}
+          projects={filteredProjects.filter(p => p.agaff === activeSector)}
+          onClose={() => setActiveSector(null)}
+        />
+      )}
     </div>
   );
 }
+
