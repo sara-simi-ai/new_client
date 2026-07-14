@@ -4,7 +4,7 @@ import { MaslolElement, HemsheciElement } from "../ProjectElements/ProjectElemen
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoney";
 import { getGapStatus } from "../../../utils/calculateProjectFinance";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL } from "../../../dec/Dec";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL } from "../../../dec/Dec";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "../ProjectsList/Project.css";
 import "./ProjectTable.css";
@@ -53,6 +53,13 @@ const columns = [
     render: (row) => <MaslolElement maslol={row.maslol} />,
   },
   {
+    key: "plannedHr",
+    label: PLANNED_HR_LABEL,
+    cellClassName: "tr-num",
+    render: (row) => formatMoney(row.financeData?.coachAdam || 0),
+    renderTotal: (totals) => formatMoney(totals.totalPlannedHr),
+  },
+  {
     key: "hrBudget",
     label: HR_BUDGET_LABEL,
     cellClassName: "tr-num",
@@ -95,11 +102,12 @@ export default function ProjectTable({ projects }) {
     (acc, project) => {
       const financeData = project.financeData || {};
       acc.totalHR += financeData.totalTakzivCoachAdam || 0;
+      acc.totalPlannedHr += financeData.coachAdam || 0;
       acc.totalProcurement += financeData.totalTakzivRechesh || 0;
       acc.totalGap += financeData.pearim || 0;
       return acc;
     },
-    { totalHR: 0, totalProcurement: 0, totalGap: 0 }
+    { totalHR: 0, totalPlannedHr: 0, totalProcurement: 0, totalGap: 0 }
   );
 
   const handleRowClick = (row) => {

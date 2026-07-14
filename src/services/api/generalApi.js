@@ -50,8 +50,12 @@ export async function getProjectById(id) {
   return response.json();
 }
 
-export async function getAllProjects() {
-  const response = await apiFetch(`/${RESOURCE}/getAllProjects`);
+export async function getProjectByYear(year) {
+  const response = await apiFetch(`/${RESOURCE}/getProjectsByYear/${encodeURIComponent(year)}`);
+
+  if (response.status === 404) {
+    throw new Error(`Project for year '${year}' was not found.`);
+  }
 
   if (!response.ok) {
     throw new Error("An unexpected error occurred.");
@@ -60,11 +64,11 @@ export async function getAllProjects() {
   return response.json();
 }
 
-export async function getProjectByYear(year) {
-  const response = await apiFetch(`/${RESOURCE}/getProjectsByYear/${encodeURIComponent(year)}`);
+export async function getAllProjects() {
+  const response = await apiFetch(`/${RESOURCE}/getAllProjects`);
 
   if (response.status === 404) {
-    throw new Error(`Project for year '${year}' was not found.`);
+    throw new Error("No projects were found.");
   }
 
   if (!response.ok) {

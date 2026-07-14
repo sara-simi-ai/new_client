@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
-import { getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/generalApi";
+import { getAllProjects, getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/generalApi";
 import { calculateProjectFinance } from "../../utils/calculateProjectFinance";
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFilters";
 
@@ -78,7 +78,7 @@ export function ProjectsProvider({ children }) {
       projects,
       filters,
       (project) => projectFinanceMap[project.id]?.statusPearim || "takin"
-    ).filter((project) => project.active === true);
+    );
   }, [projects, filters, projectFinanceMap]);
   
   const filterOptions = useMemo(() => getProjectFilterOptions(projects), [projects]);
@@ -98,19 +98,17 @@ export function ProjectsProvider({ children }) {
     let totalHR = 0;
     let totalProc = 0;
     let totalGap = 0;
-    let totalActive = 0;
 
     filteredProjects.forEach((p) => {
       const financeData = projectFinanceMap[p.id] || {};
       totalHR += financeData.totalTakzivCoachAdam || 0;
       totalProc += financeData.totalTakzivRechesh || 0;
       totalGap += financeData.pearim || 0;
-      if (p.active) totalActive += 1;
     });
 
     return {
       totalCount: filteredProjects.length,
-      totalActive,
+      totalActive: filteredProjects.length,
       totalHR,
       totalProc,
       totalBudget: totalHR + totalProc,
@@ -149,6 +147,22 @@ export function ProjectsProvider({ children }) {
     return normalizedUpdated;
   };
 
+  const loadAllProjects = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAllProjects();
+      const normalized = (data || []).map(normalizeProjectFromApi);
+      setProjects(normalized);
+      setSelectedProjectId(null);
+      return normalized;
+    } catch (err) {
+      console.error("שגיאה בטעינת כל הפרויקטים:", err);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const deleteProjectData = async (id) => {
     await deleteProject(id);
     setProjects((prev) => prev.filter((p) => p.id !== id));
@@ -182,6 +196,8 @@ export function ProjectsProvider({ children }) {
     updateProjectData,
     deleteProjectData,
     copyFromPreviousYear
+    ,
+    loadAllProjects
   };
 
   return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>;

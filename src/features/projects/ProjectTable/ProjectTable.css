@@ -25,7 +25,11 @@
   background: var(--bg2, rgba(0,0,0,.015));
 }
 
-.tr-item:hover { background: var(--blue-bg); filter: brightness(0.98); }
+.tr-item:hover {
+  background: var(--blue-bg);
+  filter: brightness(0.98);
+}
+
 .tr-item.sel {
   background: var(--blue-bg);
   box-shadow: inset 3px 0 0 var(--blue);
@@ -37,18 +41,17 @@
 }
 
 .tr-name-cell {
-  min-width: 220px;
+  min-width: 140px;
 }
 
 .tr-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 320px;
+  max-width: 200px;
 }
 
 .tr-badges {
@@ -59,7 +62,9 @@
   flex-wrap: wrap;
 }
 
-.tr-badges .badge { font-size: 10px; }
+.tr-badges .badge {
+  font-size: 10px;
+}
 
 .tr-num {
   position: relative;
@@ -72,51 +77,6 @@
 
 @media (max-width: 700px) {
   .tr-name {
-    max-width: 160px;
-  }
-}
-
-.tr-status {
-  width: 90px;
-  text-align: center;
-}
-
-.tr-name-cell {
-  min-width: 220px;
-}
-
-.tr-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 6px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 320px;
-}
-
-.tr-badges {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-}
-
-.tr-badges .badge { font-size: 10px; }
-
-.tr-num {
-  position: relative;
-  font-size: 12px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  color: var(--text);
-}
-
-@media (max-width: 700px) {
-  .tr-name {
-    max-width: 160px;
+    max-width: 120px;
   }
 }

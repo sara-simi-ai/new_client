@@ -79,7 +79,7 @@ export default function ProjectsListModal({ projects, onClose, initialFilters = 
           {!selectedId ? (
             <div className="pl-table">
               {filtered.length === 0 ? (
-                <div className="text-right text-sm text-slate-600">לא נמצאו פרויקטים התואמים את המסננים.</div>
+                <div className="pl-empty-message">לא נמצאו פרויקטים התואמים את המסננים.</div>
               ) : (
                 filtered.map((p) => {
                   const gap = computeBudgetMinusPlanned(p);

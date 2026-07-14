@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import { ApiProvider } from './services/context/ApiContext';
 import { ProjectsProvider } from './services/context/ProjectsContext';
-import reportWebVitals from './reportWebVitals';
 import { BUDGET_COLORS } from './features/dashboard/constans/chartConstants';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -17,8 +16,6 @@ root.render(
     </ApiProvider>
   </React.StrictMode>
 );
-
-reportWebVitals();
 
 Object.entries(BUDGET_COLORS).forEach(([key, hex]) => {
   try {
