@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinance";
-import { AGAF_OPTIONS, GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL, YECHIDA_MEVATSAAT_OPTIONS } from "../../../dec/Dec";
+import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
+import { AGAF_OPTIONS, GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL, YECHIDA_MEVATSAAT_OPTIONS } from "../../../utils/Dec";
 import "./ProjectFormModal.css";
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
@@ -109,8 +109,8 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
               <label className="np-label">יחידת פיתוח *</label>
               <select className={`np-select${errors.yechidaMevatzat ? ' np-input--error' : ''}`} value={form.yechidaMevatzat} onChange={(e) => set('yechidaMevatzat', e.target.value)}>
                 <option value="">בחר יחידת פיתוח</option>
-                {YECHIDA_MEVATSAAT_OPTIONS.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                {YECHIDA_MEVATSAAT_OPTIONS.filter(o => o.value !== "__all__").map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
             </div>
@@ -118,8 +118,8 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
               <label className="np-label">אגף מבצע *</label>
                 <select className={`np-select${errors.agaff ? ' np-input--error' : ''}`} value={form.agaff} onChange={(e) => set('agaff', e.target.value)}>
                 <option value="">בחר אגף</option>
-                {AGAF_OPTIONS.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                {AGAF_OPTIONS.filter(o => o.value !== "__all__").map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
             </div>

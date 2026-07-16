@@ -32,8 +32,8 @@
 .toolbar input:not([type="checkbox"]):focus,
 .toolbar select:focus {
   outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 95, 142, 0.12);
 }
 
 .toolbar input:not([type="checkbox"]) {
@@ -45,6 +45,21 @@
   position: relative;
   min-width: 160px;
   display: flex;
+}
+
+.filter-dropdown-title {
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  text-align: right;
+  direction: rtl;
+  pointer-events: none;
+  z-index: 10;
+  background: transparent;
+  padding: 0 2px;
 }
 
 .filter-button {
@@ -136,7 +151,7 @@
   gap: 8px;
   margin-bottom: 6px;
   padding-bottom: 6px;
-  border-bottom: 1px solid var(--border2);
+  border-bottom: none;
 }
 
 .toolbar .filter-popover-header .btn {
@@ -212,7 +227,7 @@
   border: none !important;
   background: none !important;
   direction: ltr;
-  accent-color: var(--blue);
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
@@ -220,8 +235,8 @@
 .toolbar select:focus,
 .filter-button:focus {
   outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 95, 142, 0.12);
 }
 
 .toolbar .btn {

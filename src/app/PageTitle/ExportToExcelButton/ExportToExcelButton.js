@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
-import { formatMoney } from "../../../utils/formatMoney";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../dec/Dec";
+import { formatMoney } from "../../../utils/formatMoneyHelper";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
 import "./ExportToExcelButton.css";
@@ -85,7 +85,7 @@ export default function ExportToExcelButton() {
           project.projectName || "",
           project.agaff || "",
           project.yechidaMevatzat || "",
-          project.logHemsheci ? "המשכי: כן" : "חדש",
+          project.logHemsheci ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL,
           getMaslolLabel(project.maslol),
           formatMoney(totalTakzivCoachAdam),
           formatMoney(totalTakzivRechesh),
@@ -173,8 +173,12 @@ export default function ExportToExcelButton() {
       onClick={handleExport}
       disabled={loading}
       title="ייצא פרויקטים לקובץ אקסל"
+      aria-label="ייצא פרויקטים לאקסל"
+      type="button"
     >
-      {loading ? "מייצא..." : "ייצא לאקסל"}
+      <svg viewBox="0 0 24 24" className="export-excel-btn-icon" aria-hidden="true">
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm1 15H9v-2h6v2Zm0-4H9v-2h6v2Zm-4-4V4.5L16.5 9H11Z" />
+      </svg>
     </button>
   );
 }

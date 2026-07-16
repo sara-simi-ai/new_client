@@ -2,9 +2,9 @@ import React from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { MaslolElement, HemsheciElement } from "../ProjectElements/ProjectElements";
 import { GapElement } from "../../../components/GapElement/GapElement";
-import { formatMoney } from "../../../utils/formatMoney";
-import { getGapStatus } from "../../../utils/calculateProjectFinance";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL } from "../../../dec/Dec";
+import { formatMoney } from "../../../utils/formatMoneyHelper";
+import { getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL } from "../../../utils/Dec";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "../ProjectsList/Project.css";
 import "./ProjectTable.css";
@@ -40,8 +40,8 @@ const columns = [
     render: (row) => (
       <HemsheciElement
         isHemshechi={row.logHemsheci}
-        trueLabel="המשכי: כן"
-        falseLabel="חדש"
+        trueLabel={CONTINUATION_TRUE_LABEL}
+        falseLabel={CONTINUATION_FALSE_LABEL}
       />
     ),
   },

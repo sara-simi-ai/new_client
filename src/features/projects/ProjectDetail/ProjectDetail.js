@@ -5,6 +5,11 @@ import { MaslolElement, HemsheciElement } from "../ProjectElements/ProjectElemen
 import "./ProjectDetail.css";
 import { useProjects } from "../../../services/context/ProjectsContext";
 
+const isRealText = (value) => {
+  const normalized = String(value || "").trim().toLowerCase();
+  return normalized !== "" && normalized !== "string";
+};
+
 export default function ProjectDetail({ project, onClose, onEdit }) {
   
   const { projectFinanceMap } = useProjects();
@@ -12,6 +17,8 @@ export default function ProjectDetail({ project, onClose, onEdit }) {
   if (!project) return null;
 
   const financeData = projectFinanceMap[project.id];
+  const projectDescription = isRealText(project.teur) ? project.teur : "";
+  const hearot = isRealText(project.hearot) ? project.hearot : "";
 
   return (
     <div className="det" dir="rtl">
@@ -35,22 +42,20 @@ export default function ProjectDetail({ project, onClose, onEdit }) {
       </header>
 
       <div className="det-body">
-        {project.teur && (
-          <>
-            <div className="det-lbl">תיאור הפרויקט</div>
-            <div className="det-desc">{project.teur}</div>
-          </>
-        )}
-
         <div className="det-lbl">נתוני תקציב</div>
         <ProjectFinanceLayout financeData={financeData} mode="detail" />
 
-        {project.remarks && (
+        {projectDescription && (
           <>
-            <div className="det-lbl">הערות</div>
-            <div className="det-desc det-desc--short">{project.remarks}</div>
+            <div className="det-lbl">תיאור הפרויקט</div>
+            <div className="det-desc">{projectDescription}</div>
           </>
         )}
+
+        <>
+          <div className="det-lbl">הערות</div>
+          <div className="det-desc">{hearot}</div>
+        </>
       </div>
     </div>
   );

@@ -1,13 +1,18 @@
 .export-excel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: #1e5f8e;
   color: white;
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.5rem 0.9rem;
+  min-height: 2.5rem;
   border-radius: 0.25rem;
   border: none;
   cursor: pointer;
   margin-left: 0.5rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .export-excel-btn:disabled {
@@ -17,4 +22,10 @@
 
 .export-excel-btn:hover:not(:disabled) {
   background-color: #174f78;
+}
+
+.export-excel-btn-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentColor;
 }

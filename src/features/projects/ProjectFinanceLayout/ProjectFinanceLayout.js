@@ -1,7 +1,7 @@
 import React from "react";
-import { formatMoney } from "../../../utils/formatMoney";
+import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { GapElement } from "../../../components/GapElement/GapElement";
-import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, TOTAL_BUDGET_LABEL } from "../../../dec/Dec";
+import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import "./ProjectFinanceLayout.css";
 
 export default function ProjectFinanceLayout({ financeData, mode = "card", onEdit, onDelete }) {

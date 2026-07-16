@@ -1,7 +1,23 @@
 import { useCallback, useMemo, useState } from 'react';
 
-export function useExpandableProjectList(projects, compareFn, maxVisibleProjects = 4) {
-  const [showMore, setShowMore] = useState(false);
+export function useExpandableProjectList(
+  projects,
+  compareFn,
+  maxVisibleProjects = 4,
+  controlledShowMore,
+  controlledToggleShowMore,
+) {
+  const [internalShowMore, setInternalShowMore] = useState(false);
+
+  const showMore = controlledShowMore !== undefined ? controlledShowMore : internalShowMore;
+  const toggleShowMore = useCallback(
+    () => (
+      controlledToggleShowMore
+        ? controlledToggleShowMore()
+        : setInternalShowMore((prev) => !prev)
+    ),
+    [controlledToggleShowMore],
+  );
 
   const sorted = useMemo(
     () => [...projects].sort(compareFn),
@@ -21,11 +37,6 @@ export function useExpandableProjectList(projects, compareFn, maxVisibleProjects
   const hasExpandableProjects = useMemo(
     () => hiddenCount > 0,
     [hiddenCount],
-  );
-
-  const toggleShowMore = useCallback(
-    () => setShowMore((prev) => !prev),
-    [],
   );
 
   return {

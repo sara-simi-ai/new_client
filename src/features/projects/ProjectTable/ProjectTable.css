@@ -26,13 +26,13 @@
 }
 
 .tr-item:hover {
-  background: var(--blue-bg);
+  background: var(--accent-bg);
   filter: brightness(0.98);
 }
 
 .tr-item.sel {
-  background: var(--blue-bg);
-  box-shadow: inset 3px 0 0 var(--blue);
+  background: var(--accent-bg);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .tr-status {

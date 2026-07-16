@@ -69,12 +69,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: 12px;
   border: 1px solid #cbd5e1;
   background: #ffffff;
   color: #1f2937;
-  padding: 0.5rem 0.85rem;
-  font-size: 0.82rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
   font-weight: 600;
   transition: background-color .2s ease, border-color .2s ease, color .2s ease;
 }
@@ -87,14 +87,14 @@
 }
 
 .gap-action-btn {
-  flex: 1 1 120px;
-  min-width: 110px;
+  flex: 0 1 auto;
+  min-width: 100px;
 }
 
 @media (max-width: 900px) {
   .gap-action-btn {
-    padding: 0.45rem 0.75rem;
-    font-size: 0.78rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.76rem;
   }
 }
 

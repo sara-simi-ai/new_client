@@ -9,8 +9,8 @@ export default function ProjectsToolbar() {
 
   return (
     <div className="projects-toolbar" dir="rtl">
-      <ViewToggle view={viewMode} onChange={setViewMode} />
       <NewProjectButton />
+      <ViewToggle view={viewMode} onChange={setViewMode} />
     </div>
   );
 }

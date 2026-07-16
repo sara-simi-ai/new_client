@@ -1,6 +1,6 @@
 import React from 'react';
 import './BudgetNumbers.css';
-import { formatMoney } from '../../../../utils/formatMoney';
+import { formatMoney } from '../../../../utils/formatMoneyHelper';
 
 export default function BudgetNumbers({ gapLabel, gapClass, hrBudget, procurementBudget, planningBudget }) {
   return (

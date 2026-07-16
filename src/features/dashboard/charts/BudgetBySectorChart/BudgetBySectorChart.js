@@ -2,9 +2,9 @@ import React, { useMemo, useState } from 'react';
 import './BudgetBySectorChart.css';
 import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-import { formatGapDisplay, getGapStatus } from '../../../../utils/calculateProjectFinance';
+import { formatGapDisplay, getGapStatus } from '../../../../utils/calculateProjectFinanceHelper';
 import { BUDGET_COLORS } from '../../constans/chartConstants';
-import { GAP_CLASSES } from '../../../../dec/Dec';
+import { GAP_CLASSES } from '../../../../utils/Dec';
 import SectorProjectsModal from './SectorProjectsModal/SectorProjectsModal';
 
 const legendItems = [

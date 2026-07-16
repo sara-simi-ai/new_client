@@ -2,7 +2,7 @@ import React from 'react';
 import './BudgetDistributionDonut.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 import { DASH_COLORS } from '../../constans/dashConstants';
-import { formatMoney } from '../../../../utils/formatMoney';
+import { formatMoney } from '../../../../utils/formatMoneyHelper';
 import DonutChart from '../DonutChart/DonutChart';
 
 export default function BudgetDistributionDonut() {

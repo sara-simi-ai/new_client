@@ -30,8 +30,8 @@
 }
 
 .main-tabs-btn--active {
-  color: var(--color-proc);
-  border-bottom-color: var(--color-proc);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .main-tabs-content {

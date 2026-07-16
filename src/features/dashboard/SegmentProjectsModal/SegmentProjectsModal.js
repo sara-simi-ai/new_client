@@ -3,7 +3,7 @@ import Modal from '../../../components/Modal/Modal';
 import './SegmentProjectsModal.css';
 import FilterBar from '../../projects/FilterBar/FilterBar';
 import ProjectTable from '../../projects/ProjectTable/ProjectTable';
-import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from '../../../utils/projectFilters';
+import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from '../../../utils/projectFiltersHelper';
 
 export default function SegmentProjectsModal({ title, initialProjects, onClose }) {
   

@@ -90,6 +90,8 @@
   max-height: 180px;
   overflow-y: auto;
   border: 1px solid var(--border);
+  text-align: right;
+  direction: rtl;
 }
 
 .det-desc--short { max-height: 70px; }

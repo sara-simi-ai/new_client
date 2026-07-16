@@ -4,7 +4,7 @@ import ProjectDetailModal from '../../../Common/ProjectDetailModal';
 import { MASLOL_OPTIONS } from '../../../../constants/constants';
 import { computeBudgetMinusPlanned, formatGapDisplay } from '../../../../../utils/calculateProjectFinance';
 import { GapElement } from '../../../../components/GapElement/GapElement';
-import { formatMoney } from '../../../../../utils/formatMoney';
+import { formatMoney } from '../../../../../utils/formatMoneyHelper';
 import './ProjectsListModal.css';
 
 export default function ProjectsListModal({ projects, onClose, initialFilters = {} }) {

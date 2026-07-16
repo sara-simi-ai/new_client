@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { useProjects } from "../../services/context/ProjectsContext";
-import { formatMoney } from "../../utils/formatMoney";
-import { formatGapDisplay, getGapStatus } from "../../utils/calculateProjectFinance";
+import { formatMoney } from "../../utils/formatMoneyHelper";
+import { formatGapDisplay, getGapStatus } from "../../utils/calculateProjectFinanceHelper";
 import { GapElement } from "../../components/GapElement/GapElement";
-import { GAP_CLASSES, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL } from "../../dec/Dec";
+import { GAP_CLASSES, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../utils/Dec";
 import GapDetailsModal from "./GapDetailsModal/GapDetailsModal";
 import "./SummarySquares.css";
 
@@ -22,9 +22,10 @@ export default function SummarySquares() {
 
   const summaryCards = [
     { label: "פרויקטים", value: totalCount },
-    { label: HR_BUDGET_LABEL, value: formatMoney(totalHR) },
-    { label: PROCUREMENT_BUDGET_LABEL, value: formatMoney(totalProc) },
     { label: TOTAL_BUDGET_LABEL, value: formatMoney(totalBudget) },
+    { label: PROCUREMENT_BUDGET_LABEL, value: formatMoney(totalProc) },
+    { label: PLANNED_HR_LABEL, value: formatMoney(totalPlanned) },
+    { label: HR_BUDGET_LABEL, value: formatMoney(totalHR) },
   ];
 
   if (isLoading) return <div className="ss-wrapper">טוען סיכומים...</div>;

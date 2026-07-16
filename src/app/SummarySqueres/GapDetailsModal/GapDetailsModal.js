@@ -1,6 +1,6 @@
 import { GapElement } from "../../../components/GapElement/GapElement";
-import { formatMoney } from "../../../utils/formatMoney";
-import {  getGapStatus } from "../../../utils/calculateProjectFinance";
+import { formatMoney } from "../../../utils/formatMoneyHelper";
+import {  getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "./GapDetailsModal.css";
 

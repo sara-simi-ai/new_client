@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { getAllProjects, getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/generalApi";
-import { calculateProjectFinance } from "../../utils/calculateProjectFinance";
-import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFilters";
+import { calculateProjectFinance } from "../../utils/calculateProjectFinanceHelper";
+import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFiltersHelper";
 
 const ProjectsContext = createContext();
 
@@ -81,7 +81,18 @@ export function ProjectsProvider({ children }) {
     );
   }, [projects, filters, projectFinanceMap]);
   
-  const filterOptions = useMemo(() => getProjectFilterOptions(projects), [projects]);
+  const projectOptions = useMemo(() => {
+    // build project list based on current filters but excluding any selected project filter
+    const filtersWithoutProject = { ...filters, project: "" };
+    const available = filterProjects(
+      projects,
+      filtersWithoutProject,
+      (project) => projectFinanceMap[project.id]?.statusPearim || "takin"
+    );
+    return available.map((p) => ({ value: p.id, label: p.projectName || p.teur || "—" }));
+  }, [projects, filters, projectFinanceMap]);
+
+  const filterOptions = useMemo(() => ({ ...getProjectFilterOptions(projects), projects: projectOptions }), [projects, projectOptions]);
 
   const gapDetails = useMemo(() => {
     return filteredProjects.map((p) => {

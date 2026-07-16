@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './ContinuationDistributionDonut.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 import { DASH_COLORS } from '../../constans/dashConstants';
-import { computeProjectTotalBudget } from '../../../../utils/calculateProjectFinance';
-import { formatMoney } from '../../../../utils/formatMoney';
+import { computeProjectTotalBudget } from '../../../../utils/calculateProjectFinanceHelper';
+import { formatMoney } from '../../../../utils/formatMoneyHelper';
 import DonutChart from '../DonutChart/DonutChart';
 import SegmentProjectsModal from '../../SegmentProjectsModal/SegmentProjectsModal';
 

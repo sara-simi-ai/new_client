@@ -1,4 +1,4 @@
-import { formatMoney } from './formatMoney';
+import { formatMoney } from './formatMoneyHelper';
 
 const GAP_STATUS_THRESHOLD_PERCENT = Number(process.env.REACT_APP_GAP_STATUS_THRESHOLD_PERCENT) || 10;
 export const GAP_STATUS_THRESHOLD = GAP_STATUS_THRESHOLD_PERCENT / 100;

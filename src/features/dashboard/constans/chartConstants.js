@@ -1,5 +1,5 @@
 export const BUDGET_COLORS = {
-  HR: '#1e3a5f',
+  HR: '#1e5f8e',
   PROC: '#2563eb',
   PLANNED: '#93c5fd',
 };

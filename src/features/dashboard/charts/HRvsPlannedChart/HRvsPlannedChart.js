@@ -4,10 +4,9 @@ import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 import Modal from '../../../../components/Modal/Modal';
 import ProjectDetail from '../../../projects/ProjectDetail/ProjectDetail';
-import { compareByRelativeGap, getGapStatus } from '../../../../utils/calculateProjectFinance';
-import { useExpandableProjectList } from '../../hooks/useExpandableProjectList';
+import { getGapStatus } from '../../../../utils/calculateProjectFinanceHelper';
 import { useProjectDetail } from '../../hooks/useProjectDetail';
-import { formatGapDisplay } from '../../../../utils/calculateProjectFinance';
+import { formatGapDisplay } from '../../../../utils/calculateProjectFinanceHelper';
 import { BUDGET_COLORS, INITIAL_VISIBLE_PROJECTS_COUNT } from '../../constans/chartConstants';
 
 const HRP_LEGEND_ITEMS = [
@@ -16,17 +15,16 @@ const HRP_LEGEND_ITEMS = [
   { label: 'תכנון', color: BUDGET_COLORS.PLANNED },
 ];
 
-export default function HrVsPlannedChart() {
+export default function HrVsPlannedChart({
+  sorted,
+  visibleProjects,
+  showMore,
+  hiddenCount,
+  hasExpandableProjects,
+  toggleShowMore,
+}) {
   const { filteredProjects } = useProjects();
   const { selectedProject, openProjectDetail, closeProjectDetail } = useProjectDetail(filteredProjects);
-  const {
-    sorted,
-    showMore,
-    toggleShowMore,
-    visibleProjects,
-    hiddenCount,
-    hasExpandableProjects,
-  } = useExpandableProjectList(filteredProjects, compareByRelativeGap, INITIAL_VISIBLE_PROJECTS_COUNT);
   const maxProjectBudget = useMemo(
     () => Math.max(...filteredProjects.map((p) => Math.max(p.totalTakzivCoachAdam || 0, p.totalTakzivRechesh || 0, p.coachAdam || 0)), 1),
     [filteredProjects],
@@ -35,23 +33,40 @@ export default function HrVsPlannedChart() {
   return (
     <div className="hrp-card">
       <div className="hrp-header">
-        <span className="hrp-title">תקציב כ"א ורכש VS תכנון כ"א לפי פרויקט</span>
-        <div className="hrp-legend">
-          {HRP_LEGEND_ITEMS.map(({ label, color }) => (
-            <span key={label} className="hrp-legend-item">
-              <span className="hrp-legend-dot" style={{ background: color }} />{label}
-            </span>
-          ))}
+        <div>
+          <span className="hrp-title">תקציב כ"א ורכש VS תכנון כ"א לפי פרויקט</span>
+          <div className="hrp-legend">
+            {HRP_LEGEND_ITEMS.map(({ label, color }) => (
+              <span key={label} className="hrp-legend-item">
+                <span className="hrp-legend-dot" style={{ background: color }} />{label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="hrp-header-right">
+          <div className="hrp-actions">
+            {hasExpandableProjects ? (
+              <button
+                type="button"
+                className="gap-action-btn"
+                onClick={toggleShowMore}
+                aria-label={showMore ? 'הצג פחות פרויקטים' : 'הצג פרויקטים נוספים'}
+              >
+                {showMore ? 'הסתר' : 'הצג עוד'}
+              </button>
+            ) : (
+              <span className="gap-action-btn" aria-hidden="true">הכל מוצג</span>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="hrp-info">
         {sorted.length === 0 ? (
           <div className="hrp-note">אין פרויקטים להצגה.</div>
-        ) : hasExpandableProjects ? (
-          <div className="hrp-note">מציגים {showMore ? 'את כל הפרויקטים' : `${INITIAL_VISIBLE_PROJECTS_COUNT} פרויקטים עם הפער היחסי הגדול ביותר`}.</div>
         ) : (
-          <div className="hrp-note">מציגים את כל הפרויקטים.</div>
+          <div className="hrp-note">הפרויקטים מוצגים לפי הפער היחסי הגדול ביותר. לחץ על פרויקט לקבלת פרטים נוספים.</div>
         )}
       </div>
 
@@ -106,25 +121,6 @@ export default function HrVsPlannedChart() {
         </Modal>
       )}
 
-      {hasExpandableProjects && (
-        <div className="hrp-footer">
-          <div className="hrp-footer-note">
-            {showMore
-              ? `לחץ שוב כדי להסתיר פרויקטים נוספים.`
-              : `עוד ${hiddenCount} פרויקטים זמינים בהרחבה.`}
-          </div>
-          <button
-            type="button"
-            className="hrp-expand-button"
-            onClick={toggleShowMore}
-            aria-label={showMore ? 'הצג פחות פרויקטים' : 'הצג פרויקטים נוספים'}
-          >
-            <span className="hrp-expand-icon" style={{ transform: showMore ? 'rotate(225deg)' : 'rotate(45deg)' }}>
-              ⇔
-            </span>
-          </button>
-        </div>
-      )}
     </div>
   );
 }

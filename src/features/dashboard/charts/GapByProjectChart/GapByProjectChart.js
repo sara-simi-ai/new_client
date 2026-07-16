@@ -3,12 +3,9 @@ import './GapByProjectChart.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 import Modal from '../../../../components/Modal/Modal';
 import ProjectDetail from '../../../projects/ProjectDetail/ProjectDetail';
-import { computeBudgetMinusPlanned, computeRelativeGap, compareByRelativeGap, isGapStatusExceeded, formatGapDisplay } from '../../../../utils/calculateProjectFinance';
-import { useExpandableProjectList } from '../../hooks/useExpandableProjectList';
+import { computeBudgetMinusPlanned, computeRelativeGap, isGapStatusExceeded, formatGapDisplay } from '../../../../utils/calculateProjectFinanceHelper';
 import { useProjectDetail } from '../../hooks/useProjectDetail';
-import { INITIAL_VISIBLE_PROJECTS_COUNT } from '../../constans/chartConstants';
 
-const MAX_VISIBLE_PROJECTS = INITIAL_VISIBLE_PROJECTS_COUNT;
 const MAX_BAR_PERCENT = 42;
 const LABEL_OFFSET_REM = 1.1;
 
@@ -24,18 +21,16 @@ const gapLegend = [
   { label: 'ללא חריגה', color: GAP_COLORS.none },
 ];
 
-export default function GapByProjectChart() {
+export default function GapByProjectChart({
+  sorted,
+  visibleProjects,
+  showMore,
+  hiddenCount,
+  hasExpandableProjects,
+  toggleShowMore,
+}) {
   const { filteredProjects } = useProjects();
   const { selectedProject, openProjectDetail, closeProjectDetail } = useProjectDetail(filteredProjects);
-
-  const {
-    sorted,
-    showMore,
-    toggleShowMore,
-    visibleProjects,
-    hiddenCount,
-    hasExpandableProjects,
-  } = useExpandableProjectList(filteredProjects, compareByRelativeGap, MAX_VISIBLE_PROJECTS);
 
   const maxRelativeGap = useMemo(
     () => Math.max(...sorted.map((p) => computeRelativeGap(p)), 1),
@@ -45,14 +40,32 @@ export default function GapByProjectChart() {
   return (
     <div className="gap-card">
       <div className="gap-header">
-        <span className="gap-title">פערים לפי פרויקט (תקציב כ"א − תכנון)</span>
-        <div className="gap-legend">
-          {gapLegend.map((item) => (
-            <span key={item.label} className="gap-legend-item">
-              <span className="gap-legend-dot" style={{ background: item.color }} />
-              {item.label}
-            </span>
-          ))}
+        <div>
+          <span className="gap-title">פערים לפי פרויקט (תקציב כ"א − תכנון)</span>
+          <div className="gap-legend">
+            {gapLegend.map((item) => (
+              <span key={item.label} className="gap-legend-item">
+                <span className="gap-legend-dot" style={{ background: item.color }} />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="gap-header-right">
+          <div className="gap-actions">
+            {hasExpandableProjects ? (
+              <button
+                type="button"
+                className="gap-action-btn"
+                onClick={toggleShowMore}
+                aria-label={showMore ? 'הצג פחות פרויקטים' : 'הצג פרויקטים נוספים'}
+              >
+                {showMore ? 'הסתר' : 'הצג עוד'}
+              </button>
+            ) : (
+              <span className="gap-action-btn" aria-hidden="true">הכל מוצג</span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -125,28 +138,6 @@ export default function GapByProjectChart() {
         </Modal>
       )}
 
-      {hasExpandableProjects && (
-        <div className="gap-footer mt-4 flex items-center justify-between gap-3">
-          <div className="text-right text-sm text-slate-600">
-            {showMore
-              ? 'לחץ שוב כדי להסתיר פרויקטים נוספים.'
-              : `עוד ${hiddenCount} פרויקטים זמינים בהרחבה.`}
-          </div>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white p-2 text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-            onClick={toggleShowMore}
-            aria-label={showMore ? 'הצג פחות פרויקטים' : 'הצג פרויקטים נוספים'}
-          >
-            <span
-              className="transition-transform duration-200"
-              style={{ transform: showMore ? 'rotate(225deg)' : 'rotate(45deg)' }}
-            >
-              ⇔
-            </span>
-          </button>
-        </div>
-      )}
     </div>
   );
 }
