@@ -10,7 +10,7 @@ import { useState } from "react";
 import ProjectFormModal from "../ProjectFormModal/ProjectFormModal";
 
 export default function ProjectCard({ project }) {
-  const { deleteProjectData, projectFinanceMap, selectedProjectId, setSelectedProjectId } = useProjects();
+  const { deleteProjectData, projectFinanceMap, selectedProjectId, setSelectedProjectId, agaffOptions, yechidaMevatzatOptions } = useProjects();
 
   const financeData = projectFinanceMap[project.id];
   const isSelected = selectedProjectId === project.id;
@@ -27,6 +27,12 @@ export default function ProjectCard({ project }) {
   const maslolLabel = MASLOL_OPTIONS.find((o) => o.value === project.maslol)?.label || "לא ידוע";
   const hemsheechiText = project.logHemsheci ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL;
   const description = isRealText(project.teur) ? project.teur : "";
+  const gapStatus = financeData?.statusPearim || "takin";
+  const gapClass = gapStatus === 'odef'
+    ? 'card-accent--odef'
+    : gapStatus === 'geraon'
+      ? 'card-accent--geraon'
+      : 'card-accent--takin';
 
   const handleCardClick = (event) => {
     const clickedInteractiveElement = event.target.closest("button, a, input, select, textarea");
@@ -49,7 +55,7 @@ export default function ProjectCard({ project }) {
 
   return (
     <div className={`card ${isSelected ? "sel" : ""}`} onClick={handleCardClick}>
-      <div className={`card-accent ${isKiyum ? "card-accent--kiyum" : "card-accent--hit"}`} />
+      <div className={`card-accent ${gapClass}`} />
       <div className="card-body">
         <div className="card-title-row">
           <div className="card-name">{project.projectName}</div>

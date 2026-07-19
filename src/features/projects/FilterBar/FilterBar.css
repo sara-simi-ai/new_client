@@ -39,6 +39,12 @@
 .toolbar input:not([type="checkbox"]) {
   flex: 1;
   min-width: 200px;
+  /* make room for search icon on the left */
+  padding-left: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='11' cy='11' r='6' stroke='%236B7280' stroke-width='1.6' fill='none'/%3E%3Cpath d='M20 20 L16.5 16.5' stroke='%236B7280' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  background-size: 16px 16px;
 }
 
 .filter-dropdown {

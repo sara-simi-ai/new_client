@@ -70,15 +70,22 @@ export default function BudgetBySectorChart() {
   return (
     <div className="bbs-card">
       <div className="bbs-header">
-        <span className="bbs-title">תקציב לפי אגף</span>
-        <div className="bbs-legend">
-          {legendItems.map(item => (
-            <span key={item.label} className="bbs-legend-item">
-              <span className="bbs-legend-dot" style={{ background: item.color }} />{item.label}
-            </span>
-          ))}
+        <div>
+          <span className="bbs-title">תקציב לפי אגף</span>
+          <div className="bbs-legend">
+            {legendItems.map(item => (
+              <span key={item.label} className="bbs-legend-item">
+                <span className="bbs-legend-dot" style={{ background: item.color }} />{item.label}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
+
+      <div className="bbs-info">
+        <div className="bbs-note">האגפים מוצגים לפי הפער היחסי הגדול ביותר. לחץ על אגף לקבלת פרטים נוספים.</div>
+      </div>
+
       <div className="bbs-rows">
         {sectorsData.map(sectorItem => (
           <div

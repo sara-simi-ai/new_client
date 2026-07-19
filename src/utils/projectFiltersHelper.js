@@ -5,7 +5,7 @@ export const DEFAULT_PROJECT_FILTERS = {
   search: "",
   agaff: [],
   yechidaMevatzat: [],
-  project: "",
+  project: [],
   maslol: "",
   logHemsheci: "",
   statusPearim: [],
@@ -20,10 +20,10 @@ function isAllItemsSelected(selected, allOptions) {
   );
 }
 
-export function getProjectFilterOptions(projects) {
+export function getProjectFilterOptions(projects, agaffOptions = AGAF_OPTIONS, yechidaMevatzatOptions = YECHIDA_MEVATSAAT_OPTIONS) {
   return {
-    agaff: AGAF_OPTIONS,
-    yechidaMevatzat: YECHIDA_MEVATSAAT_OPTIONS,
+    agaff: agaffOptions,
+    yechidaMevatzat: yechidaMevatzatOptions,
     statusPearim: GAP_STATUS_OPTIONS,
   };
 }
@@ -73,7 +73,12 @@ export function filterProjects(projects, filters, getProjectStatus = (project) =
       if (!yechidaValues.includes(project.yechidaMevatzat)) return false;
     }
     
-    if (filters.project && String(project.id) !== String(filters.project)) return false;
+    const projectFilter = Array.isArray(filters.project) ? filters.project : [];
+    if (projectFilter.length) {
+      const projectValues = projectFilter.map((item) => item.value || item);
+      if (!projectValues.some((val) => String(val) === String(project.id))) return false;
+    }
+
     if (filters.maslol && String(project.maslol) !== String(filters.maslol)) return false;
     if (!matchesHemsheci(project, filters.logHemsheci)) return false;
     

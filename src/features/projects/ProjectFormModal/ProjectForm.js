@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useProjects } from "../../../services/context/ProjectsContext";
 import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { AGAF_OPTIONS, GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL, YECHIDA_MEVATSAAT_OPTIONS } from "../../../utils/Dec";
+import { GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
 import "./ProjectFormModal.css";
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
+  const { agaffOptions, yechidaMevatzatOptions } = useProjects();
   const [form, setForm] = useState({
     projectName: "",
     agaff: "",
@@ -15,6 +17,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     totalTakzivCoachAdam: 0,
     totalTakzivRechesh: 0,
     coachAdam: 0,
+    active: true,
   });
   const [tab, setTab] = useState("פרטים");
   const [errors, setErrors] = useState({});
@@ -33,6 +36,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         totalTakzivCoachAdam: initialData.totalTakzivCoachAdam || 0,
         totalTakzivRechesh: initialData.totalTakzivRechesh || 0,
         coachAdam: initialData.coachAdam || 0,
+        active: initialData.active === false ? false : true,
       }));
     }
   }, [initialData]);
@@ -109,7 +113,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
               <label className="np-label">יחידת פיתוח *</label>
               <select className={`np-select${errors.yechidaMevatzat ? ' np-input--error' : ''}`} value={form.yechidaMevatzat} onChange={(e) => set('yechidaMevatzat', e.target.value)}>
                 <option value="">בחר יחידת פיתוח</option>
-                {YECHIDA_MEVATSAAT_OPTIONS.filter(o => o.value !== "__all__").map((option) => (
+                {yechidaMevatzatOptions.filter(o => o.value !== "__all__").map((option) => (
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
@@ -118,9 +122,19 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
               <label className="np-label">אגף מבצע *</label>
                 <select className={`np-select${errors.agaff ? ' np-input--error' : ''}`} value={form.agaff} onChange={(e) => set('agaff', e.target.value)}>
                 <option value="">בחר אגף</option>
-                {AGAF_OPTIONS.filter(o => o.value !== "__all__").map((option) => (
+                {agaffOptions.filter(o => o.value !== "__all__").map((option) => (
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="np-row">
+            <div className="np-field">
+              <label className="np-label">סטטוס פרויקט</label>
+              <select className="np-select" value={form.active} onChange={(e) => set('active', e.target.value === 'true')}>
+                <option value="true">פעיל</option>
+                <option value="false">לא פעיל</option>
               </select>
             </div>
           </div>

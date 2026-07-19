@@ -9,13 +9,29 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
+  min-width: 0;
+}
+
+.bbs-header > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .bbs-title {
   font-size: 14px;
   font-weight: 600;
   color: #1e293b;
+  margin: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+  text-align: right;
+  flex: 0 0 auto;
 }
 
 .bbs-legend {
@@ -38,6 +54,16 @@
   display: inline-block;
 }
 
+.bbs-info {
+  margin-bottom: 14px;
+}
+
+.bbs-note {
+  font-size: 12px;
+  color: #475569;
+  text-align: right;
+}
+
 .bbs-rows {
   display: flex;
   flex-direction: column;
@@ -49,6 +75,8 @@
   align-items: flex-start;
   gap: 12px;
   direction: rtl;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .bbs-lbl {
@@ -61,10 +89,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .bbs-bars {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;

@@ -179,7 +179,7 @@ export default function FilterBar() {
     <div className="toolbar" dir="rtl">
       <input
         type="text"
-        placeholder="🔍  חפש שם, תיאור, אגף..."
+        placeholder="חפש שם, תיאור, אגף..."
         value={filters.search || ""}
         onChange={(e) => updateFilter("search", e.target.value)}
       />
@@ -249,13 +249,9 @@ export default function FilterBar() {
         label="פרויקט"
         allLabel="כל הפרויקטים"
         options={filterOptions?.projects || []}
-        selected={filters.project}
+        selected={filters.project || []}
         onChange={(next) => updateFilter("project", next)}
-        valueToLabel={(v) => {
-          const found = (filterOptions?.projects || []).find((o) => String(o.value) === String(v));
-          return found ? found.label : "כל הפרויקטים";
-        }}
-        multi={false}
+        multi={true}
       />
 
       <button type="button" className="btn" onClick={clearFilters}>

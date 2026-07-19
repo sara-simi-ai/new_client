@@ -89,7 +89,6 @@ export default function GapByProjectChart({
 
           const relativePercent = Math.round(rel * 100);
           const valueLabel = formatGapDisplay(g, p.totalTakzivCoachAdam);
-
           const effPct = Math.min(pct, MAX_BAR_PERCENT);
 
           return (

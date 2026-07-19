@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from "
 import { getAllProjects, getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/generalApi";
 import { calculateProjectFinance } from "../../utils/calculateProjectFinanceHelper";
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFiltersHelper";
+import { AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../utils/Dec";
 
 const ProjectsContext = createContext();
 
@@ -28,12 +29,30 @@ function normalizeProjectForApi(project) {
 
 export function ProjectsProvider({ children }) {
   const [projects, setProjects] = useState([]);
+  const [allProjects, setAllProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [activeTab, setActiveTab] = useState("projects");
   const [viewMode, setViewMode] = useState("cards");
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [selectedProjectIds, setSelectedProjectIds] = useState([]); // for checkbox multi-select
   const [filters, setFilters] = useState(() => ({ ...DEFAULT_PROJECT_FILTERS }));
+  const [agaffOptions, setAgaffOptions] = useState(() => {
+    try {
+      const saved = window.localStorage.getItem("agaffOptions");
+      return saved ? JSON.parse(saved) : AGAF_OPTIONS;
+    } catch {
+      return AGAF_OPTIONS;
+    }
+  });
+  const [yechidaMevatzatOptions, setYechidaMevatzatOptions] = useState(() => {
+    try {
+      const saved = window.localStorage.getItem("yechidaMevatzatOptions");
+      return saved ? JSON.parse(saved) : YECHIDA_MEVATSAAT_OPTIONS;
+    } catch {
+      return YECHIDA_MEVATSAAT_OPTIONS;
+    }
+  });
 
   const projectFinanceMap = useMemo(() => {
     const map = {};
@@ -42,6 +61,22 @@ export function ProjectsProvider({ children }) {
     });
     return map;
   }, [projects]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("agaffOptions", JSON.stringify(agaffOptions));
+    } catch {
+      // ignore local storage write failures
+    }
+  }, [agaffOptions]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("yechidaMevatzatOptions", JSON.stringify(yechidaMevatzatOptions));
+    } catch {
+      // ignore local storage write failures
+    }
+  }, [yechidaMevatzatOptions]);
 
   useEffect(() => {
     let mounted = true;
@@ -83,16 +118,17 @@ export function ProjectsProvider({ children }) {
   
   const projectOptions = useMemo(() => {
     // build project list based on current filters but excluding any selected project filter
-    const filtersWithoutProject = { ...filters, project: "" };
+    const filtersWithoutProject = { ...filters, project: [] };
     const available = filterProjects(
       projects,
       filtersWithoutProject,
       (project) => projectFinanceMap[project.id]?.statusPearim || "takin"
     );
-    return available.map((p) => ({ value: p.id, label: p.projectName || p.teur || "—" }));
+    const items = available.map((p) => ({ value: p.id, label: p.projectName || p.teur || "—" }));
+    return [{ value: "__all__", label: "כל הפרויקטים" }, ...items];
   }, [projects, filters, projectFinanceMap]);
 
-  const filterOptions = useMemo(() => ({ ...getProjectFilterOptions(projects), projects: projectOptions }), [projects, projectOptions]);
+  const filterOptions = useMemo(() => ({ ...getProjectFilterOptions(projects, agaffOptions, yechidaMevatzatOptions), projects: projectOptions }), [projects, projectOptions, agaffOptions, yechidaMevatzatOptions]);
 
   const gapDetails = useMemo(() => {
     return filteredProjects.map((p) => {
@@ -132,6 +168,7 @@ export function ProjectsProvider({ children }) {
     const savedProject = await insertProject(fullData);
     const normalizedSaved = normalizeProjectFromApi(savedProject);
     setProjects((prev) => [...prev, normalizedSaved]);
+    setAllProjects((prev) => [...prev, normalizedSaved]);
     return normalizedSaved;
   };
 
@@ -155,6 +192,7 @@ export function ProjectsProvider({ children }) {
     const updated = await updateProject(toSend);
     const normalizedUpdated = normalizeProjectFromApi(updated);
     setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
     return normalizedUpdated;
   };
 
@@ -163,7 +201,7 @@ export function ProjectsProvider({ children }) {
     try {
       const data = await getAllProjects();
       const normalized = (data || []).map(normalizeProjectFromApi);
-      setProjects(normalized);
+      setAllProjects(normalized);
       setSelectedProjectId(null);
       return normalized;
     } catch (err) {
@@ -177,14 +215,32 @@ export function ProjectsProvider({ children }) {
   const deleteProjectData = async (id) => {
     await deleteProject(id);
     setProjects((prev) => prev.filter((p) => p.id !== id));
+    setAllProjects((prev) => prev.filter((p) => p.id !== id));
     setSelectedProjectId((prev) => (prev === id ? null : prev));
     return id;
   };
 
   const selectedProject = useMemo(() => projects.find((p) => p.id === selectedProjectId) || null, [projects, selectedProjectId]);
 
+  const toggleProjectSelection = (projectId) => {
+    setSelectedProjectIds((prev) =>
+      prev.includes(projectId)
+        ? prev.filter((id) => id !== projectId)
+        : [...prev, projectId]
+    );
+  };
+
+  const selectAllFilteredProjects = () => {
+    setSelectedProjectIds(filteredProjects.map((p) => p.id));
+  };
+
+  const clearProjectSelection = () => {
+    setSelectedProjectIds([]);
+  };
+
   const value = {
     projects,
+    allProjects,
     filteredProjects,
     projectFinanceMap,
     summaryData,
@@ -199,6 +255,10 @@ export function ProjectsProvider({ children }) {
     selectedProjectId,
     setSelectedProjectId,
     selectedProject,
+    selectedProjectIds,
+    toggleProjectSelection,
+    selectAllFilteredProjects,
+    clearProjectSelection,
     filters,
     filterOptions,
     updateFilter,
@@ -206,9 +266,12 @@ export function ProjectsProvider({ children }) {
     addNewProject,
     updateProjectData,
     deleteProjectData,
-    copyFromPreviousYear
-    ,
-    loadAllProjects
+    copyFromPreviousYear,
+    loadAllProjects,
+    agaffOptions,
+    yechidaMevatzatOptions,
+    setAgaffOptions,
+    setYechidaMevatzatOptions,
   };
 
   return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>;

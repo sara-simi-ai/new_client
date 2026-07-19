@@ -3,6 +3,7 @@ import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import "./ProjectFinanceLayout.css";
+import { DeleteIcon, EditIcon } from '../../../components/ActionIcons/ActionIcons';
 
 export default function ProjectFinanceLayout({ financeData, mode = "card", onEdit, onDelete }) {
   const { totalTakzivCoachAdam = 0, totalTakzivRechesh = 0, coachAdam = 0, totalTaktziv = 0 } = financeData || {};
@@ -49,12 +50,12 @@ export default function ProjectFinanceLayout({ financeData, mode = "card", onEdi
           <div className="cf-actions">
             {onDelete && (
               <button className="cf-delete-btn" onClick={onDelete} aria-label="מחק" title="מחק">
-                <span> 🗑️ </span>
+                <DeleteIcon />
               </button>
             )}
             {onEdit && (
               <button className="cf-edit-btn" onClick={onEdit} aria-label="עדכן" title="עדכן">
-                <span className="cf-edit-icon">✏</span>
+                <EditIcon />
               </button>
             )}
           </div>

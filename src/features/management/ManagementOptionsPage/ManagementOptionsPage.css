@@ -1,0 +1,21 @@
+.muted { color: #6b7280; margin: 0 0 12px 0; }
+.agaff-controls { display:flex; gap:18px; align-items:center; margin-bottom: 12px; }
+.agaff-search { flex: 1; display:flex; align-items:center; background:#fff; border:1px solid #eef2f7; padding:10px; border-radius:12px; box-shadow: 0 1px 0 rgba(15,23,42,0.02); }
+.agaff-search input { border: none; outline: none; flex:1; font-size:14px; padding:6px 8px; }
+.agaff-search .search-icon{ background:transparent; border:none; width:28px; height:28px; margin-left:8px; cursor:default; padding:0; display:flex; align-items:center; justify-content:center; }
+.agaff-search .search-icon svg { display:block; width:18px; height:18px; }
+.agaff-add-btn { background:var(--mgmt-blue, #1e5f8e); color:#fff; padding:12px 20px; border-radius:12px; border:none; font-weight:700; box-shadow: 0 6px 18px rgba(30,95,142,0.18); cursor:pointer; }
+.agaff-add-btn:active{ transform: translateY(1px); }
+.agaff-list { display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+.agaff-empty { color:#6b7280; padding:12px; }
+.agaff-item { display:flex; align-items:center; justify-content:space-between; background:#fff; border-radius:10px; padding:10px 12px; box-shadow: 0 1px 0 rgba(15,23,42,0.03); border:1px solid #f3f4f6; }
+.agaff-actions { display:flex; gap:8px; margin-right:10px; }
+.icon-btn { background:transparent; border:none; cursor:pointer; color:#6b7280; padding:4px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+.icon-btn svg { width:16px; height:16px; display:block; stroke:currentColor; }
+.icon-btn:hover { background:rgba(15,23,42,0.03); }
+.agaff-name { font-weight:600; color:#0f172a; font-size:14px; }
+.mgmt-input { width: 100%; padding: 10px 12px; border: 1px solid #eef2f7; border-radius: 10px; margin-top: 8px; font-size: 14px; outline: none; }
+.mgmt-input:focus { box-shadow: 0 6px 18px rgba(30,95,142,0.08); border-color: rgba(30,95,142,0.12); }
+.mgmt-btn { padding: 10px 14px; border-radius: 10px; border: 1px solid transparent; cursor: pointer; background: transparent; }
+.mgmt-btn.primary { background: var(--mgmt-blue, #1e5f8e); color: #fff; border-color: var(--mgmt-blue-border, rgba(30,95,142,0.12)); }
+.mgmt-btn.ghost { background: transparent; color: var(--mgmt-blue, #1e5f8e); border: 1px solid rgba(30,95,142,0.12); }

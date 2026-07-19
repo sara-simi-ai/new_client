@@ -1,16 +1,24 @@
 import React from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
-import { MaslolElement, HemsheciElement } from "../ProjectElements/ProjectElements";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL } from "../../../utils/Dec";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, MASLOL_OPTIONS, MASLOL } from "../../../utils/Dec";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "../ProjectsList/Project.css";
 import "./ProjectTable.css";
 
 
 const columns = [
+  {
+    key: "checkbox",
+    label: "",
+    headerClassName: "pt-th-checkbox",
+    cellClassName: "tr-checkbox",
+    render: (row) => (
+      <input type="checkbox" className="project-checkbox" data-id={row.id} />
+    ),
+  },
   {
     key: "name",
     label: PROJECT_NAME_LABEL,
@@ -37,20 +45,21 @@ const columns = [
     key: "continuation",
     label: CONTINUATION_LABEL,
     cellClassName: "tr-continuation",
-    render: (row) => (
-      <HemsheciElement
-        isHemshechi={row.logHemsheci}
-        trueLabel={CONTINUATION_TRUE_LABEL}
-        falseLabel={CONTINUATION_FALSE_LABEL}
-      />
-    ),
+    render: (row) => {
+      const isContinuation = Boolean(row.logHemsheci);
+      const continuationText = isContinuation ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL;
+      return continuationText;
+    },
   },
   {
     key: "status",
     label: MASLOL_LABEL,
     headerClassName: "pt-th-status",
     cellClassName: "tr-status",
-    render: (row) => <MaslolElement maslol={row.maslol} />,
+    render: (row) => {
+      const label = MASLOL_OPTIONS.find((o) => o.value === row.maslol)?.label || "לא ידוע";
+      return label;
+    },
   },
   {
     key: "plannedHr",
@@ -91,7 +100,7 @@ const columns = [
 ];
 
 export default function ProjectTable({ projects }) {
-  const { selectedProjectId, setSelectedProjectId, projectFinanceMap } = useProjects();
+  const { projectFinanceMap } = useProjects();
 
   const rowsWithFinance = projects.map((project) => ({
     ...project,
@@ -110,25 +119,20 @@ export default function ProjectTable({ projects }) {
     { totalHR: 0, totalPlannedHr: 0, totalProcurement: 0, totalGap: 0 }
   );
 
-  const handleRowClick = (row) => {
-    const isSelected = selectedProjectId === row.id;
-    setSelectedProjectId(isSelected ? null : row.id);
-  };
+  // Remove selection checkboxes and row-selection: use columns without the checkbox column
+  const columnsWithoutCheckbox = columns.filter((col) => col.key !== "checkbox");
 
-  const getRowClassName = (row) => {
-    const isSelected = selectedProjectId === row.id;
-    return `tr-item ${isSelected ? "sel" : ""}`;
-  };
+  const getRowClassName = () => "tr-item";
 
   return (
-    <GenericTable
-      columns={columns}
-      data={rowsWithFinance}
-      tableClassName="p-table"
-      wrapperClassName="p-table-wrap"
-      rowClassName={getRowClassName}
-      onRowClick={handleRowClick}
-      footerData={totals}
-    />
+    <div>
+      <GenericTable
+        columns={columnsWithoutCheckbox}
+        data={rowsWithFinance}
+        tableClassName="p-table"
+        wrapperClassName="p-table-wrap"
+        footerData={totals}
+      />
+    </div>
   );
 }

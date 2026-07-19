@@ -23,13 +23,13 @@
 
 .card-accent {
   height: 3px;
-  background: var(--accent); 
   border-radius: 3px;
   flex-shrink: 0;
 }
 
-.card-accent--kiyum { background: var(--accent); }
-.card-accent--hit { background: var(--accent); }
+.card-accent--takin { background-color: var(--gap-neutral); }
+.card-accent--odef { background-color: var(--gap-positive); }
+.card-accent--geraon { background-color: var(--gap-negative); }
 
 .card-body {
   padding: 12px 14px;

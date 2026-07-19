@@ -172,3 +172,12 @@
 @media (max-width: 768px) {
   .pd-fin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+.cf-edit-btn svg,
+.cf-delete-btn svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+  stroke: #888888;
+  fill: none;
+}

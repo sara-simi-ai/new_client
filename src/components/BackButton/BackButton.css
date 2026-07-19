@@ -1,0 +1,37 @@
+.back-btn {
+	background: transparent !important;
+	border: none !important;
+	color: var(--mgmt-blue, #1e5f8e) !important;
+	font-size: 14px !important;
+	font-weight: 700 !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	gap: 8px !important;
+	padding: 0 !important;
+	min-width: 0 !important;
+	width: auto !important;
+	height: auto !important;
+	line-height: 1.2 !important;
+	text-decoration: none !important;
+	cursor: pointer !important;
+	direction: ltr !important;
+	transition: transform 0.14s ease, color 0.14s ease;
+}
+
+.back-btn span {
+	font-weight: 700 !important;
+	transition: transform 0.14s ease;
+}
+
+.back-btn:hover {
+	background: transparent !important;
+}
+
+.back-btn:hover span {
+	transform: scale(1.03);
+}
+
+.back-btn svg {
+	width: 18px !important;
+	height: 18px !important;
+}
