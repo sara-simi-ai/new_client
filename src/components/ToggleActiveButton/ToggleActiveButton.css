@@ -1,0 +1,35 @@
+.toggle-active-button {
+  border: none;
+  padding: 4px 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  cursor: pointer;
+  min-width: 52px;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.toggle-active-button.on {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.toggle-active-button.off {
+  background-color: #dc2626;
+  color: #ffffff;
+  border: 1px solid #d1d5db;
+}
+
+.toggle-active-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.toggle-active-button:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+}
+
+.toggle-active-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

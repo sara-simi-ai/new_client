@@ -1,9 +1,9 @@
 import React from 'react';
 import ManagementOptionsPage from '../ManagementOptionsPage/ManagementOptionsPage';
-import { useProjects } from '../../../services/context/ProjectsContext';
+import { useAgaffManagement } from '../ManagementOptionsPage/useAgaffManagement';
 
 export default function DepartmentsPage({ onBack }) {
-  const { agaffOptions, setAgaffOptions } = useProjects();
+  const hook = useAgaffManagement();
 
   return (
     <ManagementOptionsPage
@@ -19,9 +19,13 @@ export default function DepartmentsPage({ onBack }) {
       deleteModalTitle="מחיקת אגף"
       deleteModalDescription={(option) => `האם אתה בטוח שברצונך למחוק את האגף "${option?.label}"?`}
       itemPlaceholder="שם אגף"
-      options={agaffOptions}
-      setOptions={setAgaffOptions}
+      options={hook.filteredItems}
+      setOptions={() => {}} // No-op for async version
+      onToggleOptionActive={hook.handleToggleActive}
       duplicateErrorMessage="אגף עם השם הזה כבר קיים"
+      // Pass the full hook state for async support
+      __hook__={hook}
+      __isAsync__={true}
     />
   );
 }

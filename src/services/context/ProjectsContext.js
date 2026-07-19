@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
-import { getAllProjects, getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/generalApi";
+import { getAllProjects, getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/projectApi";
 import { calculateProjectFinance } from "../../utils/calculateProjectFinanceHelper";
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFiltersHelper";
 import { AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../utils/Dec";
+import { useAgaff } from "./AgaffContext";
+import { useTsevetMevatzeat } from "./TsevetMevatzeatContext";
 
 const ProjectsContext = createContext();
 
@@ -27,7 +29,7 @@ function normalizeProjectForApi(project) {
   };
 }
 
-export function ProjectsProvider({ children }) {
+export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, yechidaMevatzatOptions: propsYechidaMevatzatOptions }) {
   const [projects, setProjects] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,22 +39,38 @@ export function ProjectsProvider({ children }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [selectedProjectIds, setSelectedProjectIds] = useState([]); // for checkbox multi-select
   const [filters, setFilters] = useState(() => ({ ...DEFAULT_PROJECT_FILTERS }));
-  const [agaffOptions, setAgaffOptions] = useState(() => {
+  
+  // Use provided options or fallback to localStorage
+  const [agaffOptions] = useState(() => propsAgaffOptions || (() => {
     try {
       const saved = window.localStorage.getItem("agaffOptions");
       return saved ? JSON.parse(saved) : AGAF_OPTIONS;
     } catch {
       return AGAF_OPTIONS;
     }
-  });
-  const [yechidaMevatzatOptions, setYechidaMevatzatOptions] = useState(() => {
+  })());
+  
+  const [yechidaMevatzatOptions] = useState(() => propsYechidaMevatzatOptions || (() => {
     try {
       const saved = window.localStorage.getItem("yechidaMevatzatOptions");
       return saved ? JSON.parse(saved) : YECHIDA_MEVATSAAT_OPTIONS;
     } catch {
       return YECHIDA_MEVATSAAT_OPTIONS;
     }
-  });
+  })());
+
+  // Update internal state when props change
+  useEffect(() => {
+    if (propsAgaffOptions) {
+      // Options come from props, no need to update localStorage
+    }
+  }, [propsAgaffOptions]);
+
+  useEffect(() => {
+    if (propsYechidaMevatzatOptions) {
+      // Options come from props, no need to update localStorage
+    }
+  }, [propsYechidaMevatzatOptions]);
 
   const projectFinanceMap = useMemo(() => {
     const map = {};
@@ -61,22 +79,6 @@ export function ProjectsProvider({ children }) {
     });
     return map;
   }, [projects]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem("agaffOptions", JSON.stringify(agaffOptions));
-    } catch {
-      // ignore local storage write failures
-    }
-  }, [agaffOptions]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem("yechidaMevatzatOptions", JSON.stringify(yechidaMevatzatOptions));
-    } catch {
-      // ignore local storage write failures
-    }
-  }, [yechidaMevatzatOptions]);
 
   useEffect(() => {
     let mounted = true;
@@ -270,8 +272,6 @@ export function ProjectsProvider({ children }) {
     loadAllProjects,
     agaffOptions,
     yechidaMevatzatOptions,
-    setAgaffOptions,
-    setYechidaMevatzatOptions,
   };
 
   return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>;
@@ -281,4 +281,38 @@ export function useProjects() {
   const context = useContext(ProjectsContext);
   if (!context) throw new Error("useProjects must be used within a ProjectsProvider");
   return context;
+}
+
+/**
+ * Wrapper component that syncs Agaff and Tsevet Mevatzeat options with ProjectsProvider.
+ * This component uses hooks to get the live options from AgaffContext and TsevetMevatzeatContext,
+ * then passes them to ProjectsProvider.
+ */
+export function ProjectsProviderWithSync({ children }) {
+  const agaff = useAgaff();
+  const tsevet = useTsevetMevatzeat();
+
+  // Convert options to the format ProjectsProvider expects
+  const agaffOptions = useMemo(() => {
+    return (agaff.agaffList || []).map((item) => ({
+      value: item.id,
+      label: item.name || "—",
+    }));
+  }, [agaff.agaffList]);
+
+  const yechidaMevatzatOptions = useMemo(() => {
+    return (tsevet.tsevetMevatzeatList || []).map((item) => ({
+      value: item.id,
+      label: item.name || "—",
+    }));
+  }, [tsevet.tsevetMevatzeatList]);
+
+  return (
+    <ProjectsProvider
+      agaffOptions={agaffOptions}
+      yechidaMevatzatOptions={yechidaMevatzatOptions}
+    >
+      {children}
+    </ProjectsProvider>
+  );
 }

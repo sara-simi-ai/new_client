@@ -10,7 +10,7 @@ import { useState } from "react";
 import ProjectFormModal from "../ProjectFormModal/ProjectFormModal";
 
 export default function ProjectCard({ project }) {
-  const { deleteProjectData, projectFinanceMap, selectedProjectId, setSelectedProjectId, agaffOptions, yechidaMevatzatOptions } = useProjects();
+  const { deleteProjectData, projectFinanceMap, selectedProjectId, setSelectedProjectId } = useProjects();
 
   const financeData = projectFinanceMap[project.id];
   const isSelected = selectedProjectId === project.id;

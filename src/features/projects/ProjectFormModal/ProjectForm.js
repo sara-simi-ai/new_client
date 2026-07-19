@@ -1,11 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
+import { useAgaff } from "../../../services/context/AgaffContext";
+import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
 import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
 import { GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
 import "./ProjectFormModal.css";
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
-  const { agaffOptions, yechidaMevatzatOptions } = useProjects();
+  const { agaffOptions: fallbackAgaffOptions, yechidaMevatzatOptions: fallbackYechidaOptions } = useProjects();
+  const { agaffOptions } = useAgaff();
+  const { tsevetMevatzeatOptions } = useTsevetMevatzeat();
+
+  // Use real options from context if available, fall back to cached options
+  const effectiveAgaffOptions = useMemo(() => {
+    if (agaffOptions && agaffOptions.length > 0) {
+      return agaffOptions;
+    }
+    return fallbackAgaffOptions || [];
+  }, [agaffOptions, fallbackAgaffOptions]);
+
+  const effectiveYechidaOptions = useMemo(() => {
+    if (tsevetMevatzeatOptions && tsevetMevatzeatOptions.length > 0) {
+      return tsevetMevatzeatOptions;
+    }
+    return fallbackYechidaOptions || [];
+  }, [tsevetMevatzeatOptions, fallbackYechidaOptions]);
   const [form, setForm] = useState({
     projectName: "",
     agaff: "",
@@ -113,7 +132,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
               <label className="np-label">יחידת פיתוח *</label>
               <select className={`np-select${errors.yechidaMevatzat ? ' np-input--error' : ''}`} value={form.yechidaMevatzat} onChange={(e) => set('yechidaMevatzat', e.target.value)}>
                 <option value="">בחר יחידת פיתוח</option>
-                {yechidaMevatzatOptions.filter(o => o.value !== "__all__").map((option) => (
+                {effectiveYechidaOptions.filter(o => o.value !== "__all__").map((option) => (
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
@@ -122,7 +141,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
               <label className="np-label">אגף מבצע *</label>
                 <select className={`np-select${errors.agaff ? ' np-input--error' : ''}`} value={form.agaff} onChange={(e) => set('agaff', e.target.value)}>
                 <option value="">בחר אגף</option>
-                {agaffOptions.filter(o => o.value !== "__all__").map((option) => (
+                {effectiveAgaffOptions.filter(o => o.value !== "__all__").map((option) => (
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>

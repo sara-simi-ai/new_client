@@ -119,3 +119,19 @@ export async function copyProjectsFromPreviousYear(year) {
 
   return response.json();
 }
+
+
+export async function updateProjectActive(project) {
+  const response = await apiFetch(`/management/updateProjectActive`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(project),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Failed to update project status.");
+  }
+
+  return response.json();
+}

@@ -1,7 +1,8 @@
 import React from 'react';
-import { DeleteIcon, EditIcon } from '../../../components/ActionIcons/ActionIcons';
+import { EditIcon } from '../../../components/ActionIcons/ActionIcons';
 import Modal from '../../../components/Modal/Modal';
 import BackButton from '../../../components/BackButton/BackButton';
+import ToggleActiveButton from '../../../components/ToggleActiveButton/ToggleActiveButton';
 import '../ManagementShared.css';
 import './ManagementOptionsPage.css';
 import { useManagementOptions } from './useManagementOptions';
@@ -25,9 +26,23 @@ export default function ManagementOptionsPage({
   emptyText = 'לא נמצאו תוצאות',
   options,
   setOptions,
+  onToggleOptionActive,
   duplicateErrorMessage,
   allValue = '__all__',
+  __hook__ = null, // For async mode
+  __isAsync__ = false,
 }) {
+  // Always call the hook (rules of hooks)
+  const syncHook = useManagementOptions({
+    options,
+    setOptions,
+    allValue,
+    duplicateErrorMessage,
+  });
+
+  // Use the provided async hook if available, otherwise use sync hook
+  const hook = __isAsync__ && __hook__ ? __hook__ : syncHook;
+
   const {
     searchTerm,
     setSearchTerm,
@@ -49,12 +64,8 @@ export default function ManagementOptionsPage({
     confirmAdd,
     confirmEdit,
     confirmDelete,
-  } = useManagementOptions({
-    options,
-    setOptions,
-    allValue,
-    duplicateErrorMessage,
-  });
+    isLoading = false,
+  } = hook;
 
   return (
     <div className="mgmt-page no-card-bg" dir="rtl">
@@ -82,7 +93,7 @@ export default function ManagementOptionsPage({
                 </svg>
               </button>
             </div>
-            <button className="agaff-add-btn" type="button" onClick={openAddModal}>
+            <button className="agaff-add-btn" type="button" onClick={openAddModal} disabled={isLoading}>
               {addButtonLabel}
             </button>
           </div>
@@ -93,9 +104,11 @@ export default function ManagementOptionsPage({
               <div className="agaff-item" key={opt.value}>
                 <div className="agaff-name">{opt.label}</div>
                 <div className="agaff-actions">
-                  <button className="icon-btn" type="button" onClick={() => openDeleteModal(opt)} title="מחק" aria-label="מחק">
-                    <DeleteIcon />
-                  </button>
+                  <ToggleActiveButton
+                    active={opt.active !== false}
+                    onClick={() => onToggleOptionActive?.(opt)}
+                    title={opt.active !== false ? 'העבר ל"לא פעיל"' : 'העבר ל"פעיל"'}
+                  />
                   <button className="icon-btn" type="button" onClick={() => openEditModal(opt)} title="ערוך" aria-label="ערוך">
                     <EditIcon />
                   </button>
@@ -112,8 +125,8 @@ export default function ManagementOptionsPage({
             <input className="mgmt-input" value={pendingName} onChange={(e) => setPendingName(e.target.value)} placeholder={itemPlaceholder} />
             {modalError && <div style={{ color: '#ef4444', marginTop: 8 }}>{modalError}</div>}
             <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
-              <button className="mgmt-btn ghost" type="button" onClick={closeAddModal}>ביטול</button>
-              <button className="mgmt-btn primary" type="button" onClick={confirmAdd}>{addActionLabel}</button>
+              <button className="mgmt-btn ghost" type="button" onClick={closeAddModal} disabled={isLoading}>ביטול</button>
+              <button className="mgmt-btn primary" type="button" onClick={confirmAdd} disabled={isLoading}>{addActionLabel}</button>
             </div>
           </Modal>
         )}
@@ -125,8 +138,8 @@ export default function ManagementOptionsPage({
             <input className="mgmt-input" value={pendingName} onChange={(e) => setPendingName(e.target.value)} placeholder={itemPlaceholder} />
             {modalError && <div style={{ color: '#ef4444', marginTop: 8 }}>{modalError}</div>}
             <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
-              <button className="mgmt-btn ghost" type="button" onClick={closeEditModal}>ביטול</button>
-              <button className="mgmt-btn primary" type="button" onClick={confirmEdit}>{saveActionLabel}</button>
+              <button className="mgmt-btn ghost" type="button" onClick={closeEditModal} disabled={isLoading}>ביטול</button>
+              <button className="mgmt-btn primary" type="button" onClick={confirmEdit} disabled={isLoading}>{saveActionLabel}</button>
             </div>
           </Modal>
         )}
@@ -136,8 +149,8 @@ export default function ManagementOptionsPage({
             <h3>{deleteModalTitle}</h3>
             <p className="muted">{deleteModalDescription(deleteOption)}</p>
             <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
-              <button className="mgmt-btn ghost" type="button" onClick={closeDeleteModal}>ביטול</button>
-              <button className="mgmt-btn primary" type="button" onClick={confirmDelete}>{deleteActionLabel}</button>
+              <button className="mgmt-btn ghost" type="button" onClick={closeDeleteModal} disabled={isLoading}>ביטול</button>
+              <button className="mgmt-btn primary" type="button" onClick={confirmDelete} disabled={isLoading}>{deleteActionLabel}</button>
             </div>
           </Modal>
         )}

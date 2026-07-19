@@ -3,6 +3,7 @@ import '../ManagementShared.css';
 import '../ManagementOptionsPage/ManagementOptionsPage.css';
 import './ProjectsManagementPage.css';
 import BackButton from '../../../components/BackButton/BackButton';
+import ToggleActiveButton from '../../../components/ToggleActiveButton/ToggleActiveButton';
 import { useProjects } from '../../../services/context/ProjectsContext';
 
 export default function ProjectsManagementPage({ onBack }) {
@@ -37,13 +38,10 @@ export default function ProjectsManagementPage({ onBack }) {
               <div className="agaff-item" key={project.id}>
                 <div className="agaff-name">{project.projectName || project.teur || '—'}</div>
                 <div className="agaff-actions">
-                  <button
-                    className={`proj-toggle ${project.active ? 'on' : 'off'}`}
-                    type="button"
+                  <ToggleActiveButton
+                    active={project.active !== false}
                     onClick={() => toggleActive(project)}
-                  >
-                    {project.active ? 'פעיל' : 'לא פעיל'}
-                  </button>
+                  />
                 </div>
               </div>
             ))}

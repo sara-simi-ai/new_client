@@ -67,7 +67,7 @@ export function useManagementOptions({ options = [], setOptions, allValue = '__a
       return;
     }
 
-    const newOption = { value: clean, label: clean };
+    const newOption = { value: clean, label: clean, active: true };
     setOptions((prev) => [
       ...(prev || []).filter((item) => item.value === allValue),
       newOption,

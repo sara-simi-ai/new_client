@@ -1,9 +1,9 @@
 import React from 'react';
 import ManagementOptionsPage from '../ManagementOptionsPage/ManagementOptionsPage';
-import { useProjects } from '../../../services/context/ProjectsContext';
+import { useTsevetMevatzeatManagement } from '../ManagementOptionsPage/useTsevetMevatzeatManagement';
 
 export default function TeamsPage({ onBack }) {
-  const { yechidaMevatzatOptions, setYechidaMevatzatOptions } = useProjects();
+  const hook = useTsevetMevatzeatManagement();
 
   return (
     <ManagementOptionsPage
@@ -19,9 +19,13 @@ export default function TeamsPage({ onBack }) {
       deleteModalTitle="מחיקת צוות"
       deleteModalDescription={(option) => `האם אתה בטוח שברצונך למחוק את הצוות "${option?.label}"?`}
       itemPlaceholder="שם צוות"
-      options={yechidaMevatzatOptions}
-      setOptions={setYechidaMevatzatOptions}
+      options={hook.filteredItems}
+      setOptions={() => {}} // No-op for async version
+      onToggleOptionActive={hook.handleToggleActive}
       duplicateErrorMessage="צוות עם השם הזה כבר קיים"
+      // Pass the full hook state for async support
+      __hook__={hook}
+      __isAsync__={true}
     />
   );
 }
