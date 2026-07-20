@@ -198,8 +198,22 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     const toSend = normalizeProjectForApi({ ...projectData });
     const updated = await updateProject(toSend);
     const normalizedUpdated = normalizeProjectFromApi(updated);
-    setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    
+    // Update allProjects: keep the project but update its status
     setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    
+    // Update projects: add or remove based on active status and current year
+    if (normalizedUpdated.active && normalizedUpdated.year === selectedYear) {
+      // Project is active and matches current year - ensure it's in projects
+      setProjects((prev) => {
+        const exists = prev.some((p) => p.id === normalizedUpdated.id);
+        return exists ? prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)) : [...prev, normalizedUpdated];
+      });
+    } else {
+      // Project is inactive or from different year - remove from projects
+      setProjects((prev) => prev.filter((p) => p.id !== normalizedUpdated.id));
+    }
+    
     return normalizedUpdated;
   };
 
@@ -220,9 +234,15 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   };
 
   const deleteProjectData = async (id) => {
-    await deleteProject(id);
+    const deleted = await deleteProject(id);
+    const normalizedDeleted = normalizeProjectFromApi(deleted);
+    
+    // Remove from active projects list
     setProjects((prev) => prev.filter((p) => p.id !== id));
-    setAllProjects((prev) => prev.filter((p) => p.id !== id));
+    
+    // Update in allProjects to reflect the inactive status
+    setAllProjects((prev) => prev.map((p) => (p.id === normalizedDeleted.id ? normalizedDeleted : p)));
+    
     setSelectedProjectId((prev) => (prev === id ? null : prev));
     return id;
   };
@@ -233,8 +253,22 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   const toggleProjectStatus = async (id) => {
     const updated = await toggleProjectActive(id);
     const normalizedUpdated = normalizeProjectFromApi(updated);
-    setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    
+    // Update allProjects: keep the project but update its active status
     setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    
+    // Update projects: add or remove based on active status and current year
+    if (normalizedUpdated.active && normalizedUpdated.year === selectedYear) {
+      // Project is now active and matches current year - ensure it's in projects
+      setProjects((prev) => {
+        const exists = prev.some((p) => p.id === normalizedUpdated.id);
+        return exists ? prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)) : [...prev, normalizedUpdated];
+      });
+    } else {
+      // Project is now inactive or from different year - remove from projects
+      setProjects((prev) => prev.filter((p) => p.id !== normalizedUpdated.id));
+    }
+    
     return normalizedUpdated;
   };
 
