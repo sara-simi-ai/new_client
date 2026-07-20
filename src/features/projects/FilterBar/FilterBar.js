@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
+import { useAgaff } from "../../../services/context/AgaffContext";
+import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
 import {
   MASLOL_OPTIONS,
   CONTINUATION_LABEL,
@@ -174,6 +176,8 @@ function Dropdown({
 
 export default function FilterBar() {
   const { filters, filterOptions, updateFilter, clearFilters } = useProjects();
+  const { agaffOptions } = useAgaff();
+  const { tsevetMevatzeatOptions } = useTsevetMevatzeat();
 
   return (
     <div className="toolbar" dir="rtl">
@@ -188,7 +192,7 @@ export default function FilterBar() {
         title="אגף"
         label="אגף"
         allLabel="כל האגפים"
-        options={filterOptions.agaff}
+        options={agaffOptions}
         selected={filters.agaff || []}
         onChange={(next) => updateFilter("agaff", next)}
         multi={true}
@@ -198,7 +202,7 @@ export default function FilterBar() {
         title="מבוצע ע''י"
         label="מבוצע ע''י"
         allLabel="מבוצע ע''י"
-        options={filterOptions.yechidaMevatzat}
+        options={tsevetMevatzeatOptions}
         selected={filters.yechidaMevatzat || []}
         onChange={(next) => updateFilter("yechidaMevatzat", next)}
         multi={true}

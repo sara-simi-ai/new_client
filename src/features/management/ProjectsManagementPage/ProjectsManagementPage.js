@@ -7,7 +7,7 @@ import ToggleActiveButton from '../../../components/ToggleActiveButton/ToggleAct
 import { useProjects } from '../../../services/context/ProjectsContext';
 
 export default function ProjectsManagementPage({ onBack }) {
-  const { loadAllProjects, allProjects, toggleProjectStatus } = useProjects();
+  const { loadAllProjects, allProjects, updateProjectData } = useProjects();
 
   useEffect(() => {
     if (!allProjects?.length) {
@@ -16,7 +16,8 @@ export default function ProjectsManagementPage({ onBack }) {
   }, []);
 
   const toggleActive = async (project) => {
-    await toggleProjectStatus(project.id);
+    const updated = { ...project, active: !project.active };
+    await updateProjectData(updated);
   };
 
   return (

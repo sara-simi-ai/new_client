@@ -3,7 +3,6 @@ import { useProjects } from "../../../services/context/ProjectsContext";
 import { useAgaff } from "../../../services/context/AgaffContext";
 import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
 import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { formatMoney, parseMoney } from "../../../utils/formatMoneyHelper";
 import { GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
 import "./ProjectFormModal.css";
 
@@ -48,7 +47,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         projectName: initialData.projectName || "",
         agaff: initialData.agaff || "",
         yechidaMevatzat: initialData.yechidaMevatzat || "",
-        maslol: initialData.maslol || MASLOL_OPTIONS[0].value,
+        maslol: initialData.maslol || MASLOL_OPTIONS[0].value, 
         logHemsheci: initialData.logHemsheci || false,
         teur: initialData.teur || "",
         hearot: initialData.hearot || "",
@@ -61,25 +60,28 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
-  const handleBudgetChange = (field, value) => {
-    const cleaned = String(value || '').replace(/,/g, '').replace(/[^\d]/g, '');
-    set(field, cleaned === '' ? 0 : Number(cleaned));
+  const handleNumFocus = (field) => {
+    if (Number(form[field]) === 0) set(field, "");
   };
 
-  const totalBudget = form.totalTakzivCoachAdam + form.totalTakzivRechesh;
-  const gaps = form.totalTakzivCoachAdam - form.coachAdam;
+  const handleNumBlur = (field) => {
+    if (form[field] === "" || form[field] === null || form[field] === undefined) set(field, 0);
+  };
+
+  const totalBudget = Number(form.totalTakzivCoachAdam) + Number(form.totalTakzivRechesh);
+  const gaps = Number(form.totalTakzivCoachAdam) - Number(form.coachAdam);
   const gapNum = Number(gaps) || 0;
-  const gapDisplay = formatGapDisplay(gapNum, parseMoney(form.totalTakzivCoachAdam));
-  const gapStatus = getGapStatus(gapNum, parseMoney(form.totalTakzivCoachAdam));
+  const gapDisplay = formatGapDisplay(gapNum, Number(form.totalTakzivCoachAdam));
+  const gapStatus = getGapStatus(gapNum, Number(form.totalTakzivCoachAdam));
 
   const handleSubmit = async () => {
     const newErrors = {};
     if (!form.projectName.trim()) newErrors.projectName = true;
     if (!form.yechidaMevatzat.trim()) newErrors.yechidaMevatzat = true;
     if (!form.agaff.trim()) newErrors.agaff = true;
-    if (form.totalTakzivRechesh === 0) newErrors.totalTakzivRechesh = true;
-    if (form.totalTakzivCoachAdam === 0) newErrors.totalTakzivCoachAdam = true;
-    if (form.coachAdam === 0) newErrors.coachAdam = true;
+    if (Number(form.totalTakzivRechesh) === 0) newErrors.totalTakzivRechesh = true;
+    if (Number(form.totalTakzivCoachAdam) === 0) newErrors.totalTakzivCoachAdam = true;
+    if (Number(form.coachAdam) === 0) newErrors.coachAdam = true;
 
     const detailFields = ['projectName', 'yechidaMevatzat', 'agaff'];
     const budgetFields = ['totalTakzivRechesh', 'totalTakzivCoachAdam', 'coachAdam'];
@@ -179,29 +181,17 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
           <div className="np-row">
             <div className="np-field">
               <label className="np-label">{PROCUREMENT_BUDGET_LABEL} (₪) *</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                className={`np-input${errors.totalTakzivRechesh ? ' np-input--error' : ''}`}
-                value={formatMoney(form.totalTakzivRechesh)}
-                onChange={(e) => handleBudgetChange('totalTakzivRechesh', e.target.value)}
-              />
+              <input type="number" className={`np-input${errors.totalTakzivRechesh ? ' np-input--error' : ''}`} value={form.totalTakzivRechesh} onFocus={() => handleNumFocus('totalTakzivRechesh')} onBlur={() => handleNumBlur('totalTakzivRechesh')} onChange={(e) => set('totalTakzivRechesh', e.target.value)} />
             </div>
             <div className="np-field">
               <label className="np-label">{HR_BUDGET_LABEL} (₪) *</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                className={`np-input${errors.totalTakzivCoachAdam ? ' np-input--error' : ''}`}
-                value={formatMoney(form.totalTakzivCoachAdam)}
-                onChange={(e) => handleBudgetChange('totalTakzivCoachAdam', e.target.value)}
-              />
+              <input type="number" className={`np-input${errors.totalTakzivCoachAdam ? ' np-input--error' : ''}`} value={form.totalTakzivCoachAdam} onFocus={() => handleNumFocus('totalTakzivCoachAdam')} onBlur={() => handleNumBlur('totalTakzivCoachAdam')} onChange={(e) => set('totalTakzivCoachAdam', e.target.value)} />
             </div>
           </div>
 
           <div className="np-field">
             <label className="np-label">{TOTAL_BUDGET_LABEL} (אוטומטי)</label>
-            <input className="np-input" readOnly value={`₪${formatMoney(totalBudget)}`} style={{ backgroundColor: "#f9fafb", color: "#374151" }} />
+            <input className="np-input" readOnly value={`₪${totalBudget}`} style={{ backgroundColor: "#f9fafb", color: "#374151" }} />
           </div>
 
           <div className="np-row np-field--last">
@@ -216,13 +206,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
             </div>
             <div className="np-field" style={{ marginBottom: 0 }}>
               <label className="np-label">{PLANNED_HR_LABEL} (₪) *</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                className={`np-input${errors.coachAdam ? ' np-input--error' : ''}`}
-                value={formatMoney(form.coachAdam)}
-                onChange={(e) => handleBudgetChange('coachAdam', e.target.value)}
-              />
+              <input type="number" className={`np-input${errors.coachAdam ? ' np-input--error' : ''}`} value={form.coachAdam} onFocus={() => handleNumFocus('coachAdam')} onBlur={() => handleNumBlur('coachAdam')} onChange={(e) => set('coachAdam', e.target.value)} />
             </div>
           </div>
         </div>

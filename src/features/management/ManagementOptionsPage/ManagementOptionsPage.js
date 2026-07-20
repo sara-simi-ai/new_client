@@ -32,7 +32,7 @@ export default function ManagementOptionsPage({
   __hook__ = null, // For async mode
   __isAsync__ = false,
 }) {
-
+  // Always call the hook (rules of hooks)
   const syncHook = useManagementOptions({
     options,
     setOptions,
@@ -40,6 +40,7 @@ export default function ManagementOptionsPage({
     duplicateErrorMessage,
   });
 
+  // Use the provided async hook if available, otherwise use sync hook
   const hook = __isAsync__ && __hook__ ? __hook__ : syncHook;
 
   const {

@@ -1,4 +1,3 @@
-// src/components/ProjectsList/ProjectsList.js
 import React from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import ProjectCard from "../ProjectCard/ProjectCard";

@@ -72,9 +72,9 @@ export default function ProjectCard({ project }) {
         <div className="card-meta-section">
           <div className="card-meta-row">
             <span className="card-meta-label">אגף:</span>
-            <span className="card-meta-value">{project.agaff}</span>
+            <span className="card-meta-value">{project.agaffName}</span>
             <span className="card-meta-label">מבוצע ע"י:</span>
-            <span className="card-meta-value">{project.yechidaMevatzat}</span>
+            <span className="card-meta-value">{project.tsevetMevatseaName}</span>
           </div>
           
           <div className="card-meta-row">

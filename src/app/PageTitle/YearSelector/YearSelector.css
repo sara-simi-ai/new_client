@@ -1,35 +1,139 @@
-/* YearSelector component styles copied from Tailwind equivalents */
-.ys-wrapper {
-	display: flex;
-	align-items: center;
-	gap: 0.75rem; /* gap-3 */
+.ys-dropdown {
+  position: relative;
+  min-width: 160px;
+  display: flex;
 }
 
-.ys-select {
-	background-color: #ffffff; /* bg-white */
-	border: 1px solid #e5e7eb; /* border-gray-200 */
-	border-radius: 0.5rem; /* rounded-lg */
-	padding: 0.5rem 0.75rem 0.5rem 0.75rem; /* py-2 px-3 */
-	box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* shadow-sm */
-	font-size: 0.875rem; /* text-sm */
-	line-height: 1.25rem;
-	color: #111827;
-	-webkit-appearance: none;
-	appearance: none;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 5L6 8L9 5' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-	background-repeat: no-repeat;
-	background-position: left 0.5rem center;
-	padding-left: 1.75rem;
+.ys-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border2, #d9e2ec);
+  border-radius: 6px;
+  background: var(--bg, #ffffff);
+  color: var(--text, #111827);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  height: 36px;
+  direction: rtl;
 }
 
-.ys-select:focus {
-	outline: none;
-	box-shadow: 0 0 0 3px rgba(30,95,142,0.12); /* subtle focus ring */
-	border-color: #1e5f8e;
+.ys-button:hover {
+  border-color: var(--blue, #1e5f8e);
 }
 
-/* optional: keep native dropdown arrow visible on some browsers while removing default on others */
-.ys-select::-ms-expand {
-	display: none;
+.ys-button:focus {
+  outline: none;
+  border-color: var(--accent, #1e5f8e);
+  box-shadow: 0 0 0 3px rgba(30, 95, 142, 0.12);
+}
+
+.ys-button-value {
+  color: var(--text, #111827);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  text-align: right;
+  direction: rtl;
+}
+
+.ys-button-arrow {
+  display: inline-flex;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 5L6 8L9 5' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ys-popover {
+  position: absolute;
+  right: 0;
+  left: auto;
+  top: calc(100% + 6px);
+  z-index: 1000;
+  background: var(--bg, #ffffff);
+  color: var(--text, #111827);
+  border: 1px solid var(--border2, #d9e2ec);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  min-width: 100%;
+  width: max-content;
+  max-width: 220px;
+  padding: 6px;
+  box-sizing: border-box;
+  overflow: hidden;
+  animation: ys-slide-down 0.15s ease-out;
+  direction: rtl;
+}
+
+@keyframes ys-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ys-options {
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.ys-option {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 10px;
+  min-height: 32px;
+  width: 100%;
+  border-radius: 4px;
+  transition: background 0.12s;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.ys-option:not(:last-child) {
+  border-bottom: 1px solid var(--border2, #d9e2ec);
+}
+
+.ys-option:hover {
+  background: var(--bg2, #f5f7fa);
+}
+
+.ys-option-selected {
+  background: rgba(30, 95, 142, 0.08);
+  color: var(--accent, #1e5f8e);
+}
+
+.ys-option-text {
+  color: inherit;
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  display: block;
 }
 

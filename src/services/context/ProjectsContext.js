@@ -179,7 +179,13 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   }, [filteredProjects, projectFinanceMap]);
 
   const addNewProject = async (projectData) => {
-    const fullData = normalizeProjectForApi({ ...projectData, year: selectedYear });
+    // Ensure we include the underlying agaff/tsevet IDs expected by the API.
+    const withIds = {
+      ...projectData,
+      idntAgaff: projectData.agaff || projectData.idntAgaff || projectData.idntAgaff,
+      idntTsevetMevatsea: projectData.yechidaMevatzat || projectData.idntTsevetMevatsea || projectData.idntTsevetMevatsea,
+    };
+    const fullData = normalizeProjectForApi({ ...withIds, year: selectedYear });
     const savedProject = await insertProject(fullData);
     const normalizedSaved = normalizeProjectFromApi(savedProject);
     setProjects((prev) => [...prev, normalizedSaved]);
@@ -196,25 +202,17 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   };
 
   const updateProjectData = async (projectData) => {
-    const toSend = normalizeProjectForApi({ ...projectData });
+    // Map selected option values to the API's expected id fields.
+    const withIds = {
+      ...projectData,
+      idntAgaff: projectData.agaff || projectData.idntAgaff,
+      idntTsevetMevatsea: projectData.yechidaMevatzat || projectData.idntTsevetMevatsea,
+    };
+    const toSend = normalizeProjectForApi({ ...withIds });
     const updated = await updateProject(toSend);
     const normalizedUpdated = normalizeProjectFromApi(updated);
-    
-    // Update allProjects: keep the project but update its status
+    setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
     setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
-    
-    // Update projects: add or remove based on active status and current year
-    if (normalizedUpdated.active && normalizedUpdated.year === selectedYear) {
-      // Project is active and matches current year - ensure it's in projects
-      setProjects((prev) => {
-        const exists = prev.some((p) => p.id === normalizedUpdated.id);
-        return exists ? prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)) : [...prev, normalizedUpdated];
-      });
-    } else {
-      // Project is inactive or from different year - remove from projects
-      setProjects((prev) => prev.filter((p) => p.id !== normalizedUpdated.id));
-    }
-    
     return normalizedUpdated;
   };
 
@@ -235,15 +233,9 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   };
 
   const deleteProjectData = async (id) => {
-    const deleted = await deleteProject(id);
-    const normalizedDeleted = normalizeProjectFromApi(deleted);
-    
-    // Remove from active projects list
+    await deleteProject(id);
     setProjects((prev) => prev.filter((p) => p.id !== id));
-    
-    // Update in allProjects to reflect the inactive status
-    setAllProjects((prev) => prev.map((p) => (p.id === normalizedDeleted.id ? normalizedDeleted : p)));
-    
+    setAllProjects((prev) => prev.filter((p) => p.id !== id));
     setSelectedProjectId((prev) => (prev === id ? null : prev));
     return id;
   };
@@ -254,22 +246,8 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   const toggleProjectStatus = async (id) => {
     const updated = await toggleProjectActive(id);
     const normalizedUpdated = normalizeProjectFromApi(updated);
-    
-    // Update allProjects: keep the project but update its active status
+    setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
     setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
-    
-    // Update projects: add or remove based on active status and current year
-    if (normalizedUpdated.active && normalizedUpdated.year === selectedYear) {
-      // Project is now active and matches current year - ensure it's in projects
-      setProjects((prev) => {
-        const exists = prev.some((p) => p.id === normalizedUpdated.id);
-        return exists ? prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)) : [...prev, normalizedUpdated];
-      });
-    } else {
-      // Project is now inactive or from different year - remove from projects
-      setProjects((prev) => prev.filter((p) => p.id !== normalizedUpdated.id));
-    }
-    
     return normalizedUpdated;
   };
 
@@ -370,5 +348,3 @@ export function ProjectsProviderWithSync({ children }) {
     </ProjectsProvider>
   );
 }
-
-
