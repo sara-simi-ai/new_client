@@ -82,10 +82,13 @@ export function TsevetMevatzeatProvider({ children }) {
   }, [tsevetMevatzeatList, filters]);
 
   const tsevetMevatzeatOptions = useMemo(() => {
-    return tsevetMevatzeatList.map((t) => ({
-      value: t.id,
-      label: t.name || "—",
-    }));
+    // Only expose active tsevet entries for normal selection flows.
+    return tsevetMevatzeatList
+      .filter((t) => t.active)
+      .map((t) => ({
+        value: t.id,
+        label: t.name || "—",
+      }));
   }, [tsevetMevatzeatList]);
 
   const addNewTsevetMevatzeat = async (tsevetData) => {

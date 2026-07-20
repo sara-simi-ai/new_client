@@ -1,4 +1,3 @@
-
 import { apiFetch } from "../context/ApiContext";
 
 const RESOURCE = "tsevetmevatsea";
@@ -23,8 +22,6 @@ export async function updateTsevetMevatsea(id, tsevetMevatsea) {
     throw new Error("Tsevet Mevatsea ID must not be empty.");
   }
 
-  // Fixed: route previously had a typo ("updateTsevetMevatseaea") that did not
-  // match TsevetMevatseaController's "updateTsevetMevatsea/{id:guid}" route.
   const response = await apiFetch(`/${RESOURCE}/updateTsevetMevatsea/${encodeURIComponent(id)}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -71,10 +68,6 @@ export async function getAllTsevetMevatsea() {
   return response.json();
 }
 
-// NOTE: There is no DELETE endpoint on TsevetMevatseaController, so
-// deleteTsevetMevatsea() was removed — calling it would always 404.
-// Use toggleTsevetMevatseaActive() to deactivate a team instead of deleting it.
-
 export async function toggleTsevetMevatseaActive(id) {
   if (!id) {
     throw new Error("Tsevet Mevatsea ID must not be empty.");
@@ -95,6 +88,3 @@ export async function toggleTsevetMevatseaActive(id) {
 
   return response.json();
 }
-
-
-

@@ -16,8 +16,7 @@ const PageTitle = () => {
 			<div className="page-title-inner container">
 				<div className="page-title-right">
 					<div className="page-title-title-wrap">
-						<h1 className="page-title-title">תכ"ם</h1>
-						<h2 className="page-title-subtitle">תכנון פרויקטים</h2>
+						<h1 className="page-title-title">ניהול תקציבי פרויקטים</h1>
 						<div className="page-title-subwrap">
 							<div className="page-title-meta">
 								<span className="page-title-meta-count">{projectCount} פרויקטים</span>

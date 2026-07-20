@@ -79,10 +79,15 @@ export function AgaffProvider({ children }) {
   }, [agaffList, filters]);
 
   const agaffOptions = useMemo(() => {
-    return agaffList.map((a) => ({
-      value: a.id,
-      label: a.name || "—",
-    }));
+    // Only expose active items as selectable options across the app.
+    // The full list (including inactive) remains available as `agaffList`
+    // for admin/management screens that intentionally show inactive entries.
+    return agaffList
+      .filter((a) => a.active)
+      .map((a) => ({
+        value: a.id,
+        label: a.name || "—",
+      }));
   }, [agaffList]);
 
   const addNewAgaff = async (agaffData) => {
@@ -102,9 +107,6 @@ export function AgaffProvider({ children }) {
     );
     return normalizedUpdated;
   };
-
-  // NOTE: AgaffController has no delete endpoint, only insert/get/update/toggle.
-  // Deactivation is handled via toggleAgaffStatus below instead of deletion.
 
   const toggleAgaffStatus = async (id) => {
     const updated = await toggleAgaffActive(id);

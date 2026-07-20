@@ -33,13 +33,13 @@ const columns = [
     key: "sector",
     label: AGAF_LABEL,
     cellClassName: "tr-sector",
-    render: (row) => row.agaff,
+    render: (row) => row.agaffName,
   },
   {
     key: "unit",
     label: UNIT_LABEL,
     cellClassName: "tr-unit",
-    render: (row) => row.yechidaMevatzat,
+    render: (row) => row.tsevetMevatseaName,
   },
   {
     key: "continuation",
