@@ -37,7 +37,6 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     totalTakzivCoachAdam: 0,
     totalTakzivRechesh: 0,
     coachAdam: 0,
-    active: true,
   });
   const [tab, setTab] = useState("פרטים");
   const [errors, setErrors] = useState({});
@@ -56,7 +55,6 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         totalTakzivCoachAdam: Number(initialData.totalTakzivCoachAdam || 0),
         totalTakzivRechesh: Number(initialData.totalTakzivRechesh || 0),
         coachAdam: Number(initialData.coachAdam || 0),
-        active: initialData.active === false ? false : true,
       }));
     }
   }, [initialData]);
@@ -99,10 +97,8 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     }
 
     setErrors({});
-    await onSubmit({
-      ...initialData,
-      ...form,
-    });
+    const { active, ...payload } = { ...initialData, ...form };
+    await onSubmit(payload);
   };
 
   return (
@@ -145,16 +141,6 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
                 {effectiveAgaffOptions.filter(o => o.value !== "__all__").map((option) => (
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="np-row">
-            <div className="np-field">
-              <label className="np-label">סטטוס פרויקט</label>
-              <select className="np-select" value={form.active} onChange={(e) => set('active', e.target.value === 'true')}>
-                <option value="true">פעיל</option>
-                <option value="false">לא פעיל</option>
               </select>
             </div>
           </div>

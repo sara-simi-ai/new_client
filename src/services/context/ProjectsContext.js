@@ -32,12 +32,13 @@ function normalizeProjectFromApi(project) {
 }
 
 function normalizeProjectForApi(project) {
-  const totalTakzivCoachAdam = Number(project.totalTakzivCoachAdam ?? 0);
+  const { active, createdAt, updatedAt, ...rest } = project;
+  const totalTakzivCoachAdam = Number(rest.totalTakzivCoachAdam ?? 0);
   return {
-    ...project,
+    ...rest,
     totalTakzivCoachAdam,
-    totalTakzivRechesh: Number(project.totalTakzivRechesh || 0),
-    coachAdam: Number(project.coachAdam || 0),
+    totalTakzivRechesh: Number(rest.totalTakzivRechesh || 0),
+    coachAdam: Number(rest.coachAdam || 0),
   };
 }
 

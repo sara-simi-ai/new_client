@@ -15,7 +15,7 @@
   --accent-hover: #174f78;     /* accent hover */
   --gap-positive: #f97316;     /* gap in surplus / orange */
   --gap-negative: #dc2626;     /* gap in deficit / red */
-  --gap-neutral: #16a34a;      /* success / no gap */
+  --gap-neutral: var(--accent);      /* success / no gap (use primary brand accent) */
 }
 @media (prefers-color-scheme: dark){
   :root{

@@ -34,6 +34,13 @@ export default function ProjectCard({ project }) {
       ? 'card-accent--geraon'
       : 'card-accent--takin';
 
+  const statusLabels = {
+    odef: 'עודף',
+    geraon: 'גרעון',
+    takin: 'תקין',
+  };
+  const statusLabel = statusLabels[gapStatus] || statusLabels.takin;
+
   const handleCardClick = (event) => {
     const clickedInteractiveElement = event.target.closest("button, a, input, select, textarea");
     if (clickedInteractiveElement) {
@@ -56,6 +63,7 @@ export default function ProjectCard({ project }) {
   return (
     <div className={`card ${isSelected ? "sel" : ""}`} onClick={handleCardClick}>
       <div className={`card-accent ${gapClass}`} />
+      <span className={`status-badge status-badge--${gapStatus}`}>{statusLabel}</span>
       <div className="card-body">
         <div className="card-title-row">
           <div className="card-name">{project.projectName}</div>
