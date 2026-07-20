@@ -53,6 +53,7 @@ function matchesStatusPearim(project, selectedStatuses, getProjectStatus, isAllS
 
 export function filterProjects(projects, filters, getProjectStatus = (project) => calculateProjectFinance(project).statusPearim) {
   return projects.filter((project) => {
+    if (project.active === false) return false;
     if (!matchesSearch(project, filters.search)) return false;
     
     // For agaff: if not empty and all items not selected, filter by agaff

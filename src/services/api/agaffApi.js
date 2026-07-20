@@ -68,27 +68,6 @@ export async function getAllAgaff() {
   return response.json();
 }
 
-export async function deleteAgaff(id) {
-  if (!id) {
-    throw new Error("Agaff ID must not be empty.");
-  }
-
-  const response = await apiFetch(`/${RESOURCE}/deleteAgaff/${encodeURIComponent(id)}`, {
-    method: "DELETE",
-  });
-
-  if (response.status === 404) {
-    throw new Error(`Agaff with ID '${id}' was not found.`);
-  }
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Failed to delete agaff.");
-  }
-
-  return response.json();
-}
-
 export async function toggleAgaffActive(id) {
   if (!id) {
     throw new Error("Agaff ID must not be empty.");

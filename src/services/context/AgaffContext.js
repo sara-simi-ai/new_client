@@ -1,19 +1,27 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
-import { getAllAgaff, insertAgaff, updateAgaff, deleteAgaff, toggleAgaffActive } from "../api/agaffApi";
+import { getAllAgaff, insertAgaff, updateAgaff, toggleAgaffActive } from "../api/agaffApi";
 
 const AgaffContext = createContext();
 
+// The Agaff model in C# (Agaff.cs) only has: IdntAgaff (Guid), AgaffName (string), Active (bool).
+// ASP.NET Core serializes these to camelCase JSON: idntAgaff, agaffName, active.
+// We normalize once here at the API boundary and expose convenient `id`/`name`
+// aliases so the rest of the app (ProjectsContext, forms, etc.) doesn't need to
+// know about the C#-side property names.
 function normalizeAgaffFromApi(agaff) {
   return {
     ...agaff,
-    name: agaff.name || "",
-    description: agaff.description || "",
+    id: agaff.idntAgaff,
+    name: agaff.agaffName || "",
+    active: agaff.active ?? true,
   };
 }
 
 function normalizeAgaffForApi(agaff) {
   return {
-    ...agaff,
+    idntAgaff: agaff.id ?? agaff.idntAgaff,
+    agaffName: agaff.name ?? agaff.agaffName ?? "",
+    active: agaff.active ?? true,
   };
 }
 
@@ -57,14 +65,10 @@ export function AgaffProvider({ children }) {
 
   const filteredAgaff = useMemo(() => {
     let result = agaffList;
-    
+
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      result = result.filter(
-        (a) =>
-          (a.name && a.name.toLowerCase().includes(searchLower)) ||
-          (a.description && a.description.toLowerCase().includes(searchLower))
-      );
+      result = result.filter((a) => a.name && a.name.toLowerCase().includes(searchLower));
     }
 
     if (filters.active !== undefined) {
@@ -99,12 +103,8 @@ export function AgaffProvider({ children }) {
     return normalizedUpdated;
   };
 
-  const deleteAgaffData = async (id) => {
-    await deleteAgaff(id);
-    setAgaffList((prev) => prev.filter((a) => a.id !== id));
-    setSelectedAgaffId((prev) => (prev === id ? null : prev));
-    return id;
-  };
+  // NOTE: AgaffController has no delete endpoint, only insert/get/update/toggle.
+  // Deactivation is handled via toggleAgaffStatus below instead of deletion.
 
   const toggleAgaffStatus = async (id) => {
     const updated = await toggleAgaffActive(id);
@@ -122,9 +122,7 @@ export function AgaffProvider({ children }) {
 
   const toggleAgaffSelection = (agaffId) => {
     setSelectedAgaffIds((prev) =>
-      prev.includes(agaffId)
-        ? prev.filter((id) => id !== agaffId)
-        : [...prev, agaffId]
+      prev.includes(agaffId) ? prev.filter((id) => id !== agaffId) : [...prev, agaffId]
     );
   };
 
@@ -153,7 +151,6 @@ export function AgaffProvider({ children }) {
     clearFilters,
     addNewAgaff,
     updateAgaffData,
-    deleteAgaffData,
     toggleAgaffStatus,
   };
 

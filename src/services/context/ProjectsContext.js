@@ -1,5 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
-import { getAllProjects, getProjectByYear, insertProject, updateProject, deleteProject, copyProjectsFromPreviousYear } from "../api/projectApi";
+import {
+  getAllProjects,
+  getProjectByYear,
+  insertProject,
+  updateProject,
+  deleteProject,
+  copyProjectsFromPreviousYear,
+  toggleProjectActive,
+} from "../api/projectApi";
 import { calculateProjectFinance } from "../../utils/calculateProjectFinanceHelper";
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFiltersHelper";
 import { AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../utils/Dec";
@@ -8,7 +16,11 @@ import { useTsevetMevatzeat } from "./TsevetMevatzeatContext";
 
 const ProjectsContext = createContext();
 
-
+// Project.cs fields (PascalCase) are serialized by ASP.NET Core as camelCase JSON:
+// id, idntAgaff, agaffName, idntTsevetMevatsea, tsevetMevatseaName, projectName, teur,
+// maslol, idntMaslol, logHemsheci, totalTakzivCoachAdam, totalTakzivRechesh, coachAdam,
+// hearot, active, year, createdAt, updatedAt. These already line up with the field names
+// used below, so only numeric coercion / defaults are normalized here.
 function normalizeProjectFromApi(project) {
   const totalTakzivCoachAdam = project.totalTakzivCoachAdam ?? 0;
   return {
@@ -39,7 +51,7 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [selectedProjectIds, setSelectedProjectIds] = useState([]); // for checkbox multi-select
   const [filters, setFilters] = useState(() => ({ ...DEFAULT_PROJECT_FILTERS }));
-  
+
   // Use provided options or fallback to localStorage
   const [agaffOptions] = useState(() => propsAgaffOptions || (() => {
     try {
@@ -49,7 +61,7 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       return AGAF_OPTIONS;
     }
   })());
-  
+
   const [yechidaMevatzatOptions] = useState(() => propsYechidaMevatzatOptions || (() => {
     try {
       const saved = window.localStorage.getItem("yechidaMevatzatOptions");
@@ -117,7 +129,7 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       (project) => projectFinanceMap[project.id]?.statusPearim || "takin"
     );
   }, [projects, filters, projectFinanceMap]);
-  
+
   const projectOptions = useMemo(() => {
     // build project list based on current filters but excluding any selected project filter
     const filtersWithoutProject = { ...filters, project: [] };
@@ -174,16 +186,9 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     return normalizedSaved;
   };
 
-    const copyFromPreviousYear = async (year) => {
+  const copyFromPreviousYear = async (year) => {
     const copied = await copyProjectsFromPreviousYear(year);
-    const normalized = (copied || []).map((p) => ({
-      ...p,
-      projectName: p.projectName || p.name || "",
-      teur: p.teur || p.desc || "",
-      totalTakzuvCoachAdam: p.totalTakzuvCoachAdam || 0,
-      totalTakzivRechesh: p.totalTakzivRechesh || 0,
-      coachAdam: p.coachAdam || 0,
-    }));
+    const normalized = (copied || []).map(normalizeProjectFromApi);
 
     setProjects((prev) => [...prev, ...normalized]);
     return normalized;
@@ -220,6 +225,17 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     setAllProjects((prev) => prev.filter((p) => p.id !== id));
     setSelectedProjectId((prev) => (prev === id ? null : prev));
     return id;
+  };
+
+  // Added: ProjectController exposes PATCH "toggleProjectActive/{id:guid}", but no
+  // corresponding function previously existed on the context (the old projectApi
+  // function pointed at a non-existent "/management/updateProjectActive" route).
+  const toggleProjectStatus = async (id) => {
+    const updated = await toggleProjectActive(id);
+    const normalizedUpdated = normalizeProjectFromApi(updated);
+    setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    return normalizedUpdated;
   };
 
   const selectedProject = useMemo(() => projects.find((p) => p.id === selectedProjectId) || null, [projects, selectedProjectId]);
@@ -268,6 +284,7 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     addNewProject,
     updateProjectData,
     deleteProjectData,
+    toggleProjectStatus,
     copyFromPreviousYear,
     loadAllProjects,
     agaffOptions,
@@ -292,7 +309,9 @@ export function ProjectsProviderWithSync({ children }) {
   const agaff = useAgaff();
   const tsevet = useTsevetMevatzeat();
 
-  // Convert options to the format ProjectsProvider expects
+  // Convert options to the format ProjectsProvider expects.
+  // agaff.agaffList / tsevet.tsevetMevatzeatList items already carry `id`/`name`
+  // aliases from their respective contexts' normalizeFromApi functions.
   const agaffOptions = useMemo(() => {
     return (agaff.agaffList || []).map((item) => ({
       value: item.id,
@@ -316,3 +335,5 @@ export function ProjectsProviderWithSync({ children }) {
     </ProjectsProvider>
   );
 }
+
+

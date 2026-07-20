@@ -1,3 +1,4 @@
+
 import { apiFetch } from "../context/ApiContext";
 
 const RESOURCE = "tsevetmevatsea";
@@ -22,7 +23,9 @@ export async function updateTsevetMevatsea(id, tsevetMevatsea) {
     throw new Error("Tsevet Mevatsea ID must not be empty.");
   }
 
-  const response = await apiFetch(`/${RESOURCE}/updateTsevetMevatseaea/${encodeURIComponent(id)}`, {
+  // Fixed: route previously had a typo ("updateTsevetMevatseaea") that did not
+  // match TsevetMevatseaController's "updateTsevetMevatsea/{id:guid}" route.
+  const response = await apiFetch(`/${RESOURCE}/updateTsevetMevatsea/${encodeURIComponent(id)}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(tsevetMevatsea),
@@ -68,13 +71,17 @@ export async function getAllTsevetMevatsea() {
   return response.json();
 }
 
-export async function deleteTsevetMevatsea(id) {
+// NOTE: There is no DELETE endpoint on TsevetMevatseaController, so
+// deleteTsevetMevatsea() was removed — calling it would always 404.
+// Use toggleTsevetMevatseaActive() to deactivate a team instead of deleting it.
+
+export async function toggleTsevetMevatseaActive(id) {
   if (!id) {
     throw new Error("Tsevet Mevatsea ID must not be empty.");
   }
 
-  const response = await apiFetch(`/${RESOURCE}/deleteTsevetMevatsea/${encodeURIComponent(id)}`, {
-    method: "DELETE",
+  const response = await apiFetch(`/${RESOURCE}/toggleTsevetMevatseaActive/${encodeURIComponent(id)}`, {
+    method: "PATCH",
   });
 
   if (response.status === 404) {
@@ -83,8 +90,11 @@ export async function deleteTsevetMevatsea(id) {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || "Failed to delete tsevet mevatsea.");
+    throw new Error(errorText || "Failed to toggle tsevet mevatsea active status.");
   }
 
   return response.json();
 }
+
+
+

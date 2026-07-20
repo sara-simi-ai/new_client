@@ -26,16 +26,14 @@ export function useAgaffManagement() {
   const [modalError, setModalError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Convert agaff items to management options format
   const options = useMemo(() => {
     return (filteredAgaff || []).map((agaff) => ({
-      value: agaff.id,
-      label: agaff.name || '—',
+      value: agaff.idntAgaff,
+      label: agaff.agaffName || '—',
       active: agaff.active !== false,
     }));
   }, [filteredAgaff]);
 
-  // Update search filter when search term changes
   useEffect(() => {
     updateFilter('search', searchTerm);
   }, [searchTerm, updateFilter]);
@@ -82,15 +80,14 @@ export function useAgaffManagement() {
     const clean = (pendingName || '').trim();
     if (!clean) return;
 
-    // Check for duplicate names
-    if ((filteredAgaff || []).some((a) => a.name === clean)) {
+    if ((filteredAgaff || []).some((a) => a.agaffName === clean)) {
       setModalError('אגף עם השם הזה כבר קיים');
       return;
     }
 
     setIsLoading(true);
     try {
-      await addNewAgaff({ name: clean, description: '' });
+      await addNewAgaff({ agaffName: clean, active: true });
       closeAddModal();
     } catch (err) {
       setModalError(err.message || 'Failed to create agaff');
@@ -104,14 +101,14 @@ export function useAgaffManagement() {
     if (!clean || !editItem) return;
 
     // Check for duplicate names (excluding current)
-    if ((filteredAgaff || []).some((a) => a.name === clean && a.id !== editItem.value)) {
+    if ((filteredAgaff || []).some((a) => a.agaffName === clean && a.idntAgaff !== editItem.value)) {
       setModalError('אגף עם השם הזה כבר קיים');
       return;
     }
 
     setIsLoading(true);
     try {
-      await updateAgaffData({ id: editItem.value, name: clean });
+      await updateAgaffData({ idntAgaff: editItem.value, agaffName: clean });
       closeEditModal();
     } catch (err) {
       setModalError(err.message || 'Failed to update agaff');

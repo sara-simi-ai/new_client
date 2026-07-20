@@ -33,7 +33,7 @@ export async function updateProject(project) {
 }
 
 export async function getProjectById(id) {
-  if (!id || !id.trim()) {
+  if (!id || !id.toString().trim()) {
     throw new Error("Project ID must not be empty.");
   }
 
@@ -96,7 +96,7 @@ export async function deleteProject(id) {
     throw new Error(errorText || "Failed to delete project.");
   }
 
-    return response.json();
+  return response.json();
 }
 
 export async function copyProjectsFromPreviousYear(year) {
@@ -120,17 +120,22 @@ export async function copyProjectsFromPreviousYear(year) {
   return response.json();
 }
 
+export async function toggleProjectActive(id) {
+  if (!id) {
+    throw new Error("Project ID must not be empty.");
+  }
 
-export async function updateProjectActive(project) {
-  const response = await apiFetch(`/management/updateProjectActive`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(project),
+  const response = await apiFetch(`/${RESOURCE}/toggleProjectActive/${encodeURIComponent(id)}`, {
+    method: "PATCH",
   });
+
+  if (response.status === 404) {
+    throw new Error(`Project with ID '${id}' was not found.`);
+  }
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || "Failed to update project status.");
+    throw new Error(errorText || "Failed to toggle project active status.");
   }
 
   return response.json();

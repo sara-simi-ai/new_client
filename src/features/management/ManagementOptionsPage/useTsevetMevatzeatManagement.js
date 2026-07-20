@@ -1,9 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useTsevetMevatzeat } from '../../../services/context/TsevetMevatzeatContext';
 
-/**
- * Hook for managing Tsevet Mevatzeat list with ManagementOptionsPage integration
- */
 export function useTsevetMevatzeatManagement() {
   const {
     filteredTsevetMevatzeat,
@@ -11,6 +8,7 @@ export function useTsevetMevatzeatManagement() {
     addNewTsevetMevatzeat,
     updateTsevetData,
     deleteTsevetData,
+    toggleTsevetStatus,
     updateFilter,
     filters,
   } = useTsevetMevatzeat();
@@ -25,16 +23,14 @@ export function useTsevetMevatzeatManagement() {
   const [modalError, setModalError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Convert tsevet mevatzeat items to management options format
   const options = useMemo(() => {
     return (filteredTsevetMevatzeat || []).map((tsevet) => ({
-      value: tsevet.id,
-      label: tsevet.name || '—',
+      value: tsevet.idntTsevetMevatsea,
+      label: tsevet.tsevetMevatseaName || '—',
       active: tsevet.active !== false,
     }));
   }, [filteredTsevetMevatzeat]);
 
-  // Update search filter when search term changes
   useEffect(() => {
     updateFilter('search', searchTerm);
   }, [searchTerm, updateFilter]);
@@ -82,14 +78,17 @@ export function useTsevetMevatzeatManagement() {
     if (!clean) return;
 
     // Check for duplicate names
-    if ((filteredTsevetMevatzeat || []).some((t) => t.name === clean)) {
+    if ((filteredTsevetMevatzeat || []).some((t) => t.tsevetMevatseaName === clean)) {
       setModalError('צוות עם השם הזה כבר קיים');
       return;
     }
 
     setIsLoading(true);
     try {
-      await addNewTsevetMevatzeat({ name: clean, description: '' });
+      await addNewTsevetMevatzeat({
+        tsevetMevatseaName: clean,
+        active: true,
+      });
       closeAddModal();
     } catch (err) {
       setModalError(err.message || 'Failed to create tsevet mevatzeat');
@@ -103,14 +102,19 @@ export function useTsevetMevatzeatManagement() {
     if (!clean || !editItem) return;
 
     // Check for duplicate names (excluding current)
-    if ((filteredTsevetMevatzeat || []).some((t) => t.name === clean && t.id !== editItem.value)) {
+    if ((filteredTsevetMevatzeat || []).some(
+      (t) => t.tsevetMevatseaName === clean && t.idntTsevetMevatsea !== editItem.value
+    )) {
       setModalError('צוות עם השם הזה כבר קיים');
       return;
     }
 
     setIsLoading(true);
     try {
-      await updateTsevetData({ id: editItem.value, name: clean });
+      await updateTsevetData({
+        idntTsevetMevatsea: editItem.value,
+        tsevetMevatseaName: clean,
+      });
       closeEditModal();
     } catch (err) {
       setModalError(err.message || 'Failed to update tsevet mevatzeat');
@@ -134,10 +138,12 @@ export function useTsevetMevatzeatManagement() {
   }, [deleteItem, deleteTsevetData, closeDeleteModal]);
 
   const handleToggleActive = useCallback(async (option) => {
-    // Note: TsevetMevatzeatContext doesn't have toggleTsevetMevatzeatActive, only updateTsevetData
-    // We would need to implement this in the API/Context if needed
-    console.warn('Toggle active not yet implemented for Tsevet Mevatzeat');
-  }, []);
+    try {
+      await toggleTsevetStatus(option.value);
+    } catch (err) {
+      console.error('Failed to toggle tsevet mevatzeat active status:', err);
+    }
+  }, [toggleTsevetStatus]);
 
   return {
     searchTerm,

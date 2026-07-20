@@ -1,19 +1,30 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
-import { getAllTsevetMevatsea, insertTsevetMevatsea, updateTsevetMevatsea, deleteTsevetMevatsea } from "../api/tsevetMevatseaApi";
+import {
+  getAllTsevetMevatsea,
+  insertTsevetMevatsea,
+  updateTsevetMevatsea,
+  toggleTsevetMevatseaActive,
+} from "../api/tsevetMevatseaApi";
 
 const TsevetMevatzeatContext = createContext();
 
+// TsevetMevatsea.cs only has: IdntTsevetMevatsea (Guid), TsevetMevatseaName (string), Active (bool),
+// serialized by ASP.NET Core as idntTsevetMevatsea / tsevetMevatseaName / active.
+// Normalize once here and expose `id`/`name` aliases for the rest of the app.
 function normalizeTsevetMevatseaFromApi(tsevetMevatsea) {
   return {
     ...tsevetMevatsea,
-    name: tsevetMevatsea.name || "",
-    description: tsevetMevatsea.description || "",
+    id: tsevetMevatsea.idntTsevetMevatsea,
+    name: tsevetMevatsea.tsevetMevatseaName || "",
+    active: tsevetMevatsea.active ?? true,
   };
 }
 
 function normalizeTsevetMevatseaForApi(tsevetMevatsea) {
   return {
-    ...tsevetMevatsea,
+    idntTsevetMevatsea: tsevetMevatsea.id ?? tsevetMevatsea.idntTsevetMevatsea,
+    tsevetMevatseaName: tsevetMevatsea.name ?? tsevetMevatsea.tsevetMevatseaName ?? "",
+    active: tsevetMevatsea.active ?? true,
   };
 }
 
@@ -57,14 +68,10 @@ export function TsevetMevatzeatProvider({ children }) {
 
   const filteredTsevetMevatzeat = useMemo(() => {
     let result = tsevetMevatzeatList;
-    
+
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      result = result.filter(
-        (t) =>
-          (t.name && t.name.toLowerCase().includes(searchLower)) ||
-          (t.description && t.description.toLowerCase().includes(searchLower))
-      );
+      result = result.filter((t) => t.name && t.name.toLowerCase().includes(searchLower));
     }
 
     if (filters.active !== undefined) {
@@ -99,11 +106,16 @@ export function TsevetMevatzeatProvider({ children }) {
     return normalizedUpdated;
   };
 
-  const deleteTsevetData = async (id) => {
-    await deleteTsevetMevatsea(id);
-    setTsevetMevatzeatList((prev) => prev.filter((t) => t.id !== id));
-    setSelectedTsevetId((prev) => (prev === id ? null : prev));
-    return id;
+  // NOTE: TsevetMevatseaController has no delete endpoint, only insert/get/update/toggle.
+  // Deactivation is handled via toggleTsevetStatus below instead of deletion.
+
+  const toggleTsevetStatus = async (id) => {
+    const updated = await toggleTsevetMevatseaActive(id);
+    const normalizedUpdated = normalizeTsevetMevatseaFromApi(updated);
+    setTsevetMevatzeatList((prev) =>
+      prev.map((t) => (t.id === normalizedUpdated.id ? normalizedUpdated : t))
+    );
+    return normalizedUpdated;
   };
 
   const selectedTsevetMevatzeat = useMemo(
@@ -113,9 +125,7 @@ export function TsevetMevatzeatProvider({ children }) {
 
   const toggleTsevetSelection = (tsevetId) => {
     setSelectedTsevetIds((prev) =>
-      prev.includes(tsevetId)
-        ? prev.filter((id) => id !== tsevetId)
-        : [...prev, tsevetId]
+      prev.includes(tsevetId) ? prev.filter((id) => id !== tsevetId) : [...prev, tsevetId]
     );
   };
 
@@ -144,13 +154,11 @@ export function TsevetMevatzeatProvider({ children }) {
     clearFilters,
     addNewTsevetMevatzeat,
     updateTsevetData,
-    deleteTsevetData,
+    toggleTsevetStatus,
   };
 
   return (
-    <TsevetMevatzeatContext.Provider value={value}>
-      {children}
-    </TsevetMevatzeatContext.Provider>
+    <TsevetMevatzeatContext.Provider value={value}>{children}</TsevetMevatzeatContext.Provider>
   );
 }
 
