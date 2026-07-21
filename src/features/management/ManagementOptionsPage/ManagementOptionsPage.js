@@ -6,6 +6,45 @@ import ToggleActiveButton from '../../../components/ToggleActiveButton/ToggleAct
 import '../ManagementShared.css';
 import './ManagementOptionsPage.css';
 import { useManagementOptions } from './useManagementOptions';
+import {
+  MANAGEMENT_EMPTY_TEXT,
+  MANAGEMENT_ADD_ACTION,
+  MANAGEMENT_SAVE_ACTION,
+  MANAGEMENT_DELETE_ACTION,
+  MANAGEMENT_CANCEL_ACTION,
+  MANAGEMENT_TOGGLE_INACTIVE,
+  MANAGEMENT_TOGGLE_ACTIVE,
+  MANAGEMENT_EDIT_ACTION,
+} from '../../../utils/Dec';
+
+function ManagementModal({
+  title,
+  description,
+  children,
+  error,
+  onCancel,
+  onConfirm,
+  cancelLabel,
+  confirmLabel,
+  isLoading,
+}) {
+  return (
+    <Modal onClose={onCancel}>
+      <h3>{title}</h3>
+      <p className="muted">{description}</p>
+      {children}
+      {error && <div className="mgmt-modal-error">{error}</div>}
+      <div className="mgmt-modal-actions">
+        <button className="mgmt-btn ghost" type="button" onClick={onCancel} disabled={isLoading}>
+          {cancelLabel}
+        </button>
+        <button className="mgmt-btn primary" type="button" onClick={onConfirm} disabled={isLoading}>
+          {confirmLabel}
+        </button>
+      </div>
+    </Modal>
+  );
+}
 
 export default function ManagementOptionsPage({
   onBack,
@@ -20,19 +59,18 @@ export default function ManagementOptionsPage({
   deleteModalTitle,
   deleteModalDescription = () => '',
   itemPlaceholder,
-  addActionLabel = 'הוספה',
-  saveActionLabel = 'שמור',
-  deleteActionLabel = 'מחק',
-  emptyText = 'לא נמצאו תוצאות',
+  addActionLabel = MANAGEMENT_ADD_ACTION,
+  saveActionLabel = MANAGEMENT_SAVE_ACTION,
+  deleteActionLabel = MANAGEMENT_DELETE_ACTION,
+  emptyText = MANAGEMENT_EMPTY_TEXT,
   options,
-  setOptions,
+  setOptions = () => {},
   onToggleOptionActive,
   duplicateErrorMessage,
   allValue = '__all__',
-  __hook__ = null, // For async mode
-  __isAsync__ = false,
+  asyncHook = null, 
+  isAsync = false,
 }) {
-  // Always call the hook (rules of hooks)
   const syncHook = useManagementOptions({
     options,
     setOptions,
@@ -40,8 +78,7 @@ export default function ManagementOptionsPage({
     duplicateErrorMessage,
   });
 
-  // Use the provided async hook if available, otherwise use sync hook
-  const hook = __isAsync__ && __hook__ ? __hook__ : syncHook;
+  const hook = isAsync && asyncHook ? asyncHook : syncHook;
 
   const {
     searchTerm,
@@ -107,9 +144,9 @@ export default function ManagementOptionsPage({
                   <ToggleActiveButton
                     active={opt.active !== false}
                     onClick={() => onToggleOptionActive?.(opt)}
-                    title={opt.active !== false ? 'העבר ל"לא פעיל"' : 'העבר ל"פעיל"'}
+                    title={opt.active !== false ? MANAGEMENT_TOGGLE_INACTIVE : MANAGEMENT_TOGGLE_ACTIVE}
                   />
-                  <button className="icon-btn" type="button" onClick={() => openEditModal(opt)} title="ערוך" aria-label="ערוך">
+                  <button className="icon-btn" type="button" onClick={() => openEditModal(opt)} title={MANAGEMENT_EDIT_ACTION} aria-label={MANAGEMENT_EDIT_ACTION}>
                     <EditIcon />
                   </button>
                 </div>
@@ -119,40 +156,45 @@ export default function ManagementOptionsPage({
         </div>
 
         {addModalOpen && (
-          <Modal onClose={closeAddModal}>
-            <h3>{addModalTitle}</h3>
-            <p className="muted">{addModalDescription}</p>
+          <ManagementModal
+            title={addModalTitle}
+            description={addModalDescription}
+            error={modalError}
+            onCancel={closeAddModal}
+            onConfirm={confirmAdd}
+            cancelLabel={MANAGEMENT_CANCEL_ACTION}
+            confirmLabel={addActionLabel}
+            isLoading={isLoading}
+          >
             <input className="mgmt-input" value={pendingName} onChange={(e) => setPendingName(e.target.value)} placeholder={itemPlaceholder} />
-            {modalError && <div style={{ color: '#ef4444', marginTop: 8 }}>{modalError}</div>}
-            <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
-              <button className="mgmt-btn ghost" type="button" onClick={closeAddModal} disabled={isLoading}>ביטול</button>
-              <button className="mgmt-btn primary" type="button" onClick={confirmAdd} disabled={isLoading}>{addActionLabel}</button>
-            </div>
-          </Modal>
+          </ManagementModal>
         )}
 
         {editModalOpen && (
-          <Modal onClose={closeEditModal}>
-            <h3>{editModalTitle}</h3>
-            <p className="muted">{editModalDescription}</p>
+          <ManagementModal
+            title={editModalTitle}
+            description={editModalDescription}
+            error={modalError}
+            onCancel={closeEditModal}
+            onConfirm={confirmEdit}
+            cancelLabel={MANAGEMENT_CANCEL_ACTION}
+            confirmLabel={saveActionLabel}
+            isLoading={isLoading}
+          >
             <input className="mgmt-input" value={pendingName} onChange={(e) => setPendingName(e.target.value)} placeholder={itemPlaceholder} />
-            {modalError && <div style={{ color: '#ef4444', marginTop: 8 }}>{modalError}</div>}
-            <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
-              <button className="mgmt-btn ghost" type="button" onClick={closeEditModal} disabled={isLoading}>ביטול</button>
-              <button className="mgmt-btn primary" type="button" onClick={confirmEdit} disabled={isLoading}>{saveActionLabel}</button>
-            </div>
-          </Modal>
+          </ManagementModal>
         )}
 
         {deleteModalOpen && (
-          <Modal onClose={closeDeleteModal}>
-            <h3>{deleteModalTitle}</h3>
-            <p className="muted">{deleteModalDescription(deleteOption)}</p>
-            <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
-              <button className="mgmt-btn ghost" type="button" onClick={closeDeleteModal} disabled={isLoading}>ביטול</button>
-              <button className="mgmt-btn primary" type="button" onClick={confirmDelete} disabled={isLoading}>{deleteActionLabel}</button>
-            </div>
-          </Modal>
+          <ManagementModal
+            title={deleteModalTitle}
+            description={deleteModalDescription(deleteOption)}
+            onCancel={closeDeleteModal}
+            onConfirm={confirmDelete}
+            cancelLabel={MANAGEMENT_CANCEL_ACTION}
+            confirmLabel={deleteActionLabel}
+            isLoading={isLoading}
+          />
         )}
       </div>
     </div>

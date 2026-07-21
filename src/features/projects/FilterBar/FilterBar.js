@@ -45,7 +45,6 @@ function Dropdown({
     const optionKey = getOptionKey(option);
     
     if (optionKey === "__all__") {
-      // "All" is considered selected if no items are selected OR if all non-"all" items are selected
       if (!Array.isArray(selected) || selected.length === 0) return false;
       
       const allItems = options.filter((o) => getOptionKey(o) !== "__all__");

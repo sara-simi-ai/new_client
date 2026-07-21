@@ -3,9 +3,41 @@ import './ManagementHome.css';
 import DepartmentsPage from '../DepartmentsPage/DepartmentsPage';
 import TeamsPage from '../TeamsPage/TeamsPage';
 import ProjectsManagementPage from '../ProjectsManagementPage/ProjectsManagementPage';
+import {
+  MANAGEMENT_TITLE,
+  MANAGEMENT_SUBTITLE,
+  DEPARTMENTS_CARD_TITLE,
+  DEPARTMENTS_CARD_DESC,
+  TEAMS_CARD_TITLE,
+  TEAMS_CARD_DESC,
+  PROJECTS_CARD_TITLE,
+  PROJECTS_CARD_DESC,
+  MANAGEMENT_MANAGE_BUTTON,
+} from '../../../utils/Dec';
 
 export default function ManagementHome() {
   const [currentPage, setCurrentPage] = useState('landing');
+
+  const cards = [
+    {
+      title: DEPARTMENTS_CARD_TITLE,
+      description: DEPARTMENTS_CARD_DESC,
+      page: 'departments',
+      className: 'mgmt-card card-small',
+    },
+    {
+      title: TEAMS_CARD_TITLE,
+      description: TEAMS_CARD_DESC,
+      page: 'teams',
+      className: 'mgmt-card',
+    },
+    {
+      title: PROJECTS_CARD_TITLE,
+      description: PROJECTS_CARD_DESC,
+      page: 'projects',
+      className: 'mgmt-card card-small',
+    },
+  ];
 
   const renderPage = () => {
     if (currentPage === 'departments') {
@@ -27,40 +59,26 @@ export default function ManagementHome() {
   return (
     <div className="mgmt" dir="rtl">
       <div className="mgmt-header">
-        <h2 className="mgmt-title">מסכי ניהול</h2>
-        <p className="mgmt-sub">פלטפורמה מרכזית לניהול מלא של אגפים, צוותות ופרויקטים  </p>
+        <h2 className="mgmt-title">{MANAGEMENT_TITLE}</h2>
+        <p className="mgmt-sub">{MANAGEMENT_SUBTITLE}</p>
       </div>
 
       <div className="mgmt-cards mgmt-landing">
-        <div className="mgmt-card card-small">
-          <h3>ניהול אגפים</h3>
-          <p className="muted">תחזוקה וארגון של אגפי הפעילות בחברה – הוסף, ערוך או מחק אגפים בקלות</p>
-          <div className="card-actions">
-            <button type="button" className="card-link-btn" onClick={() => setCurrentPage('departments')}>
-             לניהול 
-            </button>
+        {cards.map(({ title, description, page, className }) => (
+          <div key={page} className={className}>
+            <h3>{title}</h3>
+            <p className="muted">{description}</p>
+            <div className="card-actions">
+              <button
+                type="button"
+                className="card-link-btn"
+                onClick={() => setCurrentPage(page)}
+              >
+                {MANAGEMENT_MANAGE_BUTTON}
+              </button>
+            </div>
           </div>
-        </div>
-
-        <div className="mgmt-card">
-          <h3>ניהול צוותות</h3>
-          <p className="muted">הנהלת צוותים וקבוצות עבודה – נהל את מבנה הצוותים והקשרים בתוך כל אגף</p>
-          <div className="card-actions">
-            <button type="button" className="card-link-btn" onClick={() => setCurrentPage('teams')}>
-              לניהול 
-            </button>
-          </div>
-        </div>
-
-        <div className="mgmt-card card-small">
-          <h3>ניהול פרויקטים</h3>
-          <p className="muted">פיקוח עדכני על פרויקטים ותקדמותם – עקוב אחרי מעמד וביצועי כל פרויקט</p>
-          <div className="card-actions">
-            <button type="button" className="card-link-btn" onClick={() => setCurrentPage('projects')}>
-              לניהול 
-            </button>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { getAllAgaff, insertAgaff, updateAgaff, toggleAgaffActive } from "../api/agaffApi";
 
 const AgaffContext = createContext();
@@ -55,13 +55,16 @@ export function AgaffProvider({ children }) {
     };
   }, []);
 
-  const updateFilter = (filterName, value) => {
-    setFilters((prev) => ({ ...prev, [filterName]: value }));
-  };
+  const updateFilter = useCallback((filterName, value) => {
+    setFilters((prev) => {
+      if (prev[filterName] === value) return prev;
+      return { ...prev, [filterName]: value };
+    });
+  }, []);
 
-  const clearFilters = () => {
-    setFilters({});
-  };
+  const clearFilters = useCallback(() => {
+    setFilters((prev) => (Object.keys(prev).length ? {} : prev));
+  }, []);
 
   const filteredAgaff = useMemo(() => {
     let result = agaffList;
@@ -90,15 +93,15 @@ export function AgaffProvider({ children }) {
       }));
   }, [agaffList]);
 
-  const addNewAgaff = async (agaffData) => {
+  const addNewAgaff = useCallback(async (agaffData) => {
     const fullData = normalizeAgaffForApi(agaffData);
     const savedAgaff = await insertAgaff(fullData);
     const normalizedSaved = normalizeAgaffFromApi(savedAgaff);
     setAgaffList((prev) => [...prev, normalizedSaved]);
     return normalizedSaved;
-  };
+  }, []);
 
-  const updateAgaffData = async (agaffData) => {
+  const updateAgaffData = useCallback(async (agaffData) => {
     const toSend = normalizeAgaffForApi(agaffData);
     const updated = await updateAgaff(agaffData.id, toSend);
     const normalizedUpdated = normalizeAgaffFromApi(updated);
@@ -106,55 +109,76 @@ export function AgaffProvider({ children }) {
       prev.map((a) => (a.id === normalizedUpdated.id ? normalizedUpdated : a))
     );
     return normalizedUpdated;
-  };
+  }, []);
 
-  const toggleAgaffStatus = async (id) => {
+  const toggleAgaffStatus = useCallback(async (id) => {
     const updated = await toggleAgaffActive(id);
     const normalizedUpdated = normalizeAgaffFromApi(updated);
     setAgaffList((prev) =>
       prev.map((a) => (a.id === normalizedUpdated.id ? normalizedUpdated : a))
     );
     return normalizedUpdated;
-  };
+  }, []);
 
   const selectedAgaff = useMemo(
     () => agaffList.find((a) => a.id === selectedAgaffId) || null,
     [agaffList, selectedAgaffId]
   );
 
-  const toggleAgaffSelection = (agaffId) => {
+  const toggleAgaffSelection = useCallback((agaffId) => {
     setSelectedAgaffIds((prev) =>
       prev.includes(agaffId) ? prev.filter((id) => id !== agaffId) : [...prev, agaffId]
     );
-  };
+  }, []);
 
-  const selectAllFilteredAgaff = () => {
+  const selectAllFilteredAgaff = useCallback(() => {
     setSelectedAgaffIds(filteredAgaff.map((a) => a.id));
-  };
+  }, [filteredAgaff]);
 
-  const clearAgaffSelection = () => {
+  const clearAgaffSelection = useCallback(() => {
     setSelectedAgaffIds([]);
-  };
+  }, []);
 
-  const value = {
-    agaffList,
-    filteredAgaff,
-    isLoading,
-    selectedAgaffId,
-    setSelectedAgaffId,
-    selectedAgaff,
-    selectedAgaffIds,
-    toggleAgaffSelection,
-    selectAllFilteredAgaff,
-    clearAgaffSelection,
-    agaffOptions,
-    filters,
-    updateFilter,
-    clearFilters,
-    addNewAgaff,
-    updateAgaffData,
-    toggleAgaffStatus,
-  };
+  const value = useMemo(
+    () => ({
+      agaffList,
+      filteredAgaff,
+      isLoading,
+      selectedAgaffId,
+      setSelectedAgaffId,
+      selectedAgaff,
+      selectedAgaffIds,
+      toggleAgaffSelection,
+      selectAllFilteredAgaff,
+      clearAgaffSelection,
+      agaffOptions,
+      filters,
+      updateFilter,
+      clearFilters,
+      addNewAgaff,
+      updateAgaffData,
+      toggleAgaffStatus,
+    }),
+    [
+      agaffList,
+      filteredAgaff,
+      isLoading,
+      selectedAgaffId,
+      setSelectedAgaffId,
+      selectedAgaff,
+      selectedAgaffIds,
+      toggleAgaffSelection,
+      selectAllFilteredAgaff,
+      clearAgaffSelection,
+      agaffOptions,
+      filters,
+      updateFilter,
+      clearFilters,
+      addNewAgaff,
+      updateAgaffData,
+      toggleAgaffStatus,
+    ]
+  );
 
   return <AgaffContext.Provider value={value}>{children}</AgaffContext.Provider>;
 }

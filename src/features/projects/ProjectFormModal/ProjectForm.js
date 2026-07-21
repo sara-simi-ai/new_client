@@ -4,6 +4,7 @@ import { useAgaff } from "../../../services/context/AgaffContext";
 import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
 import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
 import { GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
+import { formatNumberWithSeparators, parseFormattedNumber } from "../../../utils/formatMoneyHelper";
 import "./ProjectFormModal.css";
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
@@ -61,11 +62,34 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
   const handleNumFocus = (field) => {
+    // When focused, show the unformatted number for easier editing
     if (Number(form[field]) === 0) set(field, "");
   };
 
   const handleNumBlur = (field) => {
-    if (form[field] === "" || form[field] === null || form[field] === undefined) set(field, 0);
+    // When blurring, parse the input and convert to number
+    const numValue = parseFormattedNumber(form[field]);
+    set(field, numValue);
+  };
+
+  const handleNumChange = (field, value) => {
+    // Allow user to input with or without formatting
+    // We'll parse when they blur or submit
+    set(field, value);
+  };
+
+  const getDisplayValue = (fieldValue) => {
+    // Get the value to display in the input
+    // If it's an empty string (user is editing) or already formatted, show as-is
+    // Otherwise format the number
+    if (fieldValue === "" || fieldValue === null || fieldValue === undefined) {
+      return "";
+    }
+    
+    // If it looks like a raw number, format it
+    const numValue = parseFormattedNumber(fieldValue);
+    if (numValue === 0) return "";
+    return formatNumberWithSeparators(numValue);
   };
 
   const totalBudget = Number(form.totalTakzivCoachAdam) + Number(form.totalTakzivRechesh);
@@ -181,17 +205,17 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
           <div className="np-row">
             <div className="np-field">
               <label className="np-label">{PROCUREMENT_BUDGET_LABEL} (₪) *</label>
-              <input type="number" className={`np-input${errors.totalTakzivRechesh ? ' np-input--error' : ''}`} value={form.totalTakzivRechesh} onFocus={() => handleNumFocus('totalTakzivRechesh')} onBlur={() => handleNumBlur('totalTakzivRechesh')} onChange={(e) => set('totalTakzivRechesh', e.target.value)} />
+              <input type="text" inputMode="numeric" className={`np-input${errors.totalTakzivRechesh ? ' np-input--error' : ''}`} value={getDisplayValue(form.totalTakzivRechesh)} onFocus={() => handleNumFocus('totalTakzivRechesh')} onBlur={() => handleNumBlur('totalTakzivRechesh')} onChange={(e) => handleNumChange('totalTakzivRechesh', e.target.value)} />
             </div>
             <div className="np-field">
               <label className="np-label">{HR_BUDGET_LABEL} (₪) *</label>
-              <input type="number" className={`np-input${errors.totalTakzivCoachAdam ? ' np-input--error' : ''}`} value={form.totalTakzivCoachAdam} onFocus={() => handleNumFocus('totalTakzivCoachAdam')} onBlur={() => handleNumBlur('totalTakzivCoachAdam')} onChange={(e) => set('totalTakzivCoachAdam', e.target.value)} />
+              <input type="text" inputMode="numeric" className={`np-input${errors.totalTakzivCoachAdam ? ' np-input--error' : ''}`} value={getDisplayValue(form.totalTakzivCoachAdam)} onFocus={() => handleNumFocus('totalTakzivCoachAdam')} onBlur={() => handleNumBlur('totalTakzivCoachAdam')} onChange={(e) => handleNumChange('totalTakzivCoachAdam', e.target.value)} />
             </div>
           </div>
 
           <div className="np-field">
             <label className="np-label">{TOTAL_BUDGET_LABEL} (אוטומטי)</label>
-            <input className="np-input" readOnly value={`₪${totalBudget}`} style={{ backgroundColor: "#f9fafb", color: "#374151" }} />
+            <input className="np-input" readOnly value={`₪${formatNumberWithSeparators(totalBudget)}`} style={{ backgroundColor: "#f9fafb", color: "#374151" }} />
           </div>
 
           <div className="np-row np-field--last">
@@ -206,7 +230,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
             </div>
             <div className="np-field" style={{ marginBottom: 0 }}>
               <label className="np-label">{PLANNED_HR_LABEL} (₪) *</label>
-              <input type="number" className={`np-input${errors.coachAdam ? ' np-input--error' : ''}`} value={form.coachAdam} onFocus={() => handleNumFocus('coachAdam')} onBlur={() => handleNumBlur('coachAdam')} onChange={(e) => set('coachAdam', e.target.value)} />
+              <input type="text" inputMode="numeric" className={`np-input${errors.coachAdam ? ' np-input--error' : ''}`} value={getDisplayValue(form.coachAdam)} onFocus={() => handleNumFocus('coachAdam')} onBlur={() => handleNumBlur('coachAdam')} onChange={(e) => handleNumChange('coachAdam', e.target.value)} />
             </div>
           </div>
         </div>

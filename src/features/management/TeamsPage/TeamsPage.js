@@ -1,6 +1,20 @@
 import React from 'react';
 import ManagementOptionsPage from '../ManagementOptionsPage/ManagementOptionsPage';
 import { useTsevetMevatzeatManagement } from '../ManagementOptionsPage/useTsevetMevatzeatManagement';
+import {
+  TEAMS_TITLE,
+  TEAMS_SUBTITLE,
+  TEAMS_SEARCH_PLACEHOLDER,
+  TEAMS_ADD_BUTTON,
+  TEAMS_ADD_MODAL_TITLE,
+  TEAMS_ADD_MODAL_DESC,
+  TEAMS_EDIT_MODAL_TITLE,
+  TEAMS_EDIT_MODAL_DESC,
+  TEAMS_DELETE_MODAL_TITLE,
+  TEAMS_ITEM_PLACEHOLDER,
+  TEAMS_DUPLICATE_ERROR,
+  TEAMS_DELETE_CONFIRM_TEXT,
+} from '../../../utils/Dec';
 
 export default function TeamsPage({ onBack }) {
   const hook = useTsevetMevatzeatManagement();
@@ -8,24 +22,22 @@ export default function TeamsPage({ onBack }) {
   return (
     <ManagementOptionsPage
       onBack={onBack}
-      title="ניהול צוותות"
-      subtitle="הוסף, ערוך או מחק צוותות במערכת."
-      searchPlaceholder="חיפוש לפי שם צוות"
-      addButtonLabel="הוספת צוות +"
-      addModalTitle="הוספת צוות חדש"
-      addModalDescription="הכנס שם לצוות החדש"
-      editModalTitle="עריכת צוות"
-      editModalDescription="ערוך את שם הצוות"
-      deleteModalTitle="מחיקת צוות"
-      deleteModalDescription={(option) => `האם אתה בטוח שברצונך למחוק את הצוות "${option?.label}"?`}
-      itemPlaceholder="שם צוות"
-      options={hook.filteredItems}
-      setOptions={() => {}} // No-op for async version
+      title={TEAMS_TITLE}
+      subtitle={TEAMS_SUBTITLE}
+      searchPlaceholder={TEAMS_SEARCH_PLACEHOLDER}
+      addButtonLabel={TEAMS_ADD_BUTTON}
+      addModalTitle={TEAMS_ADD_MODAL_TITLE}
+      addModalDescription={TEAMS_ADD_MODAL_DESC}
+      editModalTitle={TEAMS_EDIT_MODAL_TITLE}
+      editModalDescription={TEAMS_EDIT_MODAL_DESC}
+      deleteModalTitle={TEAMS_DELETE_MODAL_TITLE}
+      deleteModalDescription={(option) => `${TEAMS_DELETE_CONFIRM_TEXT} "${option?.label}"?`}
+      itemPlaceholder={TEAMS_ITEM_PLACEHOLDER}
+      options={hook.options}
       onToggleOptionActive={hook.handleToggleActive}
-      duplicateErrorMessage="צוות עם השם הזה כבר קיים"
-      // Pass the full hook state for async support
-      __hook__={hook}
-      __isAsync__={true}
+      duplicateErrorMessage={TEAMS_DUPLICATE_ERROR}
+      asyncHook={hook}
+      isAsync={true}
     />
   );
 }

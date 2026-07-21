@@ -1,6 +1,20 @@
 import React from 'react';
 import ManagementOptionsPage from '../ManagementOptionsPage/ManagementOptionsPage';
 import { useAgaffManagement } from '../ManagementOptionsPage/useAgaffManagement';
+import {
+  DEPARTMENTS_TITLE,
+  DEPARTMENTS_SUBTITLE,
+  DEPARTMENTS_SEARCH_PLACEHOLDER,
+  DEPARTMENTS_ADD_BUTTON,
+  DEPARTMENTS_ADD_MODAL_TITLE,
+  DEPARTMENTS_ADD_MODAL_DESC,
+  DEPARTMENTS_EDIT_MODAL_TITLE,
+  DEPARTMENTS_EDIT_MODAL_DESC,
+  DEPARTMENTS_DELETE_MODAL_TITLE,
+  DEPARTMENTS_ITEM_PLACEHOLDER,
+  DEPARTMENTS_DUPLICATE_ERROR,
+  DEPARTMENTS_DELETE_CONFIRM_TEXT,
+} from '../../../utils/Dec';
 
 export default function DepartmentsPage({ onBack }) {
   const hook = useAgaffManagement();
@@ -8,24 +22,24 @@ export default function DepartmentsPage({ onBack }) {
   return (
     <ManagementOptionsPage
       onBack={onBack}
-      title="ניהול אגפים"
-      subtitle="הוסף, ערוך או מחק אגפים במערכת."
-      searchPlaceholder="חיפוש לפי שם אגף"
-      addButtonLabel="הוספת אגף +"
-      addModalTitle="הוספת אגף חדש"
-      addModalDescription="הכנס שם לאגף החדש"
-      editModalTitle="עריכת אגף"
-      editModalDescription="ערוך את שם האגף"
-      deleteModalTitle="מחיקת אגף"
-      deleteModalDescription={(option) => `האם אתה בטוח שברצונך למחוק את האגף "${option?.label}"?`}
-      itemPlaceholder="שם אגף"
-      options={hook.filteredItems}
-      setOptions={() => {}} // No-op for async version
+      title={DEPARTMENTS_TITLE}
+      subtitle={DEPARTMENTS_SUBTITLE}
+      searchPlaceholder={DEPARTMENTS_SEARCH_PLACEHOLDER}
+      addButtonLabel={DEPARTMENTS_ADD_BUTTON}
+      addModalTitle={DEPARTMENTS_ADD_MODAL_TITLE}
+      addModalDescription={DEPARTMENTS_ADD_MODAL_DESC}
+      editModalTitle={DEPARTMENTS_EDIT_MODAL_TITLE}
+      editModalDescription={DEPARTMENTS_EDIT_MODAL_DESC}
+      deleteModalTitle={DEPARTMENTS_DELETE_MODAL_TITLE}
+      deleteModalDescription={(option) => `${DEPARTMENTS_DELETE_CONFIRM_TEXT} "${option?.label}"?`}
+      itemPlaceholder={DEPARTMENTS_ITEM_PLACEHOLDER}
+      // Pass full, unfiltered options to avoid duplicating the derived `filteredItems` provided by the async hook
+      options={hook.options}
       onToggleOptionActive={hook.handleToggleActive}
-      duplicateErrorMessage="אגף עם השם הזה כבר קיים"
+      duplicateErrorMessage={DEPARTMENTS_DUPLICATE_ERROR}
       // Pass the full hook state for async support
-      __hook__={hook}
-      __isAsync__={true}
+      asyncHook={hook}
+      isAsync={true}
     />
   );
 }

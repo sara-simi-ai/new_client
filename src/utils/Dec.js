@@ -31,11 +31,66 @@ export const TOTAL_BUDGET_LABEL = 'סה"כ תקציב';
 export const TOTAL_GAPS_LABEL = 'סה"כ פערים';
 export const PROJECT_NAME_LABEL = 'שם הפרויקט';
 export const AGAF_LABEL = 'אגף';
-export const UNIT_LABEL = 'יחידה מבצעת';
+export const UNIT_LABEL = 'צוות מבצע';
 export const CONTINUATION_LABEL = 'המשכי';
 export const CONTINUATION_TRUE_LABEL = 'כן';
 export const CONTINUATION_FALSE_LABEL = 'לא';
 export const MASLOL_LABEL = 'מסלול';
+
+// Management Home texts
+export const MANAGEMENT_TITLE = 'מסכי ניהול';
+export const MANAGEMENT_SUBTITLE = 'פלטפורמה מרכזית לניהול מלא של אגפים, צוותות ופרויקטים  ';
+
+// Departments/Agaff Management
+export const DEPARTMENTS_TITLE = 'ניהול אגפים';
+export const DEPARTMENTS_SUBTITLE = 'הוסף, ערוך או מחק אגפים במערכת.';
+export const DEPARTMENTS_SEARCH_PLACEHOLDER = 'חיפוש לפי שם אגף';
+export const DEPARTMENTS_ADD_BUTTON = 'הוספת אגף +';
+export const DEPARTMENTS_ADD_MODAL_TITLE = 'הוספת אגף חדש';
+export const DEPARTMENTS_ADD_MODAL_DESC = 'הכנס שם לאגף החדש';
+export const DEPARTMENTS_EDIT_MODAL_TITLE = 'עריכת אגף';
+export const DEPARTMENTS_EDIT_MODAL_DESC = 'ערוך את שם האגף';
+export const DEPARTMENTS_DELETE_MODAL_TITLE = 'מחיקת אגף';
+export const DEPARTMENTS_ITEM_PLACEHOLDER = 'שם אגף';
+export const DEPARTMENTS_DUPLICATE_ERROR = 'אגף עם השם הזה כבר קיים';
+export const DEPARTMENTS_CARD_TITLE = 'ניהול אגפים';
+export const DEPARTMENTS_CARD_DESC = 'תחזוקה וארגון של אגפי הפעילות בחברה – הוסף, ערוך או מחק אגפים בקלות';
+
+// Teams/Tsevet Management
+export const TEAMS_TITLE = 'ניהול צוותות';
+export const TEAMS_SUBTITLE = 'הוסף, ערוך או מחק צוותות במערכת.';
+export const TEAMS_SEARCH_PLACEHOLDER = 'חיפוש לפי שם צוות';
+export const TEAMS_ADD_BUTTON = 'הוספת צוות +';
+export const TEAMS_ADD_MODAL_TITLE = 'הוספת צוות חדש';
+export const TEAMS_ADD_MODAL_DESC = 'הכנס שם לצוות החדש';
+export const TEAMS_EDIT_MODAL_TITLE = 'עריכת צוות';
+export const TEAMS_EDIT_MODAL_DESC = 'ערוך את שם הצוות';
+export const TEAMS_DELETE_MODAL_TITLE = 'מחיקת צוות';
+export const TEAMS_ITEM_PLACEHOLDER = 'שם צוות';
+export const TEAMS_DUPLICATE_ERROR = 'צוות עם השם הזה כבר קיים';
+export const TEAMS_CARD_TITLE = 'ניהול צוותות';
+export const TEAMS_CARD_DESC = 'הנהלת צוותים וקבוצות עבודה – נהל את מבנה הצוותים והקשרים בתוך כל אגף';
+export const MANAGEMENT_DUPLICATE_NAME_ERROR = 'שם עם השם הזה כבר קיים';
+export const DEPARTMENTS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את האגף';
+export const TEAMS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את הצוות';
+
+// Projects Management
+export const PROJECTS_TITLE = 'ניהול פרויקטים';
+export const PROJECTS_SUBTITLE = 'סקירת כל הפרויקטים וניהול המצב הפעיל שלהם.';
+export const PROJECTS_EMPTY_STATE = 'לא נמצאו פרויקטים. טוען...';
+export const PROJECTS_CARD_TITLE = 'ניהול פרויקטים';
+export const PROJECTS_CARD_DESC = 'פיקוח עדכני על פרויקטים ותקדמותם – עקוב אחרי מעמד וביצועי כל פרויקט';
+
+// Management UI Common
+export const MANAGEMENT_MANAGE_BUTTON = 'לניהול';
+export const MANAGEMENT_EMPTY_TEXT = 'לא נמצאו תוצאות';
+export const MANAGEMENT_ADD_ACTION = 'הוספה';
+export const MANAGEMENT_SAVE_ACTION = 'שמור';
+export const MANAGEMENT_DELETE_ACTION = 'מחק';
+export const MANAGEMENT_CANCEL_ACTION = 'ביטול';
+export const MANAGEMENT_TOGGLE_INACTIVE = 'העבר ל"לא פעיל"';
+export const MANAGEMENT_TOGGLE_ACTIVE = 'העבר ל"פעיל"';
+export const MANAGEMENT_EDIT_ACTION = 'ערוך';
 
 export const AGAF_OPTIONS = [
   { value: "__all__", label: "כל האגפים" },
@@ -53,4 +108,70 @@ export const YECHIDA_MEVATSAAT_OPTIONS = [
   { value: "מערכות ליבה", label: "מערכות ליבה" },
 ];
 
-export default { MASLOL, MASLOL_OPTIONS, GAP_STATUS, GAP_STATUS_OPTIONS, GAP_CLASSES, AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, TOTAL_BUDGET_LABEL, TOTAL_GAPS_LABEL, PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL };
+export default { 
+  MASLOL, 
+  MASLOL_OPTIONS, 
+  GAP_STATUS, 
+  GAP_STATUS_OPTIONS, 
+  GAP_CLASSES, 
+  AGAF_OPTIONS, 
+  YECHIDA_MEVATSAAT_OPTIONS, 
+  HR_BUDGET_LABEL, 
+  PROCUREMENT_BUDGET_LABEL, 
+  PLANNED_HR_LABEL, 
+  GAPS_LABEL, 
+  TOTAL_BUDGET_LABEL, 
+  TOTAL_GAPS_LABEL, 
+  PROJECT_NAME_LABEL, 
+  AGAF_LABEL, 
+  UNIT_LABEL, 
+  CONTINUATION_LABEL, 
+  CONTINUATION_TRUE_LABEL, 
+  CONTINUATION_FALSE_LABEL, 
+  MASLOL_LABEL,
+  MANAGEMENT_TITLE,
+  MANAGEMENT_SUBTITLE,
+  MANAGEMENT_DUPLICATE_NAME_ERROR,
+  DEPARTMENTS_TITLE,
+  DEPARTMENTS_SUBTITLE,
+  DEPARTMENTS_SEARCH_PLACEHOLDER,
+  DEPARTMENTS_ADD_BUTTON,
+  DEPARTMENTS_ADD_MODAL_TITLE,
+  DEPARTMENTS_ADD_MODAL_DESC,
+  DEPARTMENTS_EDIT_MODAL_TITLE,
+  DEPARTMENTS_EDIT_MODAL_DESC,
+  DEPARTMENTS_DELETE_MODAL_TITLE,
+  DEPARTMENTS_ITEM_PLACEHOLDER,
+  DEPARTMENTS_DUPLICATE_ERROR,
+  DEPARTMENTS_CARD_TITLE,
+  DEPARTMENTS_CARD_DESC,
+  DEPARTMENTS_DELETE_CONFIRM_TEXT,
+  TEAMS_TITLE,
+  TEAMS_SUBTITLE,
+  TEAMS_SEARCH_PLACEHOLDER,
+  TEAMS_ADD_BUTTON,
+  TEAMS_ADD_MODAL_TITLE,
+  TEAMS_ADD_MODAL_DESC,
+  TEAMS_EDIT_MODAL_TITLE,
+  TEAMS_EDIT_MODAL_DESC,
+  TEAMS_DELETE_MODAL_TITLE,
+  TEAMS_ITEM_PLACEHOLDER,
+  TEAMS_DUPLICATE_ERROR,
+  TEAMS_DELETE_CONFIRM_TEXT,
+  TEAMS_CARD_TITLE,
+  TEAMS_CARD_DESC,
+  PROJECTS_TITLE,
+  PROJECTS_SUBTITLE,
+  PROJECTS_EMPTY_STATE,
+  PROJECTS_CARD_TITLE,
+  PROJECTS_CARD_DESC,
+  MANAGEMENT_MANAGE_BUTTON,
+  MANAGEMENT_EMPTY_TEXT,
+  MANAGEMENT_ADD_ACTION,
+  MANAGEMENT_SAVE_ACTION,
+  MANAGEMENT_DELETE_ACTION,
+  MANAGEMENT_CANCEL_ACTION,
+  MANAGEMENT_TOGGLE_INACTIVE,
+  MANAGEMENT_TOGGLE_ACTIVE,
+  MANAGEMENT_EDIT_ACTION,
+};

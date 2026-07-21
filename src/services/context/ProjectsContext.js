@@ -198,11 +198,33 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     const normalized = (copied || []).map(normalizeProjectFromApi);
 
     setProjects((prev) => [...prev, ...normalized]);
+    setAllProjects((prev) => [...prev, ...normalized]);
     return normalized;
   };
 
+  const syncProjectToCurrentYear = (prevProjects, project) => {
+    if (project.year !== selectedYear) {
+      return prevProjects;
+    }
+
+    if (project.active !== false) {
+      const exists = prevProjects.some((p) => p.id === project.id);
+      return exists
+        ? prevProjects.map((p) => (p.id === project.id ? project : p))
+        : [...prevProjects, project];
+    }
+
+    return prevProjects.filter((p) => p.id !== project.id);
+  };
+
+  const syncAllProjectsList = (prevProjects, project) => {
+    const exists = prevProjects.some((p) => p.id === project.id);
+    return exists
+      ? prevProjects.map((p) => (p.id === project.id ? project : p))
+      : [...prevProjects, project];
+  };
+
   const updateProjectData = async (projectData) => {
-    // Map selected option values to the API's expected id fields.
     const withIds = {
       ...projectData,
       idntAgaff: projectData.agaff || projectData.idntAgaff,
@@ -211,8 +233,8 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     const toSend = normalizeProjectForApi({ ...withIds });
     const updated = await updateProject(toSend);
     const normalizedUpdated = normalizeProjectFromApi(updated);
-    setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
-    setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    setProjects((prev) => syncProjectToCurrentYear(prev, normalizedUpdated));
+    setAllProjects((prev) => syncAllProjectsList(prev, normalizedUpdated));
     return normalizedUpdated;
   };
 
@@ -246,8 +268,8 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   const toggleProjectStatus = async (id) => {
     const updated = await toggleProjectActive(id);
     const normalizedUpdated = normalizeProjectFromApi(updated);
-    setProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
-    setAllProjects((prev) => prev.map((p) => (p.id === normalizedUpdated.id ? normalizedUpdated : p)));
+    setProjects((prev) => syncProjectToCurrentYear(prev, normalizedUpdated));
+    setAllProjects((prev) => syncAllProjectsList(prev, normalizedUpdated));
     return normalizedUpdated;
   };
 

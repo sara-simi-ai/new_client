@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
+import { MANAGEMENT_DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
 
-export function useManagementOptions({ options = [], setOptions, allValue = '__all__', duplicateErrorMessage = 'שם עם השם הזה כבר קיים' }) {
+export function useManagementOptions({ options = [], setOptions, allValue = '__all__', duplicateErrorMessage = MANAGEMENT_DUPLICATE_NAME_ERROR }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -62,38 +63,67 @@ export function useManagementOptions({ options = [], setOptions, allValue = '__a
   const confirmAdd = useCallback(() => {
     const clean = (pendingName || '').trim();
     if (!clean) return;
-    if ((options || []).some((item) => item.label === clean)) {
-      setModalError(duplicateErrorMessage);
-      return;
-    }
 
-    const newOption = { value: clean, label: clean, active: true };
-    setOptions((prev) => [
-      ...(prev || []).filter((item) => item.value === allValue),
-      newOption,
-      ...(prev || []).filter((item) => item.value !== allValue && item.label !== clean),
-    ]);
+    setOptions((prev) => {
+      const list = prev || [];
+      if (list.some((item) => item.label === clean && item.value !== allValue)) {
+        setModalError(duplicateErrorMessage);
+        return prev;
+      }
 
-    setPendingName('');
-    setAddModalOpen(false);
-  }, [allValue, duplicateErrorMessage, options, pendingName, setOptions]);
+      const newOption = { value: clean, label: clean, active: true };
+      const updated = [
+        ...list.filter((item) => item.value === allValue),
+        newOption,
+        ...list.filter((item) => item.value !== allValue && item.label !== clean),
+      ];
+
+      setPendingName('');
+      setAddModalOpen(false);
+      return updated;
+    });
+  }, [allValue, duplicateErrorMessage, pendingName, setOptions]);
 
   const confirmEdit = useCallback(() => {
     const clean = (pendingName || '').trim();
     if (!clean || !editOption) return;
-    setOptions((prev) =>
-      (prev || []).map((item) =>
+
+    let duplicateFound = false;
+    setOptions((prev) => {
+      const list = prev || [];
+      if (
+        list.some(
+          (item) =>
+            item.value !== editOption.value &&
+            item.value !== allValue &&
+            item.label === clean,
+        )
+      ) {
+        duplicateFound = true;
+        setModalError(duplicateErrorMessage);
+        return prev;
+      }
+
+      return list.map((item) =>
         item.value === editOption.value ? { ...item, label: clean, value: clean } : item,
-      ),
-    );
+      );
+    });
+
+    if (duplicateFound) return;
+
     setEditOption(null);
     setPendingName('');
     setEditModalOpen(false);
-  }, [editOption, pendingName, setOptions]);
+  }, [allValue, duplicateErrorMessage, editOption, pendingName, setOptions]);
 
   const confirmDelete = useCallback(() => {
     if (!deleteOption) return;
-    setOptions((prev) => (prev || []).filter((item) => item.value !== deleteOption.value));
+
+    setOptions((prev) =>
+      (prev || []).map((item) =>
+        item.value === deleteOption.value ? { ...item, active: false } : item,
+      ),
+    );
     setDeleteOption(null);
     setDeleteModalOpen(false);
   }, [deleteOption, setOptions]);

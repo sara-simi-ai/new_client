@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import {
   getAllTsevetMevatsea,
   insertTsevetMevatsea,
@@ -8,9 +8,6 @@ import {
 
 const TsevetMevatzeatContext = createContext();
 
-// TsevetMevatsea.cs only has: IdntTsevetMevatsea (Guid), TsevetMevatseaName (string), Active (bool),
-// serialized by ASP.NET Core as idntTsevetMevatsea / tsevetMevatseaName / active.
-// Normalize once here and expose `id`/`name` aliases for the rest of the app.
 function normalizeTsevetMevatseaFromApi(tsevetMevatsea) {
   return {
     ...tsevetMevatsea,
@@ -58,13 +55,16 @@ export function TsevetMevatzeatProvider({ children }) {
     };
   }, []);
 
-  const updateFilter = (filterName, value) => {
-    setFilters((prev) => ({ ...prev, [filterName]: value }));
-  };
+  const updateFilter = useCallback((filterName, value) => {
+    setFilters((prev) => {
+      if (prev[filterName] === value) return prev;
+      return { ...prev, [filterName]: value };
+    });
+  }, []);
 
-  const clearFilters = () => {
-    setFilters({});
-  };
+  const clearFilters = useCallback(() => {
+    setFilters((prev) => (Object.keys(prev).length ? {} : prev));
+  }, []);
 
   const filteredTsevetMevatzeat = useMemo(() => {
     let result = tsevetMevatzeatList;
@@ -91,15 +91,15 @@ export function TsevetMevatzeatProvider({ children }) {
       }));
   }, [tsevetMevatzeatList]);
 
-  const addNewTsevetMevatzeat = async (tsevetData) => {
+  const addNewTsevetMevatzeat = useCallback(async (tsevetData) => {
     const fullData = normalizeTsevetMevatseaForApi(tsevetData);
     const savedTsevet = await insertTsevetMevatsea(fullData);
     const normalizedSaved = normalizeTsevetMevatseaFromApi(savedTsevet);
     setTsevetMevatzeatList((prev) => [...prev, normalizedSaved]);
     return normalizedSaved;
-  };
+  }, []);
 
-  const updateTsevetData = async (tsevetData) => {
+  const updateTsevetData = useCallback(async (tsevetData) => {
     const toSend = normalizeTsevetMevatseaForApi(tsevetData);
     const updated = await updateTsevetMevatsea(tsevetData.id, toSend);
     const normalizedUpdated = normalizeTsevetMevatseaFromApi(updated);
@@ -107,58 +107,79 @@ export function TsevetMevatzeatProvider({ children }) {
       prev.map((t) => (t.id === normalizedUpdated.id ? normalizedUpdated : t))
     );
     return normalizedUpdated;
-  };
+  }, []);
 
   // NOTE: TsevetMevatseaController has no delete endpoint, only insert/get/update/toggle.
   // Deactivation is handled via toggleTsevetStatus below instead of deletion.
 
-  const toggleTsevetStatus = async (id) => {
+  const toggleTsevetStatus = useCallback(async (id) => {
     const updated = await toggleTsevetMevatseaActive(id);
     const normalizedUpdated = normalizeTsevetMevatseaFromApi(updated);
     setTsevetMevatzeatList((prev) =>
       prev.map((t) => (t.id === normalizedUpdated.id ? normalizedUpdated : t))
     );
     return normalizedUpdated;
-  };
+  }, []);
 
   const selectedTsevetMevatzeat = useMemo(
     () => tsevetMevatzeatList.find((t) => t.id === selectedTsevetId) || null,
     [tsevetMevatzeatList, selectedTsevetId]
   );
 
-  const toggleTsevetSelection = (tsevetId) => {
+  const toggleTsevetSelection = useCallback((tsevetId) => {
     setSelectedTsevetIds((prev) =>
       prev.includes(tsevetId) ? prev.filter((id) => id !== tsevetId) : [...prev, tsevetId]
     );
-  };
+  }, []);
 
-  const selectAllFilteredTsevet = () => {
+  const selectAllFilteredTsevet = useCallback(() => {
     setSelectedTsevetIds(filteredTsevetMevatzeat.map((t) => t.id));
-  };
+  }, [filteredTsevetMevatzeat]);
 
-  const clearTsevetSelection = () => {
+  const clearTsevetSelection = useCallback(() => {
     setSelectedTsevetIds([]);
-  };
+  }, []);
 
-  const value = {
-    tsevetMevatzeatList,
-    filteredTsevetMevatzeat,
-    isLoading,
-    selectedTsevetId,
-    setSelectedTsevetId,
-    selectedTsevetMevatzeat,
-    selectedTsevetIds,
-    toggleTsevetSelection,
-    selectAllFilteredTsevet,
-    clearTsevetSelection,
-    tsevetMevatzeatOptions,
-    filters,
-    updateFilter,
-    clearFilters,
-    addNewTsevetMevatzeat,
-    updateTsevetData,
-    toggleTsevetStatus,
-  };
+  const value = useMemo(
+    () => ({
+      tsevetMevatzeatList,
+      filteredTsevetMevatzeat,
+      isLoading,
+      selectedTsevetId,
+      setSelectedTsevetId,
+      selectedTsevetMevatzeat,
+      selectedTsevetIds,
+      toggleTsevetSelection,
+      selectAllFilteredTsevet,
+      clearTsevetSelection,
+      tsevetMevatzeatOptions,
+      filters,
+      updateFilter,
+      clearFilters,
+      addNewTsevetMevatzeat,
+      updateTsevetData,
+      toggleTsevetStatus,
+    }),
+    [
+      tsevetMevatzeatList,
+      filteredTsevetMevatzeat,
+      isLoading,
+      selectedTsevetId,
+      selectedTsevetMevatzeat,
+      selectedTsevetIds,
+      tsevetMevatzeatOptions,
+      filters,
+      updateFilter,
+      clearFilters,
+      addNewTsevetMevatzeat,
+      updateTsevetData,
+      toggleTsevetStatus,
+      toggleTsevetSelection,
+      selectAllFilteredTsevet,
+      clearTsevetSelection,
+      setSelectedTsevetId,
+    ],
+  );
 
   return (
     <TsevetMevatzeatContext.Provider value={value}>{children}</TsevetMevatzeatContext.Provider>

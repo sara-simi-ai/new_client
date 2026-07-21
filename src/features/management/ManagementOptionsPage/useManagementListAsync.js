@@ -1,27 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import { MANAGEMENT_DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
 
-/**
- * Hook for managing async CRUD operations on management list items
- * Converts between item model and UI option format {value, label, active}
- * @param {Function} getItems - Function that returns current items array
- * @param {Function} createItem - Async function(name) => item
- * @param {Function} updateItem - Async function(id, {name, ...rest}) => item
- * @param {Function} deleteItem - Async function(id) => void
- * @param {Function} toggleActive - Async function(id) => item
- * @param {Function} itemToOption - Function to convert item to {value, label, active}
- * @param {Function} optionToItem - Function to convert option back to item structure
- * @param {string} duplicateErrorMessage - Error message for duplicates
- * @param {string} allValue - Special "all" value to filter out
- */
 export function useManagementListAsync({
   getItems,
   createItem,
   updateItem,
-  deleteItem,
   toggleActive,
   itemToOption,
-  optionToItem,
-  duplicateErrorMessage = 'שם עם השם הזה כבר קיים',
+  duplicateErrorMessage = MANAGEMENT_DUPLICATE_NAME_ERROR,
   allValue = '__all__',
 }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,15 +20,12 @@ export function useManagementListAsync({
   const [modalError, setModalError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const options = useMemo(() => {
+  const optionList = useMemo(() => {
     const items = getItems();
-    return (items || []).map(itemToOption);
-  }, [getItems, itemToOption]);
-
-  const optionList = useMemo(
-    () => (options || []).filter((item) => item.value !== allValue),
-    [options, allValue],
-  );
+    return (items || [])
+      .map(itemToOption)
+      .filter((item) => item.value !== allValue);
+  }, [getItems, itemToOption, allValue]);
 
   const filteredItems = useMemo(() => {
     const q = (searchTerm || '').trim().toLowerCase();
@@ -53,6 +36,11 @@ export function useManagementListAsync({
   const resetModalState = useCallback(() => {
     setPendingName('');
     setModalError('');
+  }, []);
+
+  const isMountedRef = useRef(true);
+  useEffect(() => () => {
+    isMountedRef.current = false;
   }, []);
 
   const closeAddModal = useCallback(() => {
@@ -92,63 +80,65 @@ export function useManagementListAsync({
     const clean = (pendingName || '').trim();
     if (!clean) return;
 
-    // Check for duplicates in current options
-    if ((options || []).some((item) => item.label === clean && item.value !== allValue)) {
+    const allItems = getItems() || [];
+    if (allItems.some((item) => item.name === clean && item.value !== allValue)) {
       setModalError(duplicateErrorMessage);
       return;
     }
 
-    setIsLoading(true);
+    if (isMountedRef.current) setIsLoading(true);
     try {
-      const newItem = await createItem(clean);
-      const newOption = itemToOption(newItem);
-      
-      closeAddModal();
-      setIsLoading(false);
+      await createItem(clean);
+      if (isMountedRef.current) {
+        closeAddModal();
+        setIsLoading(false);
+      }
     } catch (err) {
-      setModalError(err.message || 'Failed to create item');
-      setIsLoading(false);
+      if (isMountedRef.current) setModalError(err.message || 'Failed to create item');
+      if (isMountedRef.current) setIsLoading(false);
     }
-  }, [allValue, duplicateErrorMessage, options, pendingName, createItem, itemToOption, closeAddModal]);
+  }, [allValue, duplicateErrorMessage, pendingName, createItem, closeAddModal, getItems]);
 
   const confirmEdit = useCallback(async () => {
     const clean = (pendingName || '').trim();
     if (!clean || !editOption) return;
 
-    // Check for duplicate names (excluding the current item)
-    if ((options || []).some(
-      (item) => item.label === clean && item.value !== editOption.value && item.value !== allValue
+    const allItems = getItems() || [];
+    if (allItems.some(
+      (item) => item.name === clean && item.value !== editOption.value && item.value !== allValue
     )) {
       setModalError(duplicateErrorMessage);
       return;
     }
 
-    setIsLoading(true);
+    if (isMountedRef.current) setIsLoading(true);
     try {
-      const updatedItem = await updateItem(editOption.value, { name: clean });
-      const updatedOption = itemToOption(updatedItem);
-      
-      closeEditModal();
-      setIsLoading(false);
+      await updateItem(editOption.value, { name: clean });
+      if (isMountedRef.current) {
+        closeEditModal();
+        setIsLoading(false);
+      }
     } catch (err) {
-      setModalError(err.message || 'Failed to update item');
-      setIsLoading(false);
+      if (isMountedRef.current) setModalError(err.message || 'Failed to update item');
+      if (isMountedRef.current) setIsLoading(false);
     }
-  }, [editOption, options, pendingName, allValue, duplicateErrorMessage, updateItem, itemToOption, closeEditModal]);
+  }, [editOption, pendingName, allValue, duplicateErrorMessage, updateItem, closeEditModal, getItems]);
 
   const confirmDelete = useCallback(async () => {
     if (!deleteOption) return;
 
-    setIsLoading(true);
+    if (isMountedRef.current) setIsLoading(true);
     try {
-      await deleteItem(deleteOption.value);
-      closeDeleteModal();
-      setIsLoading(false);
+      await toggleActive(deleteOption.value);
+      if (isMountedRef.current) {
+        closeDeleteModal();
+        setIsLoading(false);
+      }
     } catch (err) {
-      setModalError(err.message || 'Failed to delete item');
-      setIsLoading(false);
+      if (isMountedRef.current) setModalError(err.message || 'Failed to delete item');
+      if (isMountedRef.current) setIsLoading(false);
     }
-  }, [deleteOption, deleteItem, closeDeleteModal]);
+  }, [deleteOption, closeDeleteModal, toggleActive]);
 
   const handleToggleActive = useCallback(async (option) => {
     try {
@@ -161,6 +151,7 @@ export function useManagementListAsync({
   return {
     searchTerm,
     setSearchTerm,
+    options: optionList,
     filteredItems,
     addModalOpen,
     editModalOpen,
