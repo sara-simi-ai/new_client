@@ -1,0 +1,33 @@
+.project-meta-section {
+  font-size: 11px;
+  color: var(--text2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  direction: rtl;
+  text-align: right;
+}
+
+.project-meta-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.project-meta-item {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.project-meta-label {
+  font-weight: 600;
+  color: var(--text2);
+  white-space: nowrap;
+}
+
+.project-meta-value {
+  color: var(--text);
+  font-weight: 500;
+}

@@ -1,18 +1,36 @@
 import React, { useEffect } from "react";
 import "./Modal.css";
 
-export default function Modal({ onClose, children, maxWidth = 520 }) {
+/**
+ * Reusable Modal Component
+ * @param {Function} onClose - Callback function when modal closes
+ * @param {React.ReactNode} children - Modal content
+ * @param {number} maxWidth - Maximum width of modal (default: 520px)
+ * @param {boolean} closeOnBackdropClick - Whether to close on backdrop click (default: true)
+ * @param {boolean} closeOnEscape - Whether to close on Escape key (default: true)
+ */
+export default function Modal({
+  onClose,
+  children,
+  maxWidth = 520,
+  closeOnBackdropClick = true,
+  closeOnEscape = true,
+}) {
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
+    if (closeOnBackdropClick && e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   useEffect(() => {
+    if (!closeOnEscape) return;
+
     const handleKey = (e) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  }, [onClose, closeOnEscape]);
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>

@@ -1,30 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { useAgaff } from "../../../services/context/AgaffContext";
 import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
-import {
-  MASLOL_OPTIONS,
-  CONTINUATION_LABEL,
-  CONTINUATION_FALSE_LABEL,
-  CONTINUATION_TRUE_LABEL,
-} from "../../../utils/Dec";
+import { MASLOL_OPTIONS, CONTINUATION_LABEL, CONTINUATION_FALSE_LABEL, CONTINUATION_TRUE_LABEL } from "../../../utils/Dec";
+import { getOptionKey, getOptionLabel, getOptionLabelByValue } from "../../../utils/optionHelpers";
+import { useClickOutside } from '../../../utils/useClickOutside';
 import "./FilterBar.css";
 
-const getOptionKey = (option) => (typeof option === "object" ? option.value : option);
-const getOptionLabel = (option) => (typeof option === "object" ? option.label : option);
 
-function useClickOutside(ref, onClose) {
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
-        onClose();
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [ref, onClose]);
-}
 
 function Dropdown({
   label,
@@ -45,7 +28,6 @@ function Dropdown({
     const optionKey = getOptionKey(option);
     
     if (optionKey === "__all__") {
-      // "All" is considered selected if no items are selected OR if all non-"all" items are selected
       if (!Array.isArray(selected) || selected.length === 0) return false;
       
       const allItems = options.filter((o) => getOptionKey(o) !== "__all__");
@@ -64,9 +46,7 @@ function Dropdown({
     if (multi) {
       const optionKey = getOptionKey(option);
       
-      // Handle "all" option
       if (optionKey === "__all__") {
-        // If all items are selected, clear them. Otherwise select all non-"all" items
         const allItems = options.filter((o) => getOptionKey(o) !== "__all__");
         const isCurrentlyAll =
           Array.isArray(selected) &&
@@ -95,7 +75,6 @@ function Dropdown({
       const values = Array.isArray(selected) ? selected : [];
       if (values.length === 0) return allLabel || label;
       
-      // Check if all non-"all" items are selected
       const allItems = options.filter((o) => getOptionKey(o) !== "__all__");
       const isAllSelected = allItems.length > 0 && allItems.every((item) =>
         values.some((s) => getOptionKey(s) === getOptionKey(item))
@@ -149,8 +128,6 @@ function Dropdown({
               const optionLabel = getOptionLabel(option);
               const optionKey = getOptionKey(option);
               
-              // Skip regular "all" rendering for string arrays (backwards compatibility)
-              // Show "all" option for multi-select only if it has __all__ in the key
               if (!multi && optionKey === "__all__") return null;
               
               return (
@@ -215,10 +192,7 @@ export default function FilterBar() {
         options={MASLOL_OPTIONS}
         selected={filters.maslol}
         onChange={(next) => updateFilter("maslol", next)}
-        valueToLabel={(v) => {
-          const found = MASLOL_OPTIONS.find((o) => o.value === v);
-          return found ? found.label : "כל המסלולים";
-        }}
+        valueToLabel={(v) => getOptionLabelByValue(MASLOL_OPTIONS, v, "כל המסלולים")}
         multi={false}
       />
 

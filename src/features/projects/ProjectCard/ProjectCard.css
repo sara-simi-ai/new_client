@@ -71,6 +71,32 @@
   gap: 6px;
 }
 
+.card-badges {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 2;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.b-maslol { background: #F3F4F6; color: #111827; }
+.b-sector { background: var(--blue-bg); color: var(--blue-text); }
+.b-unit { background: var(--purple-bg); color: var(--purple-text); }
+.b-hemshechi { padding: 2px 6px; border-radius: 12px; font-size: 11px; }
+.b-hemshechi.b-yes { background: var(--green-bg); color: var(--ok); }
+.b-hemshechi.b-no { background: #FCEBEB; color: #791F1F; }
+
 .card-title-row {
   display: flex;
   align-items: flex-start;

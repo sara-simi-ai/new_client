@@ -1,7 +1,7 @@
 import React from "react";
 import { formatGapDisplay } from "../../utils/calculateProjectFinanceHelper";
 import { GAP_CLASSES } from "../../utils/Dec";
-import "../../features/projects/ProjectElements/ProjectElements.css";
+// import "../../features/projects/ProjectElements/ProjectElements.css";
 
 export const GapElement = ({ financeData = {}, className = "" }) => {
   const {
