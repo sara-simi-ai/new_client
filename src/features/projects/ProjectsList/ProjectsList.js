@@ -24,7 +24,7 @@ export default function ProjectsList() {
     <section className="p-list-section" dir="rtl">
       {viewMode === "table" ? (
         <div className="p-table-layout">
-          <ProjectTable projects={filteredProjects} />
+          <ProjectTable projects={filteredProjects} onRowClick={setSelectedProjectId} />
         </div>
       ) : (
         <div className="p-grid">

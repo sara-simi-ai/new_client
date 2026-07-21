@@ -1,12 +1,10 @@
-// src/components/ProjectsList/Project/ProjectCard.js
-import React from "react";
+import React, { useState } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
-import { MaslolElement, HemsheciElement, isKiyumMaslol } from "../ProjectElements/ProjectElements";
-import { MASLOL_OPTIONS, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, CONTINUATION_LABEL } from "../../../utils/Dec";
 import ProjectFinanceLayout from "../ProjectFinanceLayout/ProjectFinanceLayout";
+import { buildProjectMetaRows, ProjectMetaSection } from "../ProjectMetaSection/ProjectMetaSection";
+import { isRealText } from "../../../utils/textHelpers";
 import "../ProjectsList/Project.css";
 import "./ProjectCard.css";
-import { useState } from "react";
 import ProjectFormModal from "../ProjectFormModal/ProjectFormModal";
 
 export default function ProjectCard({ project }) {
@@ -15,17 +13,8 @@ export default function ProjectCard({ project }) {
   const financeData = projectFinanceMap[project.id];
   const isSelected = selectedProjectId === project.id;
   const onSelect = () => setSelectedProjectId(isSelected ? null : project.id);
-
-  const isKiyum = isKiyumMaslol(project.maslol);
   const [openEdit, setOpenEdit] = useState(false);
-  
-  const isRealText = (value) => {
-    const normalized = String(value || "").trim().toLowerCase();
-    return normalized !== "" && normalized !== "string";
-  };
-  
-  const maslolLabel = MASLOL_OPTIONS.find((o) => o.value === project.maslol)?.label || "לא ידוע";
-  const hemsheechiText = project.logHemsheci ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL;
+
   const description = isRealText(project.teur) ? project.teur : "";
   const gapStatus = financeData?.statusPearim || "takin";
   const gapClass = gapStatus === 'odef'
@@ -40,6 +29,8 @@ export default function ProjectCard({ project }) {
     takin: 'תקין',
   };
   const statusLabel = statusLabels[gapStatus] || statusLabels.takin;
+
+  const metaRows = buildProjectMetaRows(project);
 
   const handleCardClick = (event) => {
     const clickedInteractiveElement = event.target.closest("button, a, input, select, textarea");
@@ -69,21 +60,7 @@ export default function ProjectCard({ project }) {
           <div className="card-name">{project.projectName}</div>
         </div>
         
-        <div className="card-meta-section">
-          <div className="card-meta-row">
-            <span className="card-meta-label">אגף:</span>
-            <span className="card-meta-value">{project.agaffName}</span>
-            <span className="card-meta-label">מבוצע ע"י:</span>
-            <span className="card-meta-value">{project.tsevetMevatseaName}</span>
-          </div>
-          
-          <div className="card-meta-row">
-            <span className="card-meta-label">המשכי:</span>
-            <span className="card-meta-value">{hemsheechiText}</span>
-            <span className="card-meta-label">מסלול:</span>
-            <span className="card-meta-value">{maslolLabel}</span>
-          </div>
-        </div>
+        <ProjectMetaSection rows={metaRows} />
 
         <div className={`card-desc ${!description ? "card-desc--empty" : ""}`}>
           <div className="card-desc-label">תיאור:</div>

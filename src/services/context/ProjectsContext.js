@@ -10,17 +10,12 @@ import {
 } from "../api/projectApi";
 import { calculateProjectFinance } from "../../utils/calculateProjectFinanceHelper";
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFiltersHelper";
-import { AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "../../utils/Dec";
+
 import { useAgaff } from "./AgaffContext";
 import { useTsevetMevatzeat } from "./TsevetMevatzeatContext";
 
 const ProjectsContext = createContext();
 
-// Project.cs fields (PascalCase) are serialized by ASP.NET Core as camelCase JSON:
-// id, idntAgaff, agaffName, idntTsevetMevatsea, tsevetMevatseaName, projectName, teur,
-// maslol, idntMaslol, logHemsheci, totalTakzivCoachAdam, totalTakzivRechesh, coachAdam,
-// hearot, active, year, createdAt, updatedAt. These already line up with the field names
-// used below, so only numeric coercion / defaults are normalized here.
 function normalizeProjectFromApi(project) {
   const totalTakzivCoachAdam = project.totalTakzivCoachAdam ?? 0;
   return {
@@ -53,22 +48,22 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   const [selectedProjectIds, setSelectedProjectIds] = useState([]); // for checkbox multi-select
   const [filters, setFilters] = useState(() => ({ ...DEFAULT_PROJECT_FILTERS }));
 
-  // Use provided options or fallback to localStorage
+  // Use provided options or fallback to localStorage when available.
   const [agaffOptions] = useState(() => propsAgaffOptions || (() => {
     try {
       const saved = window.localStorage.getItem("agaffOptions");
-      return saved ? JSON.parse(saved) : AGAF_OPTIONS;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return AGAF_OPTIONS;
+      return [];
     }
   })());
 
   const [yechidaMevatzatOptions] = useState(() => propsYechidaMevatzatOptions || (() => {
     try {
       const saved = window.localStorage.getItem("yechidaMevatzatOptions");
-      return saved ? JSON.parse(saved) : YECHIDA_MEVATSAAT_OPTIONS;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return YECHIDA_MEVATSAAT_OPTIONS;
+      return [];
     }
   })());
 
@@ -127,9 +122,11 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     return filterProjects(
       projects,
       filters,
-      (project) => projectFinanceMap[project.id]?.statusPearim || "takin"
+      (project) => projectFinanceMap[project.id]?.statusPearim || "takin",
+      agaffOptions,
+      yechidaMevatzatOptions,
     );
-  }, [projects, filters, projectFinanceMap]);
+  }, [projects, filters, projectFinanceMap, agaffOptions, yechidaMevatzatOptions]);
 
   const projectOptions = useMemo(() => {
     // build project list based on current filters but excluding any selected project filter
@@ -137,7 +134,9 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     const available = filterProjects(
       projects,
       filtersWithoutProject,
-      (project) => projectFinanceMap[project.id]?.statusPearim || "takin"
+      (project) => projectFinanceMap[project.id]?.statusPearim || "takin",
+      agaffOptions,
+      yechidaMevatzatOptions,
     );
     const items = available.map((p) => ({ value: p.id, label: p.projectName || p.teur || "—" }));
     return [{ value: "__all__", label: "כל הפרויקטים" }, ...items];

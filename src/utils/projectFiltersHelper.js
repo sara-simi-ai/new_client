@@ -1,5 +1,5 @@
 import { calculateProjectFinance } from "./calculateProjectFinanceHelper";
-import { GAP_STATUS_OPTIONS, AGAF_OPTIONS, YECHIDA_MEVATSAAT_OPTIONS } from "./Dec";
+import { GAP_STATUS_OPTIONS } from "./Dec";
 
 export const DEFAULT_PROJECT_FILTERS = {
   search: "",
@@ -11,6 +11,22 @@ export const DEFAULT_PROJECT_FILTERS = {
   statusPearim: [],
 };
 
+const AGAFF_ALL_OPTION = { value: "__all__", label: "כל האגפים" };
+const YECHIDA_ALL_OPTION = { value: "__all__", label: "כל יחידות המבצעות" };
+
+function buildOptionsFromProjects(projects, field) {
+  const optionsMap = new Map();
+  (projects || []).forEach((project) => {
+    const value = project?.[field];
+    if (value === undefined || value === null || value === "__all__") return;
+    const key = String(value);
+    if (!optionsMap.has(key)) {
+      optionsMap.set(key, { value, label: String(value) });
+    }
+  });
+  return Array.from(optionsMap.values());
+}
+
 // Helper function to check if all non-"all" items are selected
 function isAllItemsSelected(selected, allOptions) {
   if (!Array.isArray(selected) || selected.length === 0) return false;
@@ -20,10 +36,18 @@ function isAllItemsSelected(selected, allOptions) {
   );
 }
 
-export function getProjectFilterOptions(projects, agaffOptions = AGAF_OPTIONS, yechidaMevatzatOptions = YECHIDA_MEVATSAAT_OPTIONS) {
+export function getProjectFilterOptions(projects, agaffOptions = [], yechidaMevatzatOptions = []) {
+  const effectiveAgaffOptions = (agaffOptions || []).length > 0
+    ? agaffOptions
+    : [AGAFF_ALL_OPTION, ...buildOptionsFromProjects(projects, "agaff")];
+
+  const effectiveYechidaOptions = (yechidaMevatzatOptions || []).length > 0
+    ? yechidaMevatzatOptions
+    : [YECHIDA_ALL_OPTION, ...buildOptionsFromProjects(projects, "yechidaMevatzat")];
+
   return {
-    agaff: agaffOptions,
-    yechidaMevatzat: yechidaMevatzatOptions,
+    agaff: effectiveAgaffOptions,
+    yechidaMevatzat: effectiveYechidaOptions,
     statusPearim: GAP_STATUS_OPTIONS,
   };
 }
@@ -51,13 +75,27 @@ function matchesStatusPearim(project, selectedStatuses, getProjectStatus, isAllS
   return selectedCodes.includes(projectStatus);
 }
 
-export function filterProjects(projects, filters, getProjectStatus = (project) => calculateProjectFinance(project).statusPearim) {
+export function filterProjects(
+  projects,
+  filters,
+  getProjectStatus = (project) => calculateProjectFinance(project).statusPearim,
+  agaffOptions = [],
+  yechidaMevatzatOptions = []
+) {
+  const effectiveAgaffOptions = (agaffOptions || []).length > 0
+    ? agaffOptions
+    : buildOptionsFromProjects(projects, "agaff");
+
+  const effectiveYechidaOptions = (yechidaMevatzatOptions || []).length > 0
+    ? yechidaMevatzatOptions
+    : buildOptionsFromProjects(projects, "yechidaMevatzat");
+
   return projects.filter((project) => {
     if (!matchesSearch(project, filters.search)) return false;
     
     // For agaff: if not empty and all items not selected, filter by agaff
     const agaffFilter = Array.isArray(filters.agaff) ? filters.agaff : [];
-    const agaffItems = AGAF_OPTIONS.filter((o) => o.value !== "__all__");
+    const agaffItems = effectiveAgaffOptions.filter((o) => (o.value || o) !== "__all__");
     const isAgaffAllSelected = isAllItemsSelected(agaffFilter, agaffItems);
     if (agaffFilter.length && !isAgaffAllSelected) {
       const agaffValues = agaffFilter.map((a) => a.value || a);
@@ -66,7 +104,7 @@ export function filterProjects(projects, filters, getProjectStatus = (project) =
     
     // For yechidaMevatzat: if not empty and all items not selected, filter by yechidaMevatzat
     const yechidaFilter = Array.isArray(filters.yechidaMevatzat) ? filters.yechidaMevatzat : [];
-    const yechidaItems = YECHIDA_MEVATSAAT_OPTIONS.filter((o) => o.value !== "__all__");
+    const yechidaItems = effectiveYechidaOptions.filter((o) => (o.value || o) !== "__all__");
     const isYechidaAllSelected = isAllItemsSelected(yechidaFilter, yechidaItems);
     if (yechidaFilter.length && !isYechidaAllSelected) {
       const yechidaValues = yechidaFilter.map((y) => y.value || y);

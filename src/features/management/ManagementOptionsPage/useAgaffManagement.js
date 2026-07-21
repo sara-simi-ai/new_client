@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useAgaff } from '../../../services/context/AgaffContext';
 import { useManagementListAsync } from './useManagementListAsync';
-import { DEPARTMENTS_DUPLICATE_ERROR } from '../../../utils/Dec';
+import { DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
 
 export function useAgaffManagement() {
   const {
@@ -31,7 +31,7 @@ export function useAgaffManagement() {
     updateItem,
     toggleActive: toggleAgaffStatus,
     itemToOption,
-    duplicateErrorMessage: DEPARTMENTS_DUPLICATE_ERROR,
+    duplicateErrorMessage: DUPLICATE_NAME_ERROR,
   });
 
   useEffect(() => {

@@ -3,7 +3,8 @@ import { useProjects } from "../../../services/context/ProjectsContext";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, MASLOL_OPTIONS, MASLOL } from "../../../utils/Dec";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, TSEVET_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, MASLOL_OPTIONS, MASLOL } from "../../../utils/Dec";
+import { getOptionLabelByValue } from "../../../utils/optionHelpers";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "../ProjectsList/Project.css";
 import "./ProjectTable.css";
@@ -37,7 +38,7 @@ const columns = [
   },
   {
     key: "unit",
-    label: UNIT_LABEL,
+    label: TSEVET_LABEL,
     cellClassName: "tr-unit",
     render: (row) => row.tsevetMevatseaName,
   },
@@ -57,8 +58,7 @@ const columns = [
     headerClassName: "pt-th-status",
     cellClassName: "tr-status",
     render: (row) => {
-      const label = MASLOL_OPTIONS.find((o) => o.value === row.maslol)?.label || "לא ידוע";
-      return label;
+      return getOptionLabelByValue(MASLOL_OPTIONS, row.maslol);
     },
   },
   {
@@ -99,7 +99,7 @@ const columns = [
   },
 ];
 
-export default function ProjectTable({ projects }) {
+export default function ProjectTable({ projects, onRowClick }) {
   const { projectFinanceMap } = useProjects();
 
   const rowsWithFinance = projects.map((project) => ({
@@ -119,10 +119,15 @@ export default function ProjectTable({ projects }) {
     { totalHR: 0, totalPlannedHr: 0, totalProcurement: 0, totalGap: 0 }
   );
 
-  // Remove selection checkboxes and row-selection: use columns without the checkbox column
   const columnsWithoutCheckbox = columns.filter((col) => col.key !== "checkbox");
 
   const getRowClassName = () => "tr-item";
+
+  const handleRowClick = (row) => {
+    if (onRowClick) {
+      onRowClick(row.id);
+    }
+  };
 
   return (
     <div>
@@ -132,6 +137,7 @@ export default function ProjectTable({ projects }) {
         tableClassName="p-table"
         wrapperClassName="p-table-wrap"
         footerData={totals}
+        onRowClick={handleRowClick}
       />
     </div>
   );

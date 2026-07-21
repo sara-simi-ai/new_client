@@ -4,7 +4,7 @@ import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
 import { formatGapDisplay, getGapStatus } from '../../../../utils/calculateProjectFinanceHelper';
 import { BUDGET_COLORS } from '../../constans/chartConstants';
-import { GAP_CLASSES } from '../../../../utils/Dec';
+import { GAP_STATUS_BY_VALUE } from '../../../../utils/Dec';
 import SectorProjectsModal from './SectorProjectsModal/SectorProjectsModal';
 
 const legendItems = [
@@ -114,7 +114,7 @@ export default function BudgetBySectorChart() {
               })}
                 <BudgetNumbers
                   gapLabel={sectorItem.gapLabel}
-                  gapClass={GAP_CLASSES[sectorItem.gapStatus]}
+                  gapClass={GAP_STATUS_BY_VALUE[sectorItem.gapStatus]?.className || ""}
                   hrBudget={sectorItem.hrBudget}
                   procurementBudget={sectorItem.procurementBudget}
                   planningBudget={sectorItem.planningBudget}

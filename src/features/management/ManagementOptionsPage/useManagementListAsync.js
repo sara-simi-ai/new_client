@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
-import { MANAGEMENT_DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
+import { DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
 
 export function useManagementListAsync({
   getItems,
@@ -7,7 +7,7 @@ export function useManagementListAsync({
   updateItem,
   toggleActive,
   itemToOption,
-  duplicateErrorMessage = MANAGEMENT_DUPLICATE_NAME_ERROR,
+  duplicateErrorMessage = DUPLICATE_NAME_ERROR,
   allValue = '__all__',
 }) {
   const [searchTerm, setSearchTerm] = useState('');

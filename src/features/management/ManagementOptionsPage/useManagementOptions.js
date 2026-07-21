@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
-import { MANAGEMENT_DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
+import { DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
 
-export function useManagementOptions({ options = [], setOptions, allValue = '__all__', duplicateErrorMessage = MANAGEMENT_DUPLICATE_NAME_ERROR }) {
+export function useManagementOptions({ options = [], setOptions, allValue = '__all__', duplicateErrorMessage = DUPLICATE_NAME_ERROR }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);

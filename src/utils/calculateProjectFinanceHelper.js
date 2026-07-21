@@ -52,13 +52,17 @@ export const getGapStatus = (gapValue, totalBudget) => {
  * פורמט אחיד להצגת פערים
  * @param {number} gapValue - ערך הפער
  * @param {number} totalBudget - סכום התקציב (לחישוב %)
- * @returns {string} - בפורמט: ₪0 (0%) או ▲ ₪100 (5%) או ▼ ₪50 (10%)
+ * @param {{ signStyle?: 'arrow' | 'plusMinus' }} [options] - CHANGED: added signStyle option
+ *   so this one function covers both UI display (▲/▼) and plain-text contexts like
+ *   Excel export (+/-), instead of each caller writing its own near-copy of this function.
+ * @returns {string} - e.g. ₪0 (0%) or ▲ ₪100 (5%) / + ₪100 (5%) or ▼ ₪50 (10%) / - ₪50 (10%)
  */
-export const formatGapDisplay = (gapValue, totalBudget) => {
+export const formatGapDisplay = (gapValue, totalBudget, { signStyle = 'arrow' } = {}) => {
   const absValue = Math.abs(gapValue);
+  const signs = signStyle === 'plusMinus' ? { positive: '+ ', negative: '- ' } : { positive: '▲ ', negative: '▼ ' };
   const displayValue = gapValue === 0
     ? `₪${formatMoney(absValue)}`
-    : `${gapValue > 0 ? '▲ ' : '▼ '}₪${formatMoney(absValue)}`;
+    : `${gapValue > 0 ? signs.positive : signs.negative}₪${formatMoney(absValue)}`;
   
   if (totalBudget && totalBudget > 0) {
     const percent = Math.round(Math.abs(gapValue) / totalBudget * 100);

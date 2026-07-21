@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useTsevetMevatzeat } from '../../../services/context/TsevetMevatzeatContext';
 import { useManagementListAsync } from './useManagementListAsync';
-import { TEAMS_DUPLICATE_ERROR } from '../../../utils/Dec';
+import { DUPLICATE_NAME_ERROR } from '../../../utils/Dec';
 
 export function useTsevetMevatzeatManagement() {
   const {
@@ -31,7 +31,7 @@ export function useTsevetMevatzeatManagement() {
     updateItem,
     toggleActive: toggleTsevetStatus,
     itemToOption,
-    duplicateErrorMessage: TEAMS_DUPLICATE_ERROR,
+    duplicateErrorMessage: DUPLICATE_NAME_ERROR,
   });
 
   useEffect(() => {

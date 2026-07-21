@@ -6,11 +6,11 @@ import ProjectsManagementPage from '../ProjectsManagementPage/ProjectsManagement
 import {
   MANAGEMENT_TITLE,
   MANAGEMENT_SUBTITLE,
-  DEPARTMENTS_CARD_TITLE,
+  DEPARTMENTS_TITLE,
   DEPARTMENTS_CARD_DESC,
-  TEAMS_CARD_TITLE,
+  TEAMS_TITLE,
   TEAMS_CARD_DESC,
-  PROJECTS_CARD_TITLE,
+  PROJECTS_TITLE,
   PROJECTS_CARD_DESC,
   MANAGEMENT_MANAGE_BUTTON,
 } from '../../../utils/Dec';
@@ -20,19 +20,19 @@ export default function ManagementHome() {
 
   const cards = [
     {
-      title: DEPARTMENTS_CARD_TITLE,
+      title: DEPARTMENTS_TITLE,
       description: DEPARTMENTS_CARD_DESC,
       page: 'departments',
       className: 'mgmt-card card-small',
     },
     {
-      title: TEAMS_CARD_TITLE,
+      title: TEAMS_TITLE,
       description: TEAMS_CARD_DESC,
       page: 'teams',
       className: 'mgmt-card',
     },
     {
-      title: PROJECTS_CARD_TITLE,
+      title: PROJECTS_TITLE,
       description: PROJECTS_CARD_DESC,
       page: 'projects',
       className: 'mgmt-card card-small',

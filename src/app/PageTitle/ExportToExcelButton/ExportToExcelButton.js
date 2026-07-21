@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, UNIT_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
+import { formatGapDisplay } from "../../../utils/calculateProjectFinanceHelper";
+import { getOptionLabelByValue } from "../../../utils/optionHelpers";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, TSEVET_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
 import "./ExportToExcelButton.css";
@@ -15,24 +17,6 @@ export default function ExportToExcelButton() {
     left: { style: "thin" },
     bottom: { style: "thin" },
     right: { style: "thin" },
-  };
-
-  const getMaslolLabel = (value) => {
-    return MASLOL_OPTIONS.find((item) => item.value === value)?.label || value || "";
-  };
-
-  const formatGapWithSigns = (gapValue, totalBudget) => {
-    const absValue = Math.abs(gapValue);
-    const displayValue = gapValue === 0
-      ? `₪${formatMoney(absValue)}`
-      : `${gapValue > 0 ? "+" : "-"} ₪${formatMoney(absValue)}`;
-
-    if (totalBudget && totalBudget > 0) {
-      const percent = Math.round(Math.abs(gapValue) / totalBudget * 100);
-      return `${displayValue} (${percent}%)`;
-    }
-
-    return displayValue;
   };
 
   const handleExport = async () => {
@@ -57,7 +41,7 @@ export default function ExportToExcelButton() {
       const headers = [
         PROJECT_NAME_LABEL,
         AGAF_LABEL,
-        UNIT_LABEL,
+        TSEVET_LABEL,
         CONTINUATION_LABEL,
         MASLOL_LABEL,
         HR_BUDGET_LABEL,
@@ -83,13 +67,14 @@ export default function ExportToExcelButton() {
 
         const row = projectsSheet.addRow([
           project.projectName || "",
-          project.agaff || "",
-          project.yechidaMevatzat || "",
+          project.agaffName || "",
+          project.tsevetMevatseaName || "",
           project.logHemsheci ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL,
-          getMaslolLabel(project.maslol),
+
+          getOptionLabelByValue(MASLOL_OPTIONS, project.maslol, project.maslol || ""),
           formatMoney(totalTakzivCoachAdam),
           formatMoney(totalTakzivRechesh),
-          formatGapWithSigns(pearim, totalTakzivCoachAdam),
+          formatGapDisplay(pearim, totalTakzivCoachAdam, { signStyle: "plusMinus" }),
         ]);
 
         row.eachCell((cell, colNumber) => {
@@ -138,7 +123,7 @@ export default function ExportToExcelButton() {
         [HR_BUDGET_LABEL, formatMoney(summaryData?.totalHR || 0)],
         [PROCUREMENT_BUDGET_LABEL, formatMoney(summaryData?.totalProc || 0)],
         [TOTAL_BUDGET_LABEL, formatMoney(summaryData?.totalBudget || 0)],
-        [TOTAL_GAPS_LABEL, formatGapWithSigns(summaryData?.totalGap || 0, summaryData?.totalBudget || 0)],
+        [TOTAL_GAPS_LABEL, formatGapDisplay(summaryData?.totalGap || 0, summaryData?.totalBudget || 0, { signStyle: "plusMinus" })],
       ];
 
       summaryItems.forEach((item) => {

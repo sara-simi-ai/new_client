@@ -2,9 +2,11 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { useAgaff } from "../../../services/context/AgaffContext";
 import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
+import Dropdown from "../../../components/Dropdown/Dropdown";
 import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { GAP_CLASSES, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
+import { GAP_STATUS_BY_VALUE, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
 import { formatNumberWithSeparators, parseFormattedNumber } from "../../../utils/formatMoneyHelper";
+import { getOptionKey, getOptionLabel } from "../../../utils/optionHelpers";
 import "./ProjectFormModal.css";
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
@@ -12,7 +14,6 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   const { agaffOptions } = useAgaff();
   const { tsevetMevatzeatOptions } = useTsevetMevatzeat();
 
-  // Use real options from context if available, fall back to cached options
   const effectiveAgaffOptions = useMemo(() => {
     if (agaffOptions && agaffOptions.length > 0) {
       return agaffOptions;
@@ -41,14 +42,36 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   const [tab, setTab] = useState("פרטים");
   const [errors, setErrors] = useState({});
 
+  const resolveOptionValue = (initialValue, initialLabel, options) => {
+    if (!initialValue && !initialLabel) return "";
+
+    const normalizedInitial = String(initialValue || initialLabel || "").trim();
+    const normalizedLabel = String(initialLabel || initialValue || "").trim();
+
+    const match = options?.find((option) => {
+      const optionKey = String(getOptionKey(option));
+      const optionLabel = String(getOptionLabel(option));
+      return (
+        optionKey === normalizedInitial ||
+        optionLabel === normalizedInitial ||
+        optionKey === normalizedLabel ||
+        optionLabel === normalizedLabel
+      );
+    });
+
+    return match ? getOptionKey(match) : initialValue || initialLabel || "";
+  };
+
   useEffect(() => {
     if (initialData) {
+      console.log(initialData.agaff,initialData.agaffName);
+      
       setForm((prev) => ({
         ...prev,
         projectName: initialData.projectName || "",
-        agaff: initialData.agaff || "",
-        yechidaMevatzat: initialData.yechidaMevatzat || "",
-        maslol: initialData.maslol || MASLOL_OPTIONS[0].value, 
+        agaff: initialData.agaff || initialData.agaffName || "",
+        yechidaMevatzat: initialData.yechidaMevatzat || initialData.tsevetMevatseaName || "",
+        maslol: initialData.maslol || MASLOL_OPTIONS[0].value,
         logHemsheci: initialData.logHemsheci || false,
         teur: initialData.teur || "",
         hearot: initialData.hearot || "",
@@ -59,29 +82,49 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     }
   }, [initialData]);
 
+  useEffect(() => {
+    if (!initialData) return;
+
+    setForm((prev) => {
+      const resolvedAgaff = resolveOptionValue(
+        initialData.agaff,
+        initialData.agaffName,
+        effectiveAgaffOptions
+      );
+      const resolvedYechida = resolveOptionValue(
+        initialData.yechidaMevatzat,
+        initialData.tsevetMevatseaName,
+        effectiveYechidaOptions
+      );
+
+      if (prev.agaff === resolvedAgaff && prev.yechidaMevatzat === resolvedYechida) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        agaff: resolvedAgaff,
+        yechidaMevatzat: resolvedYechida,
+      };
+    });
+  }, [initialData, effectiveAgaffOptions, effectiveYechidaOptions]);
+
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
   const handleNumFocus = (field) => {
-    // When focused, show the unformatted number for easier editing
     if (Number(form[field]) === 0) set(field, "");
   };
 
   const handleNumBlur = (field) => {
-    // When blurring, parse the input and convert to number
     const numValue = parseFormattedNumber(form[field]);
     set(field, numValue);
   };
 
   const handleNumChange = (field, value) => {
-    // Allow user to input with or without formatting
-    // We'll parse when they blur or submit
     set(field, value);
   };
 
   const getDisplayValue = (fieldValue) => {
-    // Get the value to display in the input
-    // If it's an empty string (user is editing) or already formatted, show as-is
-    // Otherwise format the number
     if (fieldValue === "" || fieldValue === null || fieldValue === undefined) {
       return "";
     }
@@ -153,40 +196,56 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
           <div className="np-row">
             <div className="np-field">
               <label className="np-label">יחידת פיתוח *</label>
-              <select className={`np-select${errors.yechidaMevatzat ? ' np-input--error' : ''}`} value={form.yechidaMevatzat} onChange={(e) => set('yechidaMevatzat', e.target.value)}>
-                <option value="">בחר יחידת פיתוח</option>
-                {effectiveYechidaOptions.filter(o => o.value !== "__all__").map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
+              <Dropdown
+                className={errors.yechidaMevatzat ? 'np-input--error' : ''}
+                label="בחר יחידת פיתוח"
+                allLabel="בחר יחידת פיתוח"
+                options={effectiveYechidaOptions.filter((o) => o.value !== '__all__')}
+                selected={form.yechidaMevatzat}
+                onChange={(next) => set('yechidaMevatzat', next)}
+                multi={false}
+              />
             </div>
             <div className="np-field">
               <label className="np-label">אגף מבצע *</label>
-                <select className={`np-select${errors.agaff ? ' np-input--error' : ''}`} value={form.agaff} onChange={(e) => set('agaff', e.target.value)}>
-                <option value="">בחר אגף</option>
-                {effectiveAgaffOptions.filter(o => o.value !== "__all__").map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
+              <Dropdown
+                className={errors.agaff ? 'np-input--error' : ''}
+                label="בחר אגף"
+                allLabel="בחר אגף"
+                options={effectiveAgaffOptions.filter((o) => o.value !== '__all__')}
+                selected={form.agaff}
+                onChange={(next) => set('agaff', next)}
+                multi={false}
+              />
             </div>
           </div>
 
           <div className="np-row">
             <div className="np-field">
               <label className="np-label">המשכי</label>
-              <select className="np-select" value={form.logHemsheci} onChange={(e) => set('logHemsheci', e.target.value === 'true')}>
-                <option value="false">לא</option>
-                <option value="true">כן</option>
-              </select>
+              <Dropdown
+                label="בחר המשכי"
+                allLabel="בחר המשכי"
+                options={[
+                  { value: 'false', label: 'לא' },
+                  { value: 'true', label: 'כן' },
+                ]}
+                selected={form.logHemsheci.toString()}
+                onChange={(next) => set('logHemsheci', next === 'true')}
+                valueToLabel={(v) => (v === 'true' ? 'כן' : v === 'false' ? 'לא' : 'בחר המשכי')}
+                multi={false}
+              />
             </div>
             <div className="np-field">
               <label className="np-label">מסלול *</label>
-              <select className="np-select" value={form.maslol} onChange={(e) => set('maslol', e.target.value)}>
-                <option value="">בחר מסלול</option>
-                {MASLOL_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
+              <Dropdown
+                label="בחר מסלול"
+                allLabel="בחר מסלול"
+                options={MASLOL_OPTIONS}
+                selected={form.maslol}
+                onChange={(next) => set('maslol', next)}
+                multi={false}
+              />
             </div>
           </div>
 
@@ -222,7 +281,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
             <div className="np-field" style={{ marginBottom: 0 }}>
               <label className="np-label">{GAPS_LABEL} (אוטומטי)</label>
               <input
-                className={`np-input pc-gap ${GAP_CLASSES[gapStatus]}`}
+                className={`np-input pc-gap ${GAP_STATUS_BY_VALUE[gapStatus]?.className || ""}`}
                 readOnly
                 value={gapDisplay}
                 style={{ backgroundColor: "#f9fafb" }}

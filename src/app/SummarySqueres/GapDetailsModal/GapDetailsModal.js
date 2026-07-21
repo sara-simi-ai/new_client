@@ -1,6 +1,8 @@
+import React from "react";
+import Modal from "../../../components/Modal/Modal";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
-import {  getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
+import { getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "./GapDetailsModal.css";
 
@@ -40,25 +42,23 @@ export default function GapDetailsModal({ rows, totalGap, totalHR, totalPlanned,
   const totals = { totalPlanned: computedTotalPlanned, totalHR, totalGap };
 
   return (
-    <div className="gdm-overlay" onClick={onClose}>
-      <div className="gdm-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="gdm-header">
-          <div className="gdm-title">פערים בתקציב כ"א — {formatMoney(totalGap)}</div>
-          <button className="gdm-close" onClick={onClose} aria-label="סגור">
-            ✕
-          </button>
-        </div>
-
-        <div className="gdm-body">
-          <GenericTable
-            columns={columns}
-            data={rows}
-            tableClassName="gdm-table"
-            wrapperClassName=""
-            footerData={totals}
-          />
-        </div>
+    <Modal onClose={onClose}>
+      <div className="gdm-header">
+        <div className="gdm-title">פערים בתקציב כ"א — {formatMoney(totalGap)}</div>
+        <button className="gdm-close" onClick={onClose} aria-label="סגור">
+          ✕
+        </button>
       </div>
-    </div>
+
+      <div className="gdm-body">
+        <GenericTable
+          columns={columns}
+          data={rows}
+          tableClassName="gdm-table"
+          wrapperClassName=""
+          footerData={totals}
+        />
+      </div>
+    </Modal>
   );
 }

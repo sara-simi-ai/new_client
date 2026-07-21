@@ -3,7 +3,7 @@ import { useProjects } from "../../services/context/ProjectsContext";
 import { formatMoney } from "../../utils/formatMoneyHelper";
 import { formatGapDisplay, getGapStatus } from "../../utils/calculateProjectFinanceHelper";
 import { GapElement } from "../../components/GapElement/GapElement";
-import { GAP_CLASSES, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../utils/Dec";
+import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../utils/Dec";
 import GapDetailsModal from "./GapDetailsModal/GapDetailsModal";
 import "./SummarySquares.css";
 

@@ -12,7 +12,7 @@ import {
   TEAMS_EDIT_MODAL_DESC,
   TEAMS_DELETE_MODAL_TITLE,
   TEAMS_ITEM_PLACEHOLDER,
-  TEAMS_DUPLICATE_ERROR,
+  DUPLICATE_NAME_ERROR,
   TEAMS_DELETE_CONFIRM_TEXT,
 } from '../../../utils/Dec';
 
@@ -35,7 +35,7 @@ export default function TeamsPage({ onBack }) {
       itemPlaceholder={TEAMS_ITEM_PLACEHOLDER}
       options={hook.options}
       onToggleOptionActive={hook.handleToggleActive}
-      duplicateErrorMessage={TEAMS_DUPLICATE_ERROR}
+      duplicateErrorMessage={DUPLICATE_NAME_ERROR}
       asyncHook={hook}
       isAsync={true}
     />

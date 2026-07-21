@@ -16,14 +16,8 @@ export default function ProjectFormModal({ open, onClose, initialData = {}, mode
     onClose();
   };
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div className="pfm-backdrop" dir="rtl" onClick={handleBackdropClick}>
+    <div className="pfm-backdrop" dir="rtl">
       <div className="pfm-modal" onClick={(e) => e.stopPropagation()}>
         <header className="pfm-header">
           <h3>{mode === "edit" ? "עדכון פרויקט" : "פרויקט חדש"}</h3>

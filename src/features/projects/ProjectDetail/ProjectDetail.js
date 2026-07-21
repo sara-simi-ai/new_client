@@ -1,22 +1,18 @@
-
 import React from "react";
 import ProjectFinanceLayout from "../ProjectFinanceLayout/ProjectFinanceLayout";
-import { MaslolElement, HemsheciElement } from "../ProjectElements/ProjectElements";
+import { buildProjectMetaRows, ProjectMetaSection } from "../ProjectMetaSection/ProjectMetaSection";
+import { isRealText } from "../../../utils/textHelpers";
 import "./ProjectDetail.css";
 import { useProjects } from "../../../services/context/ProjectsContext";
 
-const isRealText = (value) => {
-  const normalized = String(value || "").trim().toLowerCase();
-  return normalized !== "" && normalized !== "string";
-};
-
 export default function ProjectDetail({ project, onClose, onEdit }) {
-  
+
   const { projectFinanceMap } = useProjects();
 
   if (!project) return null;
 
   const financeData = projectFinanceMap[project.id];
+  const metaRows = buildProjectMetaRows(project);
   const projectDescription = isRealText(project.teur) ? project.teur : "";
   const hearot = isRealText(project.hearot) ? project.hearot : "";
 
@@ -25,14 +21,7 @@ export default function ProjectDetail({ project, onClose, onEdit }) {
       <header className="det-head">
         <div>
           <h3 className="det-name">{project.projectName}</h3>
-          <div className="det-badges">
-            <MaslolElement maslol={project.maslol} />
-            {project.yechidaMevatzat && <span className="badge b-unit">{project.yechidaMevatzat}</span>}
-            {project.agaff           && <span className="badge b-sector">{project.agaff}</span>}
-            {project.logHemsheci !== undefined && (
-              <HemsheciElement isHemshechi={project.logHemsheci} />
-            )}
-          </div>
+          <ProjectMetaSection rows={metaRows} />
         </div>
 
         <div className="det-actions">

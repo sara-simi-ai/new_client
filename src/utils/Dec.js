@@ -4,12 +4,12 @@ export const MASLOL = {
   HITAZMUT: { value: "HITAZMUT", label: "התעצמות" },
 };
 
-export const MASLOL_OPTIONS = Object.values(MASLOL); 
+export const MASLOL_OPTIONS = Object.values(MASLOL);
 
 export const GAP_STATUS = {
-  TAKIN: { value: "takin", label: "אין פער" },
-  ODEF: { value: "odef", label: "פער בפלוס" },
-  GERAON: { value: "geraon", label: "פער במינוס" },
+  TAKIN: { value: "takin", label: "אין פער", className: 'gap--neutral' },
+  ODEF: { value: "odef", label: "פער בפלוס", className: 'gap--surplus' },
+  GERAON: { value: "geraon", label: "פער במינוס", className: 'gap--over' },
 };
 
 export const GAP_STATUS_OPTIONS = [
@@ -17,11 +17,9 @@ export const GAP_STATUS_OPTIONS = [
   ...Object.values(GAP_STATUS),
 ];
 
-export const GAP_CLASSES = {
-  takin: 'gap--neutral',
-  odef: 'gap--surplus',
-  geraon: 'gap--over'
-};
+export const GAP_STATUS_BY_VALUE = Object.fromEntries(
+  Object.values(GAP_STATUS).map((status) => [status.value, status])
+);
 
 export const HR_BUDGET_LABEL = 'תקציב כ"א';
 export const PROCUREMENT_BUDGET_LABEL = 'תקציב רכש';
@@ -31,7 +29,7 @@ export const TOTAL_BUDGET_LABEL = 'סה"כ תקציב';
 export const TOTAL_GAPS_LABEL = 'סה"כ פערים';
 export const PROJECT_NAME_LABEL = 'שם הפרויקט';
 export const AGAF_LABEL = 'אגף';
-export const UNIT_LABEL = 'צוות מבצע';
+export const TSEVET_LABEL = 'מבוצע ע"י';
 export const CONTINUATION_LABEL = 'המשכי';
 export const CONTINUATION_TRUE_LABEL = 'כן';
 export const CONTINUATION_FALSE_LABEL = 'לא';
@@ -52,8 +50,6 @@ export const DEPARTMENTS_EDIT_MODAL_TITLE = 'עריכת אגף';
 export const DEPARTMENTS_EDIT_MODAL_DESC = 'ערוך את שם האגף';
 export const DEPARTMENTS_DELETE_MODAL_TITLE = 'מחיקת אגף';
 export const DEPARTMENTS_ITEM_PLACEHOLDER = 'שם אגף';
-export const DEPARTMENTS_DUPLICATE_ERROR = 'אגף עם השם הזה כבר קיים';
-export const DEPARTMENTS_CARD_TITLE = 'ניהול אגפים';
 export const DEPARTMENTS_CARD_DESC = 'תחזוקה וארגון של אגפי הפעילות בחברה – הוסף, ערוך או מחק אגפים בקלות';
 
 // Teams/Tsevet Management
@@ -67,10 +63,8 @@ export const TEAMS_EDIT_MODAL_TITLE = 'עריכת צוות';
 export const TEAMS_EDIT_MODAL_DESC = 'ערוך את שם הצוות';
 export const TEAMS_DELETE_MODAL_TITLE = 'מחיקת צוות';
 export const TEAMS_ITEM_PLACEHOLDER = 'שם צוות';
-export const TEAMS_DUPLICATE_ERROR = 'צוות עם השם הזה כבר קיים';
-export const TEAMS_CARD_TITLE = 'ניהול צוותות';
 export const TEAMS_CARD_DESC = 'הנהלת צוותים וקבוצות עבודה – נהל את מבנה הצוותים והקשרים בתוך כל אגף';
-export const MANAGEMENT_DUPLICATE_NAME_ERROR = 'שם עם השם הזה כבר קיים';
+export const DUPLICATE_NAME_ERROR = 'שם עם השם הזה כבר קיים';
 export const DEPARTMENTS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את האגף';
 export const TEAMS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את הצוות';
 
@@ -78,7 +72,6 @@ export const TEAMS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך 
 export const PROJECTS_TITLE = 'ניהול פרויקטים';
 export const PROJECTS_SUBTITLE = 'סקירת כל הפרויקטים וניהול המצב הפעיל שלהם.';
 export const PROJECTS_EMPTY_STATE = 'לא נמצאו פרויקטים. טוען...';
-export const PROJECTS_CARD_TITLE = 'ניהול פרויקטים';
 export const PROJECTS_CARD_DESC = 'פיקוח עדכני על פרויקטים ותקדמותם – עקוב אחרי מעמד וביצועי כל פרויקט';
 
 // Management UI Common
@@ -92,30 +85,12 @@ export const MANAGEMENT_TOGGLE_INACTIVE = 'העבר ל"לא פעיל"';
 export const MANAGEMENT_TOGGLE_ACTIVE = 'העבר ל"פעיל"';
 export const MANAGEMENT_EDIT_ACTION = 'ערוך';
 
-export const AGAF_OPTIONS = [
-  { value: "__all__", label: "כל האגפים" },
-  { value: "פיתוח", label: "פיתוח" },
-  { value: "תחזוקה", label: "תחזוקה" },
-  { value: "מערכות מידע", label: "מערכות מידע" },
-];
-
-export const YECHIDA_MEVATSAAT_OPTIONS = [
-  { value: "__all__", label: "כל היחידות המבצעות" },
-  { value: "דיגיטל", label: "דיגיטל" },
-  { value: "דבאופס", label: "דבאופס" },
-  { value: "תשתיות", label: "תשתיות" },
-  { value: "דיבי", label: "דיבי" },
-  { value: "מערכות ליבה", label: "מערכות ליבה" },
-];
-
 export default { 
   MASLOL, 
   MASLOL_OPTIONS, 
   GAP_STATUS, 
   GAP_STATUS_OPTIONS, 
-  GAP_CLASSES, 
-  AGAF_OPTIONS, 
-  YECHIDA_MEVATSAAT_OPTIONS, 
+  GAP_STATUS_BY_VALUE, 
   HR_BUDGET_LABEL, 
   PROCUREMENT_BUDGET_LABEL, 
   PLANNED_HR_LABEL, 
@@ -124,14 +99,14 @@ export default {
   TOTAL_GAPS_LABEL, 
   PROJECT_NAME_LABEL, 
   AGAF_LABEL, 
-  UNIT_LABEL, 
+  TSEVET_LABEL, 
   CONTINUATION_LABEL, 
   CONTINUATION_TRUE_LABEL, 
   CONTINUATION_FALSE_LABEL, 
   MASLOL_LABEL,
   MANAGEMENT_TITLE,
   MANAGEMENT_SUBTITLE,
-  MANAGEMENT_DUPLICATE_NAME_ERROR,
+  DUPLICATE_NAME_ERROR,
   DEPARTMENTS_TITLE,
   DEPARTMENTS_SUBTITLE,
   DEPARTMENTS_SEARCH_PLACEHOLDER,
@@ -142,9 +117,6 @@ export default {
   DEPARTMENTS_EDIT_MODAL_DESC,
   DEPARTMENTS_DELETE_MODAL_TITLE,
   DEPARTMENTS_ITEM_PLACEHOLDER,
-  DEPARTMENTS_DUPLICATE_ERROR,
-  DEPARTMENTS_CARD_TITLE,
-  DEPARTMENTS_CARD_DESC,
   DEPARTMENTS_DELETE_CONFIRM_TEXT,
   TEAMS_TITLE,
   TEAMS_SUBTITLE,
@@ -156,14 +128,10 @@ export default {
   TEAMS_EDIT_MODAL_DESC,
   TEAMS_DELETE_MODAL_TITLE,
   TEAMS_ITEM_PLACEHOLDER,
-  TEAMS_DUPLICATE_ERROR,
   TEAMS_DELETE_CONFIRM_TEXT,
-  TEAMS_CARD_TITLE,
-  TEAMS_CARD_DESC,
   PROJECTS_TITLE,
   PROJECTS_SUBTITLE,
   PROJECTS_EMPTY_STATE,
-  PROJECTS_CARD_TITLE,
   PROJECTS_CARD_DESC,
   MANAGEMENT_MANAGE_BUTTON,
   MANAGEMENT_EMPTY_TEXT,

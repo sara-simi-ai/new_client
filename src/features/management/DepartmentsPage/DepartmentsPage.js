@@ -12,7 +12,7 @@ import {
   DEPARTMENTS_EDIT_MODAL_DESC,
   DEPARTMENTS_DELETE_MODAL_TITLE,
   DEPARTMENTS_ITEM_PLACEHOLDER,
-  DEPARTMENTS_DUPLICATE_ERROR,
+  DUPLICATE_NAME_ERROR,
   DEPARTMENTS_DELETE_CONFIRM_TEXT,
 } from '../../../utils/Dec';
 
@@ -36,7 +36,7 @@ export default function DepartmentsPage({ onBack }) {
       // Pass full, unfiltered options to avoid duplicating the derived `filteredItems` provided by the async hook
       options={hook.options}
       onToggleOptionActive={hook.handleToggleActive}
-      duplicateErrorMessage={DEPARTMENTS_DUPLICATE_ERROR}
+      duplicateErrorMessage={DUPLICATE_NAME_ERROR}
       // Pass the full hook state for async support
       asyncHook={hook}
       isAsync={true}
