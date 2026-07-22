@@ -7,6 +7,7 @@
   justify-content: center;
   padding-top:     2rem;
   z-index:         1000;
+  box-sizing:      border-box;
 }
 
 .modal {
@@ -18,4 +19,30 @@
   max-height:    90vh;
   overflow-y:    auto;
   box-shadow:    0 8px 32px rgba(0, 0, 0, 0.18);
+  box-sizing:    border-box;
+}
+
+@media (max-width: 767px) {
+  .modal-overlay {
+    padding-top: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .modal {
+    padding: 1rem;
+    max-width: 95vw;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-overlay {
+    padding-top: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .modal {
+    padding: 1rem;
+    max-width: 95vw;
+  }
 }

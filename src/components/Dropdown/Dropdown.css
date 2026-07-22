@@ -1,7 +1,15 @@
 .filter-dropdown {
   position: relative;
-  min-width: 160px;
+  min-width: auto;
   display: flex;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+@media (max-width: 767px) {
+  .filter-dropdown {
+    width: 100%;
+  }
 }
 
 .filter-dropdown-title {
@@ -34,6 +42,7 @@
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
   height: 36px;
+  min-width: 0;
 }
 
 .filter-button:hover {
@@ -67,6 +76,7 @@
   flex: 1;
   text-align: right;
   direction: rtl;
+  min-width: 0;
 }
 
 .filter-button-arrow {
@@ -99,6 +109,7 @@
   overflow: hidden;
   animation: slideDown 0.15s ease-out;
   direction: rtl;
+  z-index: 10000;
 }
 
 @keyframes slideDown {

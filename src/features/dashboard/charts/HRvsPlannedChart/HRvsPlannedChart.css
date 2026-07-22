@@ -181,3 +181,25 @@
   transition: transform .2s ease;
 }
 
+/* Responsive: on narrower screens place label above bars so bars keep full width */
+@media (max-width: 900px) {
+  .hrp-row {
+    align-items: flex-start;
+  }
+
+  .hrp-lbl {
+    width: 100%;
+    white-space: normal;
+    padding-top: 0;
+    padding-bottom: 6px;
+    overflow: visible;
+    text-overflow: clip;
+    flex-shrink: 0;
+  }
+
+  .hrp-bars {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}
+

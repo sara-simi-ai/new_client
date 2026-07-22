@@ -50,6 +50,14 @@
 	justify-content: space-between;
 }
 
+@media (max-width: 820px) {
+	.mgmt-cards.mgmt-landing {
+		grid-template-columns: repeat(2, minmax(240px, 1fr));
+		gap: 24px;
+	}
+}
+
+
 .mgmt-card {
 	background: #fff;
 	border-radius: 18px;
@@ -89,9 +97,43 @@
 	background: var(--mgmt-blue-dark, #174f78);
 }
 
-@media (max-width: 900px) {
-	.mgmt-cards {
-		grid-template-columns: 1fr;
-		padding: 0 12px;
+@media (max-width: 767px) {
+	.mgmt-header {
+		max-width: none;
+		padding: 12px 8px;
 	}
+	.mgmt {
+		padding: 14px 8px 16px;
+		box-sizing: border-box;
+		width: 100%;
+		overflow-x: hidden;
+	}
+	.mgmt-title { font-size: 22px; }
+	.mgmt-cards { padding: 0 12px; }
+	.mgmt-cards.mgmt-landing {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+	.mgmt-cards.mgmt-landing .mgmt-card {
+		aspect-ratio: auto;
+		max-width: 100%;
+		max-height: none;
+		min-height: 200px;
+	}
+}
+
+@media (max-width: 600px) {
+	.mgmt-cards.mgmt-landing {
+		grid-template-columns: 1fr;
+		gap: 16px;
+		padding: 0 8px;
+	}
+	.mgmt-cards.mgmt-landing .mgmt-card {
+		aspect-ratio: auto;
+		min-height: 140px;
+		max-height: none;
+		max-width: 100%;
+	}
+	.mgmt-header { padding: 8px 8px; }
+	.mgmt { padding: 12px 8px 16px; }
 }

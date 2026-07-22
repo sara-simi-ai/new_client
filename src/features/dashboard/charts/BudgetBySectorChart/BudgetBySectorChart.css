@@ -131,3 +131,26 @@
 }
 
 .bbs-gap { font-weight: 600; }
+
+/* Responsive: on small screens place label above bars so bars keep full width */
+@media (max-width: 900px) {
+  .bbs-row {
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;
+    display: block;
+  }
+
+  .bbs-lbl {
+    width: 100%;
+    white-space: normal;
+    padding-top: 0;
+    padding-bottom: 6px;
+    overflow: visible;
+  }
+
+  .bbs-bars {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}

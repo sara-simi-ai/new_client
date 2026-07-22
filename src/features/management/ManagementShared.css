@@ -4,10 +4,72 @@
 	--mgmt-blue-border: rgba(30,95,142,0.12);
 }
 
-.mgmt-page-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
-.mgmt-page-header > div { display:flex; flex-direction:column; align-items:flex-start; }
-.mgmt-page-content { max-width: 1160px; margin: 0 auto; padding: 0 16px; }
-.mgmt-card { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: 18px; padding: 26px 24px 22px 24px; box-shadow: 0 18px 36px rgba(15,23,42,0.08); position: relative; overflow: hidden; min-height: 160px; }
+.mgmt-page-header { 
+	display:flex; 
+	align-items:center; 
+	justify-content:space-between; 
+	gap:12px; 
+	margin-bottom:12px; 
+	flex-wrap: wrap;
+	min-width: 0;
+	width: 100%;
+}
+.mgmt-page-header > div { 
+	display:flex; 
+	flex-direction:column; 
+	align-items:flex-start; 
+	min-width: 0;
+}
+.mgmt-page-content { 
+	max-width: 1160px; 
+	margin: 0 auto; 
+	padding: 0 16px; 
+	box-sizing: border-box;
+	width: 100%;
+	overflow-x: hidden;
+}
+.mgmt-card { 
+	max-width: 100%;
+	margin: 0 auto; 
+	background: #fff; 
+	border-radius: 18px; 
+	padding: 26px 24px 22px 24px; 
+	box-shadow: 0 18px 36px rgba(15,23,42,0.08); 
+	position: relative; 
+	overflow: hidden; 
+	min-height: 160px;
+	box-sizing: border-box;
+	width: 100%;
+}
 .no-card-bg .mgmt-card { background: transparent !important; box-shadow: none !important; border: none !important; }
 .mgmt-page-title { margin: 0; font-size: 24px; color: #0f172a; font-weight: 600; }
 .mgmt-page-subtitle { margin: 6px 0 0 0; color: #6b7280; font-size: 14px; white-space: nowrap; }
+
+@media (max-width: 768px) {
+	.mgmt-page-content { 
+		padding: 0 12px;
+		max-width: none;
+	}
+	.mgmt-card { 
+		padding: 18px 14px 14px 14px;
+		min-height: auto;
+		max-width: 100%;
+	}
+	.mgmt-page-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.mgmt-page-header > div {
+		width: 100%;
+	}
+}
+
+@media (max-width: 600px) {
+	.mgmt-page-content { padding: 0 8px; }
+	.mgmt-card { 
+		padding: 14px 12px 12px 12px; 
+		min-height: auto; 
+	}
+	.mgmt-page-subtitle { white-space: normal; }
+	.mgmt-page-title { font-size: 20px; }
+}

@@ -101,7 +101,7 @@
   font-size: 11px;
   color: var(--text2);
   width: 140px;
-  flex-shrink: 0;
+  flex: 0 0 140px;
   /* allow wrapping for Hebrew labels, align RTL */
   white-space: normal;
   overflow: visible;
@@ -117,6 +117,7 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-width: 0; /* allow flex children to shrink properly */
 }
 
 .bar-track,
@@ -146,12 +147,38 @@
   font-size: 10px;
   color: var(--text3);
   width: 60px;
+  flex: 0 0 60px;
   text-align: left;
-  flex-shrink: 0;
 }
 
 @media (max-width: 720px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
+  /* allow labels and numbers to shrink on smaller screens */
+  .bar-lbl,
+  .sb-lbl,
+  .pl-name { flex: 0 0 120px; width: 120px; }
+  .bar-num,
+  .sb-num,
+  .pl-pct { flex: 0 0 48px; width: 48px; }
+}
+
+@media (max-width: 420px) {
+  /* stack label / bar / number vertically on very small screens to avoid compression */
+  .bar-row,
+  .sb-row,
+  .pl-row { flex-direction: column; align-items: stretch; gap: 6px; }
+  .bar-lbl,
+  .sb-lbl,
+  .pl-name { width: 100%; flex: 0 0 auto; text-align: right; }
+  .bar-wrap,
+  .sb-track,
+  .pl-track { width: 100%; }
+  .bar-num,
+  .sb-num,
+  .pl-pct { width: auto; flex: 0 0 auto; text-align: left; }
+  .bar-track,
+  .sb-track,
+  .pl-track { height: 12px; }
 }

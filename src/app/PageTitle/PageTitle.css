@@ -1,10 +1,9 @@
-
 .page-title-header {
   position: static;
   width: 100%;
   background: transparent;
   padding: 12px clamp(12px, 2vw, 28px);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: none;
   font-family: inherit;
 }
 
@@ -48,12 +47,19 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  justify-content: flex-end;
 }
 
 .page-title-controls {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 12px;
+}
+
+.page-title-controls > * {
+  min-width: 0;
 }
 
 .btn-primary {
@@ -77,6 +83,10 @@
 
 @media (max-width: 768px) {
   .page-title-inner { flex-direction: column; align-items: stretch; }
-  .page-title-left { justify-content: flex-start; }
+  .page-title-left { justify-content: flex-end; width: 100%; }
+  .page-title-controls { justify-content: flex-end; }
   .page-title-title { font-size: 22px; }
 }
+
+
+

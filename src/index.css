@@ -72,6 +72,80 @@ body {
   .App { padding: 1rem 0.5rem 2rem; }
 }
 
+@media (max-width: 767px) {
+  .page-shell,
+  .mgmt-page-content,
+  .page-title-inner,
+  .dashboard,
+  .dashboard-row-2,
+  .dashboard-grid,
+  .p-table-layout,
+  .mgmt-cards,
+  .mgmt-cards.mgmt-landing,
+  .projects-toolbar,
+  .page-title-left,
+  .page-title-controls,
+  .dashboard-expand-control {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .page-title-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .dashboard-row-2,
+  .dashboard-grid,
+  .p-table-layout,
+  .mgmt-cards.mgmt-landing {
+    grid-template-columns: 1fr;
+  }
+
+  .mgmt-cards.mgmt-landing .mgmt-card {
+    max-width: 100%;
+  }
+
+  .dashboard-expand-control {
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .toolbar {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toolbar input:not([type="checkbox"]),
+  .toolbar select,
+  .filter-button,
+  .toolbar .btn,
+  .filter-dropdown {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 100%;
+    box-sizing: border-box;
+  }
+
+  .page-title-controls,
+  .page-title-left,
+  .page-title-inner {
+    overflow-x: visible;
+  }
+
+  .page-title-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
 button {
   font-family: inherit;
   cursor: pointer;

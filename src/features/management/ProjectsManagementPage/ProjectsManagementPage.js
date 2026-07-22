@@ -1,63 +1,43 @@
-import React, { useEffect } from 'react';
-import '../ManagementShared.css';
-import '../ManagementOptionsPage/ManagementOptionsPage.css';
-import './ProjectsManagementPage.css';
-import BackButton from '../../../components/BackButton/BackButton';
-import ToggleActiveButton from '../../../components/ToggleActiveButton/ToggleActiveButton';
-import { useProjects } from '../../../services/context/ProjectsContext';
+import React from 'react';
+import ManagementOptionsPage from '../ManagementOptionsPage/ManagementOptionsPage';
+import { useProjectsManagement } from '../ManagementOptionsPage/useProjectsManagement';
 import {
   PROJECTS_TITLE,
   PROJECTS_SUBTITLE,
-  PROJECTS_EMPTY_STATE,
+  PROJECTS_SEARCH_PLACEHOLDER,
+  PROJECTS_ADD_BUTTON,
+  PROJECTS_ADD_MODAL_TITLE,
+  PROJECTS_ADD_MODAL_DESC,
+  PROJECTS_EDIT_MODAL_TITLE,
+  PROJECTS_EDIT_MODAL_DESC,
+  PROJECTS_DELETE_MODAL_TITLE,
+  PROJECTS_ITEM_PLACEHOLDER,
+  DUPLICATE_NAME_ERROR,
+  PROJECTS_DELETE_CONFIRM_TEXT,
 } from '../../../utils/Dec';
 
 export default function ProjectsManagementPage({ onBack }) {
-  const { loadAllProjects, allProjects, toggleProjectStatus } = useProjects();
-
-  useEffect(() => {
-    if (!allProjects?.length) {
-      loadAllProjects().catch(() => {});
-    }
-  }, []);
-
-  const toggleActive = async (project) => {
-    if (!project?.id) return;
-
-    try {
-      await toggleProjectStatus(project.id);
-    } catch (error) {
-      console.error("Failed to toggle project active status:", error);
-    }
-  };
+  const hook = useProjectsManagement();
 
   return (
-    <div className="mgmt-page no-card-bg" dir="rtl">
-      <div className="mgmt-page-header">
-        <div>
-          <h1 className="mgmt-page-title">{PROJECTS_TITLE}</h1>
-          <p className="mgmt-page-subtitle">{PROJECTS_SUBTITLE}</p>
-        </div>
-        <BackButton onClick={onBack} />
-      </div>
-
-      <div className="mgmt-page-content">
-        <div className="mgmt-card">
-          <div className="agaff-list">
-            {!allProjects?.length && <div className="agaff-empty">{PROJECTS_EMPTY_STATE}</div>}
-            {allProjects?.map((project) => (
-              <div className="agaff-item" key={project.id}>
-                <div className="agaff-name">{project.projectName || project.teur || '—'}</div>
-                <div className="agaff-actions">
-                  <ToggleActiveButton
-                    active={project.active !== false}
-                    onClick={() => toggleActive(project)}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+    <ManagementOptionsPage
+      onBack={onBack}
+      title={PROJECTS_TITLE}
+      subtitle={PROJECTS_SUBTITLE}
+      searchPlaceholder={PROJECTS_SEARCH_PLACEHOLDER}
+      addButtonLabel={PROJECTS_ADD_BUTTON}
+      addModalTitle={PROJECTS_ADD_MODAL_TITLE}
+      addModalDescription={PROJECTS_ADD_MODAL_DESC}
+      editModalTitle={PROJECTS_EDIT_MODAL_TITLE}
+      editModalDescription={PROJECTS_EDIT_MODAL_DESC}
+      deleteModalTitle={PROJECTS_DELETE_MODAL_TITLE}
+      deleteModalDescription={(option) => `${PROJECTS_DELETE_CONFIRM_TEXT} "${option?.label}"?`}
+      itemPlaceholder={PROJECTS_ITEM_PLACEHOLDER}
+      options={hook.options}
+      onToggleOptionActive={hook.handleToggleActive}
+      duplicateErrorMessage={DUPLICATE_NAME_ERROR}
+      asyncHook={hook}
+      isAsync={true}
+    />
   );
 }

@@ -337,3 +337,28 @@
 .gap-row:hover {
   z-index: 1;
 }
+
+/* Responsive: stack label above axis on small screens so bars are not compressed */
+@media (max-width: 900px) {
+  .gap-row {
+    grid-template-columns: 1fr; /* single column: label above axis */
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .gap-lbl {
+    grid-column: 1;
+    padding: 0 0 6px 0;
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .gap-axis {
+    grid-column: 1;
+    padding: 0.3rem 3%;
+  }
+
+  .gap-val {
+    max-width: 55%;
+  }
+}

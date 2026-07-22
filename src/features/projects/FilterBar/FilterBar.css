@@ -290,7 +290,7 @@
 }
 
 @media (max-width: 640px) {
-  .toolbar { align-items: stretch; }
+  .toolbar { align-items: center; }
   .toolbar input,
   .toolbar select,
   .filter-button,

@@ -70,8 +70,17 @@ export const TEAMS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך 
 
 // Projects Management
 export const PROJECTS_TITLE = 'ניהול פרויקטים';
-export const PROJECTS_SUBTITLE = 'סקירת כל הפרויקטים וניהול המצב הפעיל שלהם.';
-export const PROJECTS_EMPTY_STATE = 'לא נמצאו פרויקטים. טוען...';
+export const PROJECTS_SUBTITLE = 'הוסף, ערוך או מחק פרויקטים במערכת.';
+export const PROJECTS_SEARCH_PLACEHOLDER = 'חיפוש לפי שם פרויקט';
+export const PROJECTS_ADD_BUTTON = 'הוספת פרויקט +';
+export const PROJECTS_ADD_MODAL_TITLE = 'הוספת פרויקט חדש';
+export const PROJECTS_ADD_MODAL_DESC = 'הכנס שם לפרויקט החדש';
+export const PROJECTS_EDIT_MODAL_TITLE = 'עריכת פרויקט';
+export const PROJECTS_EDIT_MODAL_DESC = 'ערוך את שם הפרויקט';
+export const PROJECTS_DELETE_MODAL_TITLE = 'מחיקת פרויקט';
+export const PROJECTS_ITEM_PLACEHOLDER = 'שם פרויקט';
+export const PROJECTS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את הפרויקט';
+export const PROJECTS_EMPTY_STATE = 'לא נמצאו פרויקטים';
 export const PROJECTS_CARD_DESC = 'פיקוח עדכני על פרויקטים ותקדמותם – עקוב אחרי מעמד וביצועי כל פרויקט';
 
 // Management UI Common
@@ -131,6 +140,15 @@ export default {
   TEAMS_DELETE_CONFIRM_TEXT,
   PROJECTS_TITLE,
   PROJECTS_SUBTITLE,
+  PROJECTS_SEARCH_PLACEHOLDER,
+  PROJECTS_ADD_BUTTON,
+  PROJECTS_ADD_MODAL_TITLE,
+  PROJECTS_ADD_MODAL_DESC,
+  PROJECTS_EDIT_MODAL_TITLE,
+  PROJECTS_EDIT_MODAL_DESC,
+  PROJECTS_DELETE_MODAL_TITLE,
+  PROJECTS_ITEM_PLACEHOLDER,
+  PROJECTS_DELETE_CONFIRM_TEXT,
   PROJECTS_EMPTY_STATE,
   PROJECTS_CARD_DESC,
   MANAGEMENT_MANAGE_BUTTON,

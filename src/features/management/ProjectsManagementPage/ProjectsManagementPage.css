@@ -1,3 +1,19 @@
-.proj-toggle { padding: 8px 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; min-width: 92px; }
+.proj-toggle { 
+	padding: 8px 14px; 
+	border-radius: 10px; 
+	border: none; 
+	cursor: pointer; 
+	font-weight: 600; 
+	min-width: auto;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
 .proj-toggle.on { background: #10b981; color: white; }
 .proj-toggle.off { background: #ef4444; color: white; }
+
+@media (max-width: 600px) {
+	.proj-toggle {
+		padding: 6px 12px;
+		font-size: 13px;
+	}
+}
