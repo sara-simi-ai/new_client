@@ -11,7 +11,6 @@ export default function CopyProjectsButton() {
     try {
       setLoading(true);
       await copyFromPreviousYear(selectedYear);
-      // optionally show a toast; here we use alert for simplicity
       alert("העתקה הושלמה בהצלחה.");
     } catch (err) {
       console.error(err);
