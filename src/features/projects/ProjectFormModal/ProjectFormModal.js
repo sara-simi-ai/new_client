@@ -1,4 +1,5 @@
 import React from "react";
+import Modal from "../../../components/Modal/Modal";
 import "./ProjectFormModal.css";
 import ProjectForm from "./ProjectForm";
 import { useProjects } from "../../../services/context/ProjectsContext";
@@ -17,16 +18,14 @@ export default function ProjectFormModal({ open, onClose, initialData = {}, mode
   };
 
   return (
-    <div className="pfm-backdrop" dir="rtl">
-      <div className="pfm-modal" onClick={(e) => e.stopPropagation()}>
-        <header className="pfm-header">
-          <h3>{mode === "edit" ? "עדכון פרויקט" : "פרויקט חדש"}</h3>
-          <button onClick={onClose} aria-label="close">✕</button>
-        </header>
-        <div className="pfm-body">
-          <ProjectForm initialData={initialData} mode={mode} onSubmit={handleSubmit} onCancel={onClose} />
-        </div>
+    <Modal onClose={onClose} closeOnBackdropClick={false} closeOnEscape={false} maxWidth={720}>
+      <header className="pfm-header">
+        <h3>{mode === "edit" ? "עדכון פרויקט" : "פרויקט חדש"}</h3>
+        <button onClick={onClose} aria-label="close">✕</button>
+      </header>
+      <div className="pfm-body">
+        <ProjectForm initialData={initialData} mode={mode} onSubmit={handleSubmit} onCancel={onClose} />
       </div>
-    </div>
+    </Modal>
   );
 }

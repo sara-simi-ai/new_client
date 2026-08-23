@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import './BudgetBySectorChart.css';
 import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
+// Using direct project properties for backward compatibility (helper removed).
 import { formatGapDisplay, getGapStatus } from '../../../../utils/calculateProjectFinanceHelper';
 import { BUDGET_COLORS } from '../../constans/chartConstants';
 import { GAP_STATUS_BY_VALUE } from '../../../../utils/Dec';
@@ -21,7 +22,8 @@ export default function BudgetBySectorChart() {
     const sectorMap = new Map();
 
     filteredProjects.forEach(project => {
-      const sector = project.agaff;
+      // Use helper to read canonical agaff name with fallbacks.
+      const sector = project.agaffName || project.AgaffName || project.agaff || "";
       if (!sector) return;
 
       const current = sectorMap.get(sector) ?? {
@@ -126,7 +128,7 @@ export default function BudgetBySectorChart() {
       {activeSector && (
         <SectorProjectsModal
           sectorName={activeSector}
-          projects={filteredProjects.filter(p => p.agaff === activeSector)}
+          projects={filteredProjects.filter(p => (p.agaffName || p.AgaffName || p.agaff) === activeSector)}
           onClose={() => setActiveSector(null)}
         />
       )}

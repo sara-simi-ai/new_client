@@ -37,13 +37,16 @@ function isAllItemsSelected(selected, allOptions) {
 }
 
 export function getProjectFilterOptions(projects, agaffOptions = [], yechidaMevatzatOptions = []) {
+  // Prefer explicit options passed from provider (ids + labels). When not
+  // provided, derive options from project documents using the server-side
+  // denormalized name fields: `agaffName` and `tsevetMevatseaName`.
   const effectiveAgaffOptions = (agaffOptions || []).length > 0
     ? agaffOptions
-    : [AGAFF_ALL_OPTION, ...buildOptionsFromProjects(projects, "agaff")];
+    : [AGAFF_ALL_OPTION, ...buildOptionsFromProjects(projects, "agaffName")];
 
   const effectiveYechidaOptions = (yechidaMevatzatOptions || []).length > 0
     ? yechidaMevatzatOptions
-    : [YECHIDA_ALL_OPTION, ...buildOptionsFromProjects(projects, "yechidaMevatzat")];
+    : [YECHIDA_ALL_OPTION, ...buildOptionsFromProjects(projects, "tsevetMevatseaName")];
 
   return {
     agaff: effectiveAgaffOptions,
@@ -55,7 +58,7 @@ export function getProjectFilterOptions(projects, agaffOptions = [], yechidaMeva
 function matchesSearch(project, searchValue) {
   if (!searchValue) return true;
   const query = searchValue.toLowerCase();
-  return [project.projectName, project.teur, project.agaff, project.yechidaMevatzat]
+  return [project.projectName, project.teur, project.agaffName || project.AgaffName || project.agaff, project.tsevetMevatseaName || project.TsevetMevatseaName || project.yechidaMevatzat]
     .filter(Boolean)
     .some((value) => String(value).toLowerCase().includes(query));
 }
@@ -99,7 +102,7 @@ export function filterProjects(
     const isAgaffAllSelected = isAllItemsSelected(agaffFilter, agaffItems);
     if (agaffFilter.length && !isAgaffAllSelected) {
       const agaffValues = agaffFilter.map((a) => a.value || a);
-      if (!agaffValues.includes(project.agaff)) return false;
+      if (!agaffValues.includes(project.agaffName || project.AgaffName || project.agaff)) return false;
     }
     
     // For yechidaMevatzat: if not empty and all items not selected, filter by yechidaMevatzat
@@ -108,7 +111,7 @@ export function filterProjects(
     const isYechidaAllSelected = isAllItemsSelected(yechidaFilter, yechidaItems);
     if (yechidaFilter.length && !isYechidaAllSelected) {
       const yechidaValues = yechidaFilter.map((y) => y.value || y);
-      if (!yechidaValues.includes(project.yechidaMevatzat)) return false;
+      if (!yechidaValues.includes(project.tsevetMevatseaName || project.TsevetMevatseaName || project.yechidaMevatzat)) return false;
     }
     
     const projectFilter = Array.isArray(filters.project) ? filters.project : [];

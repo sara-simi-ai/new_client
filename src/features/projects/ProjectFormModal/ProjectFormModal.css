@@ -1,15 +1,11 @@
+.modal-overlay,
 .pfm-backdrop {
-  position: fixed;
-  inset: 0;
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(4px) saturate(0.9);
   -webkit-backdrop-filter: blur(4px) saturate(0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
 }
 
+.modal,
 .pfm-modal {
   background: #fff;
   color: #000;
@@ -18,7 +14,6 @@
   min-width: 320px;
   max-width: 720px;
   width: 100%;
-  z-index: 1001;
   box-shadow: 0 10px 30px rgba(2, 6, 23, 0.18);
 }
 
@@ -52,15 +47,18 @@
   margin-top: 12px;
 }
 
-.pfm-modal .np-tabs {
+.np-tabs {
   display: flex;
+  /* Use `flex-start` so the visual start aligns to the right in RTL containers
+     (the modal root uses `dir="rtl"`). `flex-end` places tabs on the left
+     when `dir=rtl`, which caused the incorrect left alignment. */
   justify-content: flex-start;
   gap: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   margin-bottom: 1.5rem;
 }
 
-.pfm-modal .np-tab {
+.np-tab {
   padding: 0.8rem 0;
   font-size: 0.94rem;
   font-weight: 500;
@@ -73,11 +71,11 @@
   transition: color 0.2s, border-color 0.2s;
 }
 
-.pfm-modal .np-tab:hover {
+.np-tab:hover {
   color: #1e293b;
 }
 
-.pfm-modal .np-tab--active {
+.np-tab--active {
   color: var(--color-proc);
   border-bottom-color: var(--color-proc);
   font-weight: 700;

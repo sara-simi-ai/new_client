@@ -22,6 +22,13 @@ function normalizeProjectFromApi(project) {
     ...project,
     projectName: project.projectName || "",
     teur: project.teur || "",
+    // Normalize server-side property names to the client-side expectations.
+    // Server writes `agaffName` / `tsevetMevatseaName`; some client code expects
+    // `agaff` and `yechidaMevatzat` fields. Provide both to be compatible.
+    agaff: project.agaff || project.agaffName || project.AgaffName || "",
+    agaffName: project.agaffName || project.AgaffName || project.agaff || "",
+    yechidaMevatzat: project.yechidaMevatzat || project.tsevetMevatseaName || project.TsevetMevatseaName || "",
+    tsevetMevatseaName: project.tsevetMevatseaName || project.TsevetMevatseaName || project.yechidaMevatzat || "",
     totalTakzivCoachAdam,
   };
 }
@@ -29,12 +36,19 @@ function normalizeProjectFromApi(project) {
 function normalizeProjectForApi(project) {
   const { active, createdAt, updatedAt, ...rest } = project;
   const totalTakzivCoachAdam = Number(rest.totalTakzivCoachAdam ?? 0);
-  return {
+  const result = {
     ...rest,
     totalTakzivCoachAdam,
     totalTakzivRechesh: Number(rest.totalTakzivRechesh || 0),
     coachAdam: Number(rest.coachAdam || 0),
   };
+
+  // Preserve `active` when explicitly provided (important for updates).
+  if (typeof active === "boolean") {
+    result.active = active;
+  }
+
+  return result;
 }
 
 export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, yechidaMevatzatOptions: propsYechidaMevatzatOptions }) {
@@ -184,7 +198,8 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       idntAgaff: projectData.agaff || projectData.idntAgaff || projectData.idntAgaff,
       idntTsevetMevatsea: projectData.yechidaMevatzat || projectData.idntTsevetMevatsea || projectData.idntTsevetMevatsea,
     };
-    const fullData = normalizeProjectForApi({ ...withIds, year: selectedYear });
+    // Always create new projects as active by default.
+    const fullData = normalizeProjectForApi({ ...withIds, year: selectedYear, active: true });
     const savedProject = await insertProject(fullData);
     const normalizedSaved = normalizeProjectFromApi(savedProject);
     setProjects((prev) => [...prev, normalizedSaved]);
@@ -229,7 +244,8 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       idntAgaff: projectData.agaff || projectData.idntAgaff,
       idntTsevetMevatsea: projectData.yechidaMevatzat || projectData.idntTsevetMevatsea,
     };
-    const toSend = normalizeProjectForApi({ ...withIds });
+    // Ensure updates re-activate the project (active = true) per requirement.
+    const toSend = normalizeProjectForApi({ ...withIds, active: true });
     const updated = await updateProject(toSend);
     const normalizedUpdated = normalizeProjectFromApi(updated);
     setProjects((prev) => syncProjectToCurrentYear(prev, normalizedUpdated));

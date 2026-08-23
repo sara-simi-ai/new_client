@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import ProjectFinanceLayout from "../ProjectFinanceLayout/ProjectFinanceLayout";
 import { buildProjectMetaRows, ProjectMetaSection } from "../ProjectMetaSection/ProjectMetaSection";
@@ -6,30 +6,20 @@ import { isRealText } from "../../../utils/textHelpers";
 import "../ProjectsList/Project.css";
 import "./ProjectCard.css";
 import ProjectFormModal from "../ProjectFormModal/ProjectFormModal";
+import { useProjectActions } from "../hooks/useProjectActions";
+import StatusGap, { getGapStatusMeta } from "../StatusGap/StatusGap";
 
 export default function ProjectCard({ project }) {
-  const { deleteProjectData, projectFinanceMap, selectedProjectId, setSelectedProjectId } = useProjects();
+  const { projectFinanceMap, selectedProjectId, setSelectedProjectId } = useProjects();
+  const { isEditing, openEdit, closeEdit, handleDelete } = useProjectActions(project);
 
   const financeData = projectFinanceMap[project.id];
   const isSelected = selectedProjectId === project.id;
   const onSelect = () => setSelectedProjectId(isSelected ? null : project.id);
-  const [openEdit, setOpenEdit] = useState(false);
 
   const description = isRealText(project.teur) ? project.teur : "";
   const gapStatus = financeData?.statusPearim || "takin";
-  const gapClass = gapStatus === 'odef'
-    ? 'card-accent--odef'
-    : gapStatus === 'geraon'
-      ? 'card-accent--geraon'
-      : 'card-accent--takin';
-
-  const statusLabels = {
-    odef: 'עודף',
-    geraon: 'גרעון',
-    takin: 'תקין',
-  };
-  const statusLabel = statusLabels[gapStatus] || statusLabels.takin;
-
+  const statusMeta = getGapStatusMeta(gapStatus);
   const metaRows = buildProjectMetaRows(project);
 
   const handleCardClick = (event) => {
@@ -40,21 +30,10 @@ export default function ProjectCard({ project }) {
     onSelect();
   };
 
-  const handleDelete = async (e) => {
-    e.stopPropagation();
-    if (!window.confirm("למחוק את הפרויקט?")) return;
-
-    try {
-      await deleteProjectData(project.id);
-    } catch (err) {
-      console.error("שגיאה במחיקת פרויקט:", err);
-    }
-  };
-
   return (
     <div className={`card ${isSelected ? "sel" : ""}`} onClick={handleCardClick}>
-      <div className={`card-accent ${gapClass}`} />
-      <span className={`status-badge status-badge--${gapStatus}`}>{statusLabel}</span>
+      <div className={`card-accent ${statusMeta.accentClass}`} />
+      <StatusGap status={gapStatus} className="card-status-badge" />
       <div className="card-body">
         <div className="card-title-row">
           <div className="card-name">{project.projectName}</div>
@@ -70,11 +49,11 @@ export default function ProjectCard({ project }) {
         <ProjectFinanceLayout
           financeData={financeData}
           mode="card"
-          onEdit={(e) => { e.stopPropagation(); setOpenEdit(true); }}
+          onEdit={openEdit}
           onDelete={handleDelete}
         />
       </div>
-      <ProjectFormModal open={openEdit} onClose={() => setOpenEdit(false)} initialData={project} mode="edit" />
+      <ProjectFormModal open={isEditing} onClose={closeEdit} initialData={project} mode="edit" />
     </div>
   );
 }

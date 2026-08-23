@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import { ApiProvider } from './services/context/ApiContext';
@@ -8,8 +8,7 @@ import { TsevetMevatzeatProvider } from './services/context/TsevetMevatzeatConte
 import { ProjectsProviderWithSync } from './services/context/ProjectsContext';
 import { BUDGET_COLORS } from './features/dashboard/constans/chartConstants';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.render(
   <React.StrictMode>
     <ApiProvider initialBase={process.env.REACT_APP_API_BASE}>
       <AgaffProvider>
@@ -20,7 +19,8 @@ root.render(
         </TsevetMevatzeatProvider>
       </AgaffProvider>
     </ApiProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
+  document.getElementById('root')
 );
 
 Object.entries(BUDGET_COLORS).forEach(([key, hex]) => {

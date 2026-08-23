@@ -32,31 +32,36 @@
    being squeezed into equal-width slots, so labels are never clipped.
    Wraps to a second line if the modal is too narrow to fit everything. */
 .spm-filters .toolbar {
-  flex-wrap: wrap;
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
   margin-bottom: 0;
-  gap: 8px;
-  row-gap: 10px;
+  gap: 6px;
+  row-gap: 0;
+  white-space: nowrap;
+  overflow: visible;
 }
 
-/* Smaller, fixed-ish width search box instead of growing to fill space */
+/* Keep the search field readable while still allowing the whole row to fill the table width */
 .spm-filters .toolbar input[type="text"] {
-  flex: 0 1 180px;
-  min-width: 120px;
-  max-width: 220px;
+  flex: 1 1 180px;
+  min-width: 150px;
+  max-width: 210px;
+  width: 180px;
 }
 
-/* Let dropdowns hug their content width */
+/* Make each dropdown fill the same row width instead of shrinking to content */
 .spm-filters .filter-dropdown {
   min-width: 0;
-  width: auto;
-  flex: 0 0 auto;
+  width: 100%;
+  flex: 1 1 120px;
 }
 
 .spm-filters .filter-button {
-  min-width: 0;
-  width: auto;
-  flex: 0 0 auto;
-  padding: 8px 14px;
+  min-width: 110px;
+  width: 100%;
+  flex: 1 1 auto;
+  padding: 8px 10px;
 }
 
 /* Override the ellipsis truncation from FilterBar.css so the full label

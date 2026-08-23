@@ -155,6 +155,7 @@ export default function FilterBar() {
   const { filters, filterOptions, updateFilter, clearFilters } = useProjects();
   const { agaffOptions } = useAgaff();
   const { tsevetMevatzeatOptions } = useTsevetMevatzeat();
+  const clearLabel = "נקה";
 
   return (
     <div className="toolbar" dir="rtl">
@@ -233,7 +234,7 @@ export default function FilterBar() {
       />
 
       <button type="button" className="btn" onClick={clearFilters}>
-        נקה הכל
+        {clearLabel}
       </button>
     </div>
   );

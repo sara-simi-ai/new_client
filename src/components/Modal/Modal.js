@@ -17,6 +17,7 @@ export default function Modal({
   closeOnEscape = true,
 }) {
   const handleOverlayClick = (e) => {
+    e.stopPropagation();
     if (closeOnBackdropClick && e.target === e.currentTarget) {
       onClose();
     }

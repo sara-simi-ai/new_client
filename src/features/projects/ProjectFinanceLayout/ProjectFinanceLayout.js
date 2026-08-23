@@ -2,13 +2,14 @@ import React from "react";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
+import ProjectActionButtons from "../ProjectActionButtons/ProjectActionButtons";
 import "./ProjectFinanceLayout.css";
-import { DeleteIcon, EditIcon } from '../../../components/ActionIcons/ActionIcons';
 
-export default function ProjectFinanceLayout({ financeData, mode = "card", onEdit, onDelete }) {
+export default function ProjectFinanceLayout({ financeData, mode = "card", onEdit, onDelete, showActions = false }) {
   const { totalTakzivCoachAdam = 0, totalTakzivRechesh = 0, coachAdam = 0, totalTaktziv = 0 } = financeData || {};
 
   const isCardMode = mode === "card";
+  const shouldRenderActions = Boolean(onEdit || onDelete) && (isCardMode || showActions);
   const classNames = isCardMode
     ? { container: "cf", label: "cf-lbl", value: "cf-val" }
     : { container: "pd-fc", label: "pd-fc-lbl", value: "pd-fc-val" };
@@ -44,21 +45,11 @@ export default function ProjectFinanceLayout({ financeData, mode = "card", onEdi
         </div>
       ))}
 
-      {isCardMode && (
-        <div className="cf-tot-row">
-          <div className="cf-tot">סה"כ {formatMoney(totalTaktziv)}</div>
-          <div className="cf-actions">
-            {onDelete && (
-              <button className="cf-delete-btn" onClick={onDelete} aria-label="מחק" title="מחק">
-                <DeleteIcon />
-              </button>
-            )}
-            {onEdit && (
-              <button className="cf-edit-btn" onClick={onEdit} aria-label="עדכן" title="עדכן">
-                <EditIcon />
-              </button>
-            )}
-          </div>
+      {shouldRenderActions && (
+        <div className={isCardMode ? "cf-tot-row" : "cf-tot-row cf-tot-row--detail"}>
+          {isCardMode && <div className="cf-tot">סה"כ {formatMoney(totalTaktziv)}</div>}
+          {!isCardMode && <div className="cf-tot" aria-hidden="true" />}
+          <ProjectActionButtons onEdit={onEdit} onDelete={onDelete} />
         </div>
       )}
     </div>
