@@ -4,6 +4,7 @@ import { GAP_STATUS_OPTIONS } from "./Dec";
 export const DEFAULT_PROJECT_FILTERS = {
   search: "",
   agaff: [],
+  chativa: [],
   yechidaMevatzat: [],
   project: [],
   maslol: "",
@@ -12,6 +13,7 @@ export const DEFAULT_PROJECT_FILTERS = {
 };
 
 const AGAFF_ALL_OPTION = { value: "__all__", label: "כל האגפים" };
+const CHATIVA_ALL_OPTION = { value: "__all__", label: "כל החטיבות" };
 const YECHIDA_ALL_OPTION = { value: "__all__", label: "כל יחידות המבצעות" };
 
 function buildOptionsFromProjects(projects, field) {
@@ -36,20 +38,25 @@ function isAllItemsSelected(selected, allOptions) {
   );
 }
 
-export function getProjectFilterOptions(projects, agaffOptions = [], yechidaMevatzatOptions = []) {
+export function getProjectFilterOptions(projects, agaffOptions = [], chativaOptions = [], yechidaMevatzatOptions = []) {
   // Prefer explicit options passed from provider (ids + labels). When not
   // provided, derive options from project documents using the server-side
-  // denormalized name fields: `agaffName` and `tsevetMevatseaName`.
+  // denormalized name fields: `agaffName`, `chativaName`, and `machlakaName`.
   const effectiveAgaffOptions = (agaffOptions || []).length > 0
     ? agaffOptions
     : [AGAFF_ALL_OPTION, ...buildOptionsFromProjects(projects, "agaffName")];
 
+  const effectiveChativaOptions = (chativaOptions || []).length > 0
+    ? chativaOptions
+    : [CHATIVA_ALL_OPTION, ...buildOptionsFromProjects(projects, "chativaName")];
+
   const effectiveYechidaOptions = (yechidaMevatzatOptions || []).length > 0
     ? yechidaMevatzatOptions
-    : [YECHIDA_ALL_OPTION, ...buildOptionsFromProjects(projects, "tsevetMevatseaName")];
+    : [YECHIDA_ALL_OPTION, ...buildOptionsFromProjects(projects, "machlakaName")];
 
   return {
     agaff: effectiveAgaffOptions,
+    chativa: effectiveChativaOptions,
     yechidaMevatzat: effectiveYechidaOptions,
     statusPearim: GAP_STATUS_OPTIONS,
   };
@@ -58,7 +65,7 @@ export function getProjectFilterOptions(projects, agaffOptions = [], yechidaMeva
 function matchesSearch(project, searchValue) {
   if (!searchValue) return true;
   const query = searchValue.toLowerCase();
-  return [project.projectName, project.teur, project.agaffName || project.AgaffName || project.agaff, project.tsevetMevatseaName || project.TsevetMevatseaName || project.yechidaMevatzat]
+  return [project.projectName, project.teur, project.agaffName || project.AgaffName || project.agaff, project.chativaName || project.ChativaName || project.chativa, project.machlakaName || project.MachlakaName ]
     .filter(Boolean)
     .some((value) => String(value).toLowerCase().includes(query));
 }
@@ -83,11 +90,16 @@ export function filterProjects(
   filters,
   getProjectStatus = (project) => calculateProjectFinance(project).statusPearim,
   agaffOptions = [],
+  chativaOptions = [],
   yechidaMevatzatOptions = []
 ) {
   const effectiveAgaffOptions = (agaffOptions || []).length > 0
     ? agaffOptions
     : buildOptionsFromProjects(projects, "agaff");
+
+  const effectiveChativaOptions = (chativaOptions || []).length > 0
+    ? chativaOptions
+    : buildOptionsFromProjects(projects, "chativa");
 
   const effectiveYechidaOptions = (yechidaMevatzatOptions || []).length > 0
     ? yechidaMevatzatOptions
@@ -105,13 +117,22 @@ export function filterProjects(
       if (!agaffValues.includes(project.agaffName || project.AgaffName || project.agaff)) return false;
     }
     
+    // For chativa: if not empty and all items not selected, filter by chativa
+    const chativaFilter = Array.isArray(filters.chativa) ? filters.chativa : [];
+    const chativaItems = effectiveChativaOptions.filter((o) => (o.value || o) !== "__all__");
+    const isChativaAllSelected = isAllItemsSelected(chativaFilter, chativaItems);
+    if (chativaFilter.length && !isChativaAllSelected) {
+      const chativaValues = chativaFilter.map((c) => c.value || c);
+      if (!chativaValues.includes(project.chativaName || project.ChativaName || project.chativa)) return false;
+    }
+    
     // For yechidaMevatzat: if not empty and all items not selected, filter by yechidaMevatzat
     const yechidaFilter = Array.isArray(filters.yechidaMevatzat) ? filters.yechidaMevatzat : [];
     const yechidaItems = effectiveYechidaOptions.filter((o) => (o.value || o) !== "__all__");
     const isYechidaAllSelected = isAllItemsSelected(yechidaFilter, yechidaItems);
     if (yechidaFilter.length && !isYechidaAllSelected) {
       const yechidaValues = yechidaFilter.map((y) => y.value || y);
-      if (!yechidaValues.includes(project.tsevetMevatseaName || project.TsevetMevatseaName || project.yechidaMevatzat)) return false;
+      if (!yechidaValues.includes(project.machlakaName || project.MachlakaName )) return false;
     }
     
     const projectFilter = Array.isArray(filters.project) ? filters.project : [];

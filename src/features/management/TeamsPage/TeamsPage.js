@@ -1,6 +1,6 @@
 import React from 'react';
 import ManagementOptionsPage from '../ManagementOptionsPage/ManagementOptionsPage';
-import { useTsevetMevatzeatManagement } from '../ManagementOptionsPage/useTsevetMevatzeatManagement';
+import { useMachlakaManagement } from '../ManagementOptionsPage/useMachlakaManagement';
 import {
   TEAMS_TITLE,
   TEAMS_SUBTITLE,
@@ -17,7 +17,7 @@ import {
 } from '../../../utils/Dec';
 
 export default function TeamsPage({ onBack }) {
-  const hook = useTsevetMevatzeatManagement();
+  const hook = useMachlakaManagement();
 
   return (
     <ManagementOptionsPage

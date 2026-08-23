@@ -29,7 +29,8 @@ export const TOTAL_BUDGET_LABEL = 'סה"כ תקציב';
 export const TOTAL_GAPS_LABEL = 'סה"כ פערים';
 export const PROJECT_NAME_LABEL = 'שם הפרויקט';
 export const AGAF_LABEL = 'אגף';
-export const TSEVET_LABEL = 'מבוצע ע"י';
+export const MACHLAKA_LABEL = 'מחלקה';
+export const CHATIVA_LABEL = 'חטיבה';
 export const CONTINUATION_LABEL = 'המשכי';
 export const CONTINUATION_TRUE_LABEL = 'כן';
 export const CONTINUATION_FALSE_LABEL = 'לא';
@@ -37,7 +38,7 @@ export const MASLOL_LABEL = 'מסלול';
 
 // Management Home texts
 export const MANAGEMENT_TITLE = 'מסכי ניהול';
-export const MANAGEMENT_SUBTITLE = 'פלטפורמה מרכזית לניהול מלא של אגפים, צוותות ופרויקטים  ';
+export const MANAGEMENT_SUBTITLE = 'פלטפורמה מרכזית לניהול מלא של אגפים, חטיבות, מחלקות ופרויקטים  ';
 
 // Departments/Agaff Management
 export const DEPARTMENTS_TITLE = 'ניהול אגפים';
@@ -53,20 +54,34 @@ export const DEPARTMENTS_ITEM_PLACEHOLDER = 'שם אגף';
 export const DEPARTMENTS_CARD_DESC = 'תחזוקה וארגון של אגפי הפעילות בחברה – הוסף, ערוך או מחק אגפים בקלות';
 
 // Teams/Tsevet Management
-export const TEAMS_TITLE = 'ניהול צוותות';
-export const TEAMS_SUBTITLE = 'הוסף, ערוך או מחק צוותות במערכת.';
-export const TEAMS_SEARCH_PLACEHOLDER = 'חיפוש לפי שם צוות';
-export const TEAMS_ADD_BUTTON = 'הוספת צוות +';
-export const TEAMS_ADD_MODAL_TITLE = 'הוספת צוות חדש';
-export const TEAMS_ADD_MODAL_DESC = 'הכנס שם לצוות החדש';
-export const TEAMS_EDIT_MODAL_TITLE = 'עריכת צוות';
-export const TEAMS_EDIT_MODAL_DESC = 'ערוך את שם הצוות';
-export const TEAMS_DELETE_MODAL_TITLE = 'מחיקת צוות';
-export const TEAMS_ITEM_PLACEHOLDER = 'שם צוות';
-export const TEAMS_CARD_DESC = 'הנהלת צוותים וקבוצות עבודה – נהל את מבנה הצוותים והקשרים בתוך כל אגף';
+export const TEAMS_TITLE = 'ניהול מחלקות';
+export const TEAMS_SUBTITLE = 'הוסף, ערוך או מחק מחלקות במערכת.';
+export const TEAMS_SEARCH_PLACEHOLDER = 'חיפוש לפי שם מחלקה';
+export const TEAMS_ADD_BUTTON = 'הוספת מחלקה +';
+export const TEAMS_ADD_MODAL_TITLE = 'הוספת מחלקה חדשה';
+export const TEAMS_ADD_MODAL_DESC = 'הכנס שם למחלקה החדשה';
+export const TEAMS_EDIT_MODAL_TITLE = 'עריכת מחלקה';
+export const TEAMS_EDIT_MODAL_DESC = 'ערוך את שם המחלקה';
+export const TEAMS_DELETE_MODAL_TITLE = 'מחיקת מחלקה';
+export const TEAMS_ITEM_PLACEHOLDER = 'שם מחלקה';
+export const TEAMS_CARD_DESC = 'הנהלת מחלקות וקבוצות עבודה – נהל את מבנה המחלקות והקשרים בתוך כל אגף';
 export const DUPLICATE_NAME_ERROR = 'שם עם השם הזה כבר קיים';
 export const DEPARTMENTS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את האגף';
-export const TEAMS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את הצוות';
+export const TEAMS_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את המחלקה';
+
+// Divisions/Chativa Management
+export const CHATIVA_TITLE = 'ניהול חטיבות';
+export const CHATIVA_SUBTITLE = 'הוסף, ערוך או מחק חטיבות במערכת.';
+export const CHATIVA_SEARCH_PLACEHOLDER = 'חיפוש לפי שם חטיבה';
+export const CHATIVA_ADD_BUTTON = 'הוספת חטיבה +';
+export const CHATIVA_ADD_MODAL_TITLE = 'הוספת חטיבה חדשה';
+export const CHATIVA_ADD_MODAL_DESC = 'הכנס שם לחטיבה החדשה';
+export const CHATIVA_EDIT_MODAL_TITLE = 'עריכת חטיבה';
+export const CHATIVA_EDIT_MODAL_DESC = 'ערוך את שם החטיבה';
+export const CHATIVA_DELETE_MODAL_TITLE = 'מחיקת חטיבה';
+export const CHATIVA_ITEM_PLACEHOLDER = 'שם חטיבה';
+export const CHATIVA_CARD_DESC = 'ניהול חטיבות ויחידות הארגון – הוסף, ערוך או מחק חטיבות לפי הצורך';
+export const CHATIVA_DELETE_CONFIRM_TEXT = 'האם אתה בטוח שברצונך למחוק את החטיבה';
 
 // Projects Management
 export const PROJECTS_TITLE = 'ניהול פרויקטים';
@@ -108,7 +123,8 @@ export default {
   TOTAL_GAPS_LABEL, 
   PROJECT_NAME_LABEL, 
   AGAF_LABEL, 
-  TSEVET_LABEL, 
+  MACHLAKA_LABEL,
+  CHATIVA_LABEL,
   CONTINUATION_LABEL, 
   CONTINUATION_TRUE_LABEL, 
   CONTINUATION_FALSE_LABEL, 
@@ -138,6 +154,17 @@ export default {
   TEAMS_DELETE_MODAL_TITLE,
   TEAMS_ITEM_PLACEHOLDER,
   TEAMS_DELETE_CONFIRM_TEXT,
+  CHATIVA_TITLE,
+  CHATIVA_SUBTITLE,
+  CHATIVA_SEARCH_PLACEHOLDER,
+  CHATIVA_ADD_BUTTON,
+  CHATIVA_ADD_MODAL_TITLE,
+  CHATIVA_ADD_MODAL_DESC,
+  CHATIVA_EDIT_MODAL_TITLE,
+  CHATIVA_EDIT_MODAL_DESC,
+  CHATIVA_DELETE_MODAL_TITLE,
+  CHATIVA_ITEM_PLACEHOLDER,
+  CHATIVA_DELETE_CONFIRM_TEXT,
   PROJECTS_TITLE,
   PROJECTS_SUBTITLE,
   PROJECTS_SEARCH_PLACEHOLDER,

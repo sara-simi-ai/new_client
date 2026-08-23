@@ -1,0 +1,7 @@
+npm warn config cache-min This option has been deprecated in favor of `--prefer-offline`.
+npm warn config shrinkwrap Use the --package-lock setting instead.
+
+> portfolio_client@0.1.0 build
+> react-scripts build
+
+Creating an optimized production build...

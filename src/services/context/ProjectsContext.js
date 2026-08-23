@@ -12,7 +12,8 @@ import { calculateProjectFinance } from "../../utils/calculateProjectFinanceHelp
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from "../../utils/projectFiltersHelper";
 
 import { useAgaff } from "./AgaffContext";
-import { useTsevetMevatzeat } from "./TsevetMevatzeatContext";
+import { useMachlaka } from "./MachlakaContext";
+import { useChativa } from "./ChativaContext";
 
 const ProjectsContext = createContext();
 
@@ -23,12 +24,14 @@ function normalizeProjectFromApi(project) {
     projectName: project.projectName || "",
     teur: project.teur || "",
     // Normalize server-side property names to the client-side expectations.
-    // Server writes `agaffName` / `tsevetMevatseaName`; some client code expects
-    // `agaff` and `yechidaMevatzat` fields. Provide both to be compatible.
+    // Server writes `agaffName` / `machlakaName` / `chativaName`; some client code expects
+    // `agaff`, `yechidaMevatzat`, and `chativa` fields. Provide both to be compatible.
     agaff: project.agaff || project.agaffName || project.AgaffName || "",
     agaffName: project.agaffName || project.AgaffName || project.agaff || "",
-    yechidaMevatzat: project.yechidaMevatzat || project.tsevetMevatseaName || project.TsevetMevatseaName || "",
-    tsevetMevatseaName: project.tsevetMevatseaName || project.TsevetMevatseaName || project.yechidaMevatzat || "",
+    machlaka: project.machlaka || project.machlakaName || project.MachlakaName || "",
+    machlakaName: project.machlakaName || project.MachlakaName || "",
+    chativa: project.chativa || project.chativaName || project.ChativaName || "",
+    chativaName: project.chativaName || project.ChativaName || project.chativa || "",
     totalTakzivCoachAdam,
   };
 }
@@ -51,7 +54,7 @@ function normalizeProjectForApi(project) {
   return result;
 }
 
-export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, yechidaMevatzatOptions: propsYechidaMevatzatOptions }) {
+export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, yechidaMevatzatOptions: propsYechidaMevatzatOptions, chativaOptions: propsChativaOptions }) {
   const [projects, setProjects] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +84,8 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     }
   })());
 
+  const [chativaOptions] = useState(() => propsChativaOptions || []);
+
   // Update internal state when props change
   useEffect(() => {
     if (propsAgaffOptions) {
@@ -93,6 +98,12 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       // Options come from props, no need to update localStorage
     }
   }, [propsYechidaMevatzatOptions]);
+
+  useEffect(() => {
+    if (propsChativaOptions) {
+      // Options come from props, no need to update localStorage
+    }
+  }, [propsChativaOptions]);
 
   const projectFinanceMap = useMemo(() => {
     const map = {};
@@ -138,9 +149,10 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       filters,
       (project) => projectFinanceMap[project.id]?.statusPearim || "takin",
       agaffOptions,
+      chativaOptions,
       yechidaMevatzatOptions,
     );
-  }, [projects, filters, projectFinanceMap, agaffOptions, yechidaMevatzatOptions]);
+  }, [projects, filters, projectFinanceMap, agaffOptions, chativaOptions, yechidaMevatzatOptions]);
 
   const projectOptions = useMemo(() => {
     // build project list based on current filters but excluding any selected project filter
@@ -150,13 +162,14 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       filtersWithoutProject,
       (project) => projectFinanceMap[project.id]?.statusPearim || "takin",
       agaffOptions,
+      chativaOptions,
       yechidaMevatzatOptions,
     );
     const items = available.map((p) => ({ value: p.id, label: p.projectName || p.teur || "—" }));
     return [{ value: "__all__", label: "כל הפרויקטים" }, ...items];
   }, [projects, filters, projectFinanceMap]);
 
-  const filterOptions = useMemo(() => ({ ...getProjectFilterOptions(projects, agaffOptions, yechidaMevatzatOptions), projects: projectOptions }), [projects, projectOptions, agaffOptions, yechidaMevatzatOptions]);
+  const filterOptions = useMemo(() => ({ ...getProjectFilterOptions(projects, agaffOptions, chativaOptions, yechidaMevatzatOptions), projects: projectOptions }), [projects, projectOptions, agaffOptions, chativaOptions, yechidaMevatzatOptions]);
 
   const gapDetails = useMemo(() => {
     return filteredProjects.map((p) => {
@@ -192,11 +205,11 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
   }, [filteredProjects, projectFinanceMap]);
 
   const addNewProject = async (projectData) => {
-    // Ensure we include the underlying agaff/tsevet IDs expected by the API.
     const withIds = {
       ...projectData,
       idntAgaff: projectData.agaff || projectData.idntAgaff || projectData.idntAgaff,
-      idntTsevetMevatsea: projectData.yechidaMevatzat || projectData.idntTsevetMevatsea || projectData.idntTsevetMevatsea,
+      idntMachlaka: projectData.yechidaMevatzat || projectData.idntMachlaka || projectData.idntTsevetMevatsea || projectData.idntMachlaka,
+      idntChativa: projectData.chativa || projectData.idntChativa,
     };
     // Always create new projects as active by default.
     const fullData = normalizeProjectForApi({ ...withIds, year: selectedYear, active: true });
@@ -242,7 +255,8 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     const withIds = {
       ...projectData,
       idntAgaff: projectData.agaff || projectData.idntAgaff,
-      idntTsevetMevatsea: projectData.yechidaMevatzat || projectData.idntTsevetMevatsea,
+      idntMachlaka: projectData.yechidaMevatzat || projectData.idntMachlaka || projectData.idntTsevetMevatsea,
+      idntChativa: projectData.chativa || projectData.idntChativa,
     };
     // Ensure updates re-activate the project (active = true) per requirement.
     const toSend = normalizeProjectForApi({ ...withIds, active: true });
@@ -339,6 +353,7 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
     loadAllProjects,
     agaffOptions,
     yechidaMevatzatOptions,
+    chativaOptions,
   };
 
   return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>;
@@ -352,16 +367,17 @@ export function useProjects() {
 
 /**
  * Wrapper component that syncs Agaff and Tsevet Mevatzeat options with ProjectsProvider.
- * This component uses hooks to get the live options from AgaffContext and TsevetMevatzeatContext,
+ * This component uses hooks to get the live options from AgaffContext and MachlakaContext,
  * then passes them to ProjectsProvider.
  */
 export function ProjectsProviderWithSync({ children }) {
   const agaff = useAgaff();
-  const tsevet = useTsevetMevatzeat();
+  const machlaka = useMachlaka();
+  const chativa = useChativa();
 
   // Convert options to the format ProjectsProvider expects.
-  // agaff.agaffList / tsevet.tsevetMevatzeatList items already carry `id`/`name`
-  // aliases from their respective contexts' normalizeFromApi functions.
+  // agaff.agaffList / machlaka.machlakaList / chativa.chativaList items already carry
+  // `id` / `name` aliases from their respective contexts.
   const agaffOptions = useMemo(() => {
     return (agaff.agaffList || []).map((item) => ({
       value: item.id,
@@ -370,16 +386,24 @@ export function ProjectsProviderWithSync({ children }) {
   }, [agaff.agaffList]);
 
   const yechidaMevatzatOptions = useMemo(() => {
-    return (tsevet.tsevetMevatzeatList || []).map((item) => ({
+    return (machlaka.machlakaList || []).map((item) => ({
       value: item.id,
       label: item.name || "—",
     }));
-  }, [tsevet.tsevetMevatzeatList]);
+  }, [machlaka.machlakaList]);
+
+  const chativaOptions = useMemo(() => {
+    return (chativa.chativaList || []).map((item) => ({
+      value: item.id,
+      label: item.name || "—",
+    }));
+  }, [chativa.chativaList]);
 
   return (
     <ProjectsProvider
       agaffOptions={agaffOptions}
       yechidaMevatzatOptions={yechidaMevatzatOptions}
+      chativaOptions={chativaOptions}
     >
       {children}
     </ProjectsProvider>

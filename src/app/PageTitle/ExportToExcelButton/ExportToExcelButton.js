@@ -3,7 +3,7 @@ import { useProjects } from "../../../services/context/ProjectsContext";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { formatGapDisplay } from "../../../utils/calculateProjectFinanceHelper";
 import { getOptionLabelByValue } from "../../../utils/optionHelpers";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, TSEVET_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, MACHLAKA_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
 import "./ExportToExcelButton.css";
@@ -41,7 +41,7 @@ export default function ExportToExcelButton() {
       const headers = [
         PROJECT_NAME_LABEL,
         AGAF_LABEL,
-        TSEVET_LABEL,
+        MACHLAKA_LABEL,
         CONTINUATION_LABEL,
         MASLOL_LABEL,
         HR_BUDGET_LABEL,
@@ -68,7 +68,7 @@ export default function ExportToExcelButton() {
         const row = projectsSheet.addRow([
           project.projectName || "",
           project.agaffName || "",
-          project.tsevetMevatseaName || "",
+          project.machlakaName || "",
           project.logHemsheci ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL,
 
           getOptionLabelByValue(MASLOL_OPTIONS, project.maslol, project.maslol || ""),

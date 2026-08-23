@@ -1,23 +1,48 @@
 import React from "react";
-import { MASLOL_OPTIONS, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, CONTINUATION_LABEL, AGAF_LABEL, MASLOL_LABEL, TSEVET_LABEL } from "../../../utils/Dec";
+import {
+  MASLOL_OPTIONS,
+  CONTINUATION_TRUE_LABEL,
+  CONTINUATION_FALSE_LABEL,
+  CONTINUATION_LABEL,
+  AGAF_LABEL,
+  MASLOL_LABEL,
+  MACHLAKA_LABEL,
+  CHATIVA_LABEL,
+} from "../../../utils/Dec";
 import { getOptionLabelByValue } from "../../../utils/optionHelpers";
 import "./ProjectMetaSection.css";
 
 function getContinuationLabel(isHemshechi) {
   const isContinuation = Boolean(isHemshechi);
-  return `${isContinuation ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL}`;
+  return isContinuation ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL;
 }
 
-export function buildProjectMetaRows(project) {  
-  
+function buildMetaItem(label, value) {
+  return { label: `${label}:`, value };
+}
+
+function getProjectValue(project, fallbackKeys) {
+  const value = fallbackKeys
+    .map((key) => project?.[key])
+    .find((entry) => entry !== undefined && entry !== null && entry !== "");
+
+  return value ?? "";
+}
+
+export function buildProjectMetaRows(project) {
+  const agaffValue = getProjectValue(project, ["agaffName", "AgaffName", "agaff"]);
+  const machlakaValue = getProjectValue(project, ["machlakaName", "MachlakaName", "machlaka"]);
+  const chativaValue = getProjectValue(project, ["chativaName", "ChativaName", "chativa"]);
+
   return [
     [
-      { label: `${AGAF_LABEL}:`, value: project.agaffName },
-      { label: `${TSEVET_LABEL}:`, value: project.tsevetMevatseaName },
+      buildMetaItem(AGAF_LABEL, agaffValue),
+      buildMetaItem(CHATIVA_LABEL, chativaValue),
+      buildMetaItem(MACHLAKA_LABEL, machlakaValue),     
     ],
     [
-      { label: `${CONTINUATION_LABEL}:`, value: getContinuationLabel(project.logHemsheci) },
-      { label: `${MASLOL_LABEL}:`, value: getOptionLabelByValue(MASLOL_OPTIONS, project.maslol) },
+      buildMetaItem(CONTINUATION_LABEL, getContinuationLabel(project?.logHemsheci)),
+      buildMetaItem(MASLOL_LABEL, getOptionLabelByValue(MASLOL_OPTIONS, project?.maslol)),
     ],
   ];
 }

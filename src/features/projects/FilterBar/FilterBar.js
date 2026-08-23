@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { useAgaff } from "../../../services/context/AgaffContext";
-import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
+import { useMachlaka } from "../../../services/context/MachlakaContext";
+import { useChativa } from "../../../services/context/ChativaContext";
 import { MASLOL_OPTIONS, CONTINUATION_LABEL, CONTINUATION_FALSE_LABEL, CONTINUATION_TRUE_LABEL } from "../../../utils/Dec";
 import { getOptionKey, getOptionLabel, getOptionLabelByValue } from "../../../utils/optionHelpers";
 import { useClickOutside } from '../../../utils/useClickOutside';
@@ -154,88 +155,106 @@ function Dropdown({
 export default function FilterBar() {
   const { filters, filterOptions, updateFilter, clearFilters } = useProjects();
   const { agaffOptions } = useAgaff();
-  const { tsevetMevatzeatOptions } = useTsevetMevatzeat();
+  const { chativaOptions } = useChativa();
+  const { machlakaOptions } = useMachlaka();
   const clearLabel = "נקה";
+
+  const filtersList = [
+    <Dropdown
+      key="agaff"
+      title="אגף"
+      label="אגף"
+      allLabel="כל האגפים"
+      options={agaffOptions}
+      selected={filters.agaff || []}
+      onChange={(next) => updateFilter("agaff", next)}
+      multi={true}
+    />,
+    <Dropdown
+      key="chativa"
+      title="חטיבה"
+      label="חטיבה"
+      allLabel="כל החטיבות"
+      options={chativaOptions}
+      selected={filters.chativa || []}
+      onChange={(next) => updateFilter("chativa", next)}
+      multi={true}
+    />,
+    <Dropdown
+      key="yechidaMevatzat"
+      title="מחלקה"
+      label="מחלקה"
+      allLabel="כל המחלקות"
+      options={machlakaOptions}
+      selected={filters.yechidaMevatzat || []}
+      onChange={(next) => updateFilter("yechidaMevatzat", next)}
+      multi={true}
+    />,
+    <Dropdown
+      key="maslol"
+      title="מסלול"
+      label="מסלול"
+      allLabel="כל המסלולים"
+      options={MASLOL_OPTIONS}
+      selected={filters.maslol}
+      onChange={(next) => updateFilter("maslol", next)}
+      valueToLabel={(v) => getOptionLabelByValue(MASLOL_OPTIONS, v, "כל המסלולים")}
+      multi={false}
+    />,
+    <Dropdown
+      key="logHemsheci"
+      title="סטטוס"
+      label={CONTINUATION_LABEL}
+      allLabel={CONTINUATION_LABEL}
+      options={[{ value: 'yes', label: `${CONTINUATION_TRUE_LABEL}` }, { value: 'no', label: `${CONTINUATION_FALSE_LABEL}` }]}
+      selected={filters.logHemsheci}
+      onChange={(next) => updateFilter("logHemsheci", next)}
+      valueToLabel={(v) => {
+        if (!v) return CONTINUATION_LABEL;
+        if (v === 'yes') return `${CONTINUATION_LABEL}: ${CONTINUATION_TRUE_LABEL}`;
+        if (v === 'no') return `${CONTINUATION_LABEL}: ${CONTINUATION_FALSE_LABEL}`;
+        return CONTINUATION_LABEL;
+      }}
+      multi={false}
+    />,
+    <Dropdown
+      key="statusPearim"
+      title="פערים"
+      label="פערים"
+      allLabel="כל הפערים"
+      options={filterOptions?.statusPearim || []}
+      selected={filters.statusPearim || []}
+      onChange={(next) => updateFilter("statusPearim", next)}
+      multi={true}
+    />,
+    <Dropdown
+      key="project"
+      title="פרויקט"
+      label="פרויקט"
+      allLabel="כל הפרויקטים"
+      options={filterOptions?.projects || []}
+      selected={filters.project || []}
+      onChange={(next) => updateFilter("project", next)}
+      multi={true}
+    />,
+  ];
 
   return (
     <div className="toolbar" dir="rtl">
-      <input
-        type="text"
-        placeholder="חפש שם, תיאור, אגף..."
-        value={filters.search || ""}
-        onChange={(e) => updateFilter("search", e.target.value)}
-      />
+      <div className="toolbar-main">
+        <input
+          type="text"
+          placeholder="חפש שם, תיאור, אגף..."
+          value={filters.search || ""}
+          onChange={(e) => updateFilter("search", e.target.value)}
+        />
 
-      <Dropdown
-        title="אגף"
-        label="אגף"
-        allLabel="כל האגפים"
-        options={agaffOptions}
-        selected={filters.agaff || []}
-        onChange={(next) => updateFilter("agaff", next)}
-        multi={true}
-      />
+        {filtersList}
 
-      <Dropdown
-        title="מבוצע ע''י"
-        label="מבוצע ע''י"
-        allLabel="מבוצע ע''י"
-        options={tsevetMevatzeatOptions}
-        selected={filters.yechidaMevatzat || []}
-        onChange={(next) => updateFilter("yechidaMevatzat", next)}
-        multi={true}
-      />
-
-      <Dropdown
-        title="מסלול"
-        label="מסלול"
-        allLabel="כל המסלולים"
-        options={MASLOL_OPTIONS}
-        selected={filters.maslol}
-        onChange={(next) => updateFilter("maslol", next)}
-        valueToLabel={(v) => getOptionLabelByValue(MASLOL_OPTIONS, v, "כל המסלולים")}
-        multi={false}
-      />
-
-      <Dropdown
-        title="סטטוס"
-        label={CONTINUATION_LABEL}
-        allLabel={CONTINUATION_LABEL}
-        options={[{ value: 'yes', label: `${CONTINUATION_TRUE_LABEL}` }, { value: 'no', label: `${CONTINUATION_FALSE_LABEL}` }]}
-        selected={filters.logHemsheci}
-        onChange={(next) => updateFilter("logHemsheci", next)}
-        valueToLabel={(v) => {
-          if (!v) return CONTINUATION_LABEL;
-          if (v === 'yes') return `${CONTINUATION_LABEL}: ${CONTINUATION_TRUE_LABEL}`;
-          if (v === 'no') return `${CONTINUATION_LABEL}: ${CONTINUATION_FALSE_LABEL}`;
-          return CONTINUATION_LABEL;
-        }}
-        multi={false}
-      />
-
-      <Dropdown
-        title="פערים"
-        label="פערים"
-        allLabel="כל הפערים"
-        options={filterOptions?.statusPearim || []}
-        selected={filters.statusPearim || []}
-        onChange={(next) => updateFilter("statusPearim", next)}
-        multi={true}
-      />
-
-      <Dropdown
-        title="פרויקט"
-        label="פרויקט"
-        allLabel="כל הפרויקטים"
-        options={filterOptions?.projects || []}
-        selected={filters.project || []}
-        onChange={(next) => updateFilter("project", next)}
-        multi={true}
-      />
-
-      <button type="button" className="btn" onClick={clearFilters}>
-        {clearLabel}
-      </button>
+        <button type="button" className="btn toolbar-clear-button" onClick={clearFilters}>
+          {clearLabel}
+        </button>
+      </div>
     </div>
   );
 }

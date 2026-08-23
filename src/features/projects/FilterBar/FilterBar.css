@@ -1,12 +1,26 @@
 .toolbar {
   display: flex;
+  align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-bottom: 16px;
   margin-top: 8px;
-  align-items: center;
   background: transparent;
   padding: 8px 0;
+}
+
+.toolbar-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.toolbar-clear-button {
+  margin-inline-start: 0;
+  flex-shrink: 0;
 }
 
 .toolbar input:not([type="checkbox"]),
@@ -37,8 +51,9 @@
 }
 
 .toolbar input:not([type="checkbox"]) {
-  flex: 1;
-  min-width: 200px;
+  flex: 0 0 180px;
+  width: 180px;
+  min-width: 180px;
   /* make room for search icon on the left */
   padding-left: 36px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='11' cy='11' r='6' stroke='%236B7280' stroke-width='1.6' fill='none'/%3E%3Cpath d='M20 20 L16.5 16.5' stroke='%236B7280' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -290,7 +305,17 @@
 }
 
 @media (max-width: 640px) {
-  .toolbar { align-items: center; }
+  .toolbar {
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .toolbar-main {
+    flex-wrap: nowrap;
+    min-width: max-content;
+  }
+
   .toolbar input,
   .toolbar select,
   .filter-button,

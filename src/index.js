@@ -4,7 +4,8 @@ import './index.css';
 import App from './App';
 import { ApiProvider } from './services/context/ApiContext';
 import { AgaffProvider } from './services/context/AgaffContext';
-import { TsevetMevatzeatProvider } from './services/context/TsevetMevatzeatContext';
+import { MachlakaProvider } from './services/context/MachlakaContext';
+import { ChativaProvider } from './services/context/ChativaContext';
 import { ProjectsProviderWithSync } from './services/context/ProjectsContext';
 import { BUDGET_COLORS } from './features/dashboard/constans/chartConstants';
 
@@ -12,11 +13,13 @@ ReactDOM.render(
   <React.StrictMode>
     <ApiProvider initialBase={process.env.REACT_APP_API_BASE}>
       <AgaffProvider>
-        <TsevetMevatzeatProvider>
-          <ProjectsProviderWithSync>
-            <App />
-          </ProjectsProviderWithSync>
-        </TsevetMevatzeatProvider>
+        <MachlakaProvider>
+          <ChativaProvider>
+            <ProjectsProviderWithSync>
+              <App />
+            </ProjectsProviderWithSync>
+          </ChativaProvider>
+        </MachlakaProvider>
       </AgaffProvider>
     </ApiProvider>
   </React.StrictMode>,

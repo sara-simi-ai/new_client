@@ -3,7 +3,7 @@ import { useProjects } from "../../../services/context/ProjectsContext";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, TSEVET_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, MASLOL_OPTIONS, MASLOL } from "../../../utils/Dec";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, MACHLAKA_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, MASLOL_OPTIONS, MASLOL } from "../../../utils/Dec";
 import { getOptionLabelByValue } from "../../../utils/optionHelpers";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "../ProjectsList/Project.css";
@@ -38,9 +38,9 @@ const columns = [
   },
   {
     key: "unit",
-    label: TSEVET_LABEL,
+    label: MACHLAKA_LABEL,
     cellClassName: "tr-unit",
-    render: (row) => row.tsevetMevatseaName,
+    render: (row) => row.machlakaName,
   },
   {
     key: "continuation",

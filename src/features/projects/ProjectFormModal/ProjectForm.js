@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { useAgaff } from "../../../services/context/AgaffContext";
-import { useTsevetMevatzeat } from "../../../services/context/TsevetMevatzeatContext";
+import { useMachlaka } from "../../../services/context/MachlakaContext";
+import { useChativa } from "../../../services/context/ChativaContext";
 import Dropdown from "../../../components/Dropdown/Dropdown";
 import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
 import { GAP_STATUS_BY_VALUE, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
@@ -12,7 +13,8 @@ import "./ProjectFormModal.css";
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
   const { agaffOptions: fallbackAgaffOptions, yechidaMevatzatOptions: fallbackYechidaOptions } = useProjects();
   const { agaffOptions } = useAgaff();
-  const { tsevetMevatzeatOptions } = useTsevetMevatzeat();
+  const { machlakaOptions } = useMachlaka();
+  const { chativaOptions } = useChativa();
 
   const effectiveAgaffOptions = useMemo(() => {
     if (agaffOptions && agaffOptions.length > 0) {
@@ -22,15 +24,21 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   }, [agaffOptions, fallbackAgaffOptions]);
 
   const effectiveYechidaOptions = useMemo(() => {
-    if (tsevetMevatzeatOptions && tsevetMevatzeatOptions.length > 0) {
-      return tsevetMevatzeatOptions;
+    if (machlakaOptions && machlakaOptions.length > 0) {
+      return machlakaOptions;
     }
     return fallbackYechidaOptions || [];
-  }, [tsevetMevatzeatOptions, fallbackYechidaOptions]);
+  }, [machlakaOptions, fallbackYechidaOptions]);
+
+  const effectiveChativaOptions = useMemo(() => {
+    return chativaOptions || [];
+  }, [chativaOptions]);
+
   const [form, setForm] = useState({
     projectName: "",
     agaff: "",
     yechidaMevatzat: "",
+    chativa: "",
     maslol: MASLOL_OPTIONS[0].value,
     logHemsheci: false,
     teur: "",
@@ -70,7 +78,8 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         ...prev,
         projectName: initialData.projectName || "",
         agaff: initialData.agaff || initialData.agaffName || "",
-        yechidaMevatzat: initialData.yechidaMevatzat || initialData.tsevetMevatseaName || "",
+        yechidaMevatzat: initialData.yechidaMevatzat || initialData.machlakaName || "",
+        chativa: initialData.chativa || initialData.chativaName || initialData.ChativaName || "",
         maslol: initialData.maslol || MASLOL_OPTIONS[0].value,
         logHemsheci: initialData.logHemsheci || false,
         teur: initialData.teur || "",
@@ -93,11 +102,20 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
       );
       const resolvedYechida = resolveOptionValue(
         initialData.yechidaMevatzat,
-        initialData.tsevetMevatseaName,
+        initialData.machlakaName,
         effectiveYechidaOptions
       );
+      const resolvedChativa = resolveOptionValue(
+        initialData.chativa,
+        initialData.chativaName,
+        effectiveChativaOptions
+      );
 
-      if (prev.agaff === resolvedAgaff && prev.yechidaMevatzat === resolvedYechida) {
+      if (
+        prev.agaff === resolvedAgaff &&
+        prev.yechidaMevatzat === resolvedYechida &&
+        prev.chativa === resolvedChativa
+      ) {
         return prev;
       }
 
@@ -105,9 +123,10 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         ...prev,
         agaff: resolvedAgaff,
         yechidaMevatzat: resolvedYechida,
+        chativa: resolvedChativa,
       };
     });
-  }, [initialData, effectiveAgaffOptions, effectiveYechidaOptions]);
+  }, [initialData, effectiveAgaffOptions, effectiveYechidaOptions, effectiveChativaOptions]);
 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -146,11 +165,12 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     if (!form.projectName.trim()) newErrors.projectName = true;
     if (!form.yechidaMevatzat.trim()) newErrors.yechidaMevatzat = true;
     if (!form.agaff.trim()) newErrors.agaff = true;
+    if (!form.chativa.trim()) newErrors.chativa = true;
     if (Number(form.totalTakzivRechesh) === 0) newErrors.totalTakzivRechesh = true;
     if (Number(form.totalTakzivCoachAdam) === 0) newErrors.totalTakzivCoachAdam = true;
     if (Number(form.coachAdam) === 0) newErrors.coachAdam = true;
 
-    const detailFields = ['projectName', 'yechidaMevatzat', 'agaff'];
+    const detailFields = ['projectName', 'yechidaMevatzat', 'agaff', 'chativa'];
     const budgetFields = ['totalTakzivRechesh', 'totalTakzivCoachAdam', 'coachAdam'];
     const hasDetailError = Object.keys(newErrors).some((field) => detailFields.includes(field));
     const hasBudgetError = Object.keys(newErrors).some((field) => budgetFields.includes(field));
@@ -193,20 +213,8 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
             <input className={`np-input${errors.projectName ? ' np-input--error' : ''}`} value={form.projectName} onChange={(e) => set('projectName', e.target.value)} />
           </div>
 
-          <div className="np-row">
-            <div className="np-field">
-              <label className="np-label">יחידת פיתוח *</label>
-              <Dropdown
-                className={errors.yechidaMevatzat ? 'np-input--error' : ''}
-                label="בחר יחידת פיתוח"
-                allLabel="בחר יחידת פיתוח"
-                options={effectiveYechidaOptions.filter((o) => o.value !== '__all__')}
-                selected={form.yechidaMevatzat}
-                onChange={(next) => set('yechidaMevatzat', next)}
-                multi={false}
-              />
-            </div>
-            <div className="np-field">
+          <div className="np-row np-row--compact">
+            <div className="np-field np-field--compact">
               <label className="np-label">אגף מבצע *</label>
               <Dropdown
                 className={errors.agaff ? 'np-input--error' : ''}
@@ -215,6 +223,30 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
                 options={effectiveAgaffOptions.filter((o) => o.value !== '__all__')}
                 selected={form.agaff}
                 onChange={(next) => set('agaff', next)}
+                multi={false}
+              />
+            </div>
+            <div className="np-field np-field--compact">
+              <label className="np-label">חטיבה *</label>
+              <Dropdown
+                className={errors.chativa ? 'np-input--error' : ''}
+                label="בחר חטיבה"
+                allLabel="בחר חטיבה"
+                options={effectiveChativaOptions.filter((o) => o.value !== '__all__')}
+                selected={form.chativa}
+                onChange={(next) => set('chativa', next)}
+                multi={false}
+              />
+            </div>
+            <div className="np-field np-field--compact">
+              <label className="np-label">מחלקה *</label>
+              <Dropdown
+                className={errors.yechidaMevatzat ? 'np-input--error' : ''}
+                label="בחר מחלקה"
+                allLabel="בחר מחלקה"
+                options={effectiveYechidaOptions.filter((o) => o.value !== '__all__')}
+                selected={form.yechidaMevatzat}
+                onChange={(next) => set('yechidaMevatzat', next)}
                 multi={false}
               />
             </div>

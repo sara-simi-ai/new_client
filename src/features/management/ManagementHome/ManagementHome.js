@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './ManagementHome.css';
 import DepartmentsPage from '../DepartmentsPage/DepartmentsPage';
 import TeamsPage from '../TeamsPage/TeamsPage';
+import ChativaPage from '../ChativaPage/ChativaPage';
 import ProjectsManagementPage from '../ProjectsManagementPage/ProjectsManagementPage';
 import {
   MANAGEMENT_TITLE,
@@ -10,6 +11,8 @@ import {
   DEPARTMENTS_CARD_DESC,
   TEAMS_TITLE,
   TEAMS_CARD_DESC,
+  CHATIVA_TITLE,
+  CHATIVA_CARD_DESC,
   PROJECTS_TITLE,
   PROJECTS_CARD_DESC,
   MANAGEMENT_MANAGE_BUTTON,
@@ -23,6 +26,12 @@ export default function ManagementHome() {
       title: DEPARTMENTS_TITLE,
       description: DEPARTMENTS_CARD_DESC,
       page: 'departments',
+      className: 'mgmt-card card-small',
+    },
+     {
+      title: CHATIVA_TITLE,
+      description: CHATIVA_CARD_DESC,
+      page: 'chativa',
       className: 'mgmt-card card-small',
     },
     {
@@ -45,6 +54,9 @@ export default function ManagementHome() {
     }
     if (currentPage === 'teams') {
       return <TeamsPage onBack={() => setCurrentPage('landing')} />;
+    }
+    if (currentPage === 'chativa') {
+      return <ChativaPage onBack={() => setCurrentPage('landing')} />;
     }
     if (currentPage === 'projects') {
       return <ProjectsManagementPage onBack={() => setCurrentPage('landing')} />;
