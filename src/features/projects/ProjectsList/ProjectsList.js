@@ -33,7 +33,7 @@ export default function ProjectsList() {
           ))}
         </div>
       )}
-      <ProjectDetailModal project={selectedProject} onClose={closeDetail} />
+      {/* Global modal is mounted in MainTabs (ModalRoot) */}
     </section>
   );
 }

@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
 import './GapByProjectChart.css';
+import { computeBudgetMinusPlanned, computeRelativeGap, isGapStatusExceeded, formatGapDisplay, hasMissingPlannedHrValue } from '../../../../utils/calculateProjectFinanceHelper';
+import SegmentProjectsModal from '../../SegmentProjectsModal/SegmentProjectsModal';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-import Modal from '../../../../components/Modal/Modal';
-import ProjectDetail from '../../../projects/ProjectDetail/ProjectDetail';
-import { computeBudgetMinusPlanned, computeRelativeGap, isGapStatusExceeded, formatGapDisplay } from '../../../../utils/calculateProjectFinanceHelper';
-import { useProjectDetail } from '../../hooks/useProjectDetail';
 
 const MAX_BAR_PERCENT = 42;
 const LABEL_OFFSET_REM = 1.1;
@@ -29,13 +27,14 @@ export default function GapByProjectChart({
   hasExpandableProjects,
   toggleShowMore,
 }) {
-  const { filteredProjects } = useProjects();
-  const { selectedProject, openProjectDetail, closeProjectDetail } = useProjectDetail(filteredProjects);
+  const { filteredProjects, setSelectedProjectId } = useProjects();
+  const openProjectDetail = (id) => setSelectedProjectId(id);
 
-  const maxRelativeGap = useMemo(
-    () => Math.max(...sorted.map((p) => computeRelativeGap(p)), 1),
-    [sorted],
-  );
+  const maxRelativeGap = useMemo(() => {
+    const rels = sorted.filter((p) => !hasMissingPlannedHrValue(p.coachAdam)).map((p) => computeRelativeGap(p));
+    if (rels.length === 0) return 1;
+    return Math.max(...rels, 1);
+  }, [sorted]);
 
   return (
     <div className="gap-card">
@@ -88,8 +87,9 @@ export default function GapByProjectChart({
           if (isExceed) barColor = isPos ? GAP_COLORS.positive : GAP_COLORS.negative;
 
           const relativePercent = Math.round(rel * 100);
-          const valueLabel = formatGapDisplay(g, p.totalTakzivCoachAdam);
-          const effPct = Math.min(pct, MAX_BAR_PERCENT);
+          const plannedMissing = hasMissingPlannedHrValue(p.coachAdam);
+          const valueLabel = formatGapDisplay(g, p.totalTakzivCoachAdam, { plannedValue: p.coachAdam });
+          const effPct = plannedMissing ? 0 : Math.min(pct, MAX_BAR_PERCENT);
 
           return (
             <div
@@ -109,14 +109,16 @@ export default function GapByProjectChart({
               <div className="gap-lbl" title={p.projectName}>{p.projectName}</div>
               <div className="gap-axis">
                 <div className="gap-zero" />
-                <div
-                  className="gap-bar"
-                  style={{
-                    [isPos ? 'left' : 'right']: '50%',
-                    width: `${effPct}%`,
-                    background: barColor,
-                  }}
-                />
+                {!plannedMissing && (
+                  <div
+                    className="gap-bar"
+                    style={{
+                      [isPos ? 'left' : 'right']: '50%',
+                      width: `${effPct}%`,
+                      background: barColor,
+                    }}
+                  />
+                )}
                 <span
                   className="gap-val"
                   style={{
@@ -131,11 +133,8 @@ export default function GapByProjectChart({
         })}
       </div>
 
-      {selectedProject && (
-        <Modal onClose={closeProjectDetail}>
-          <ProjectDetail project={selectedProject} onClose={closeProjectDetail} />
-        </Modal>
-      )}
+      {/* Modal rendered globally in App — chart only triggers selection */}
+      
 
     </div>
   );

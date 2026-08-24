@@ -36,7 +36,7 @@ export default function ProjectsListModal({ projects, onClose, initialFilters = 
   if (!projects) return null;
 
   return (
-    <Modal onClose={onClose} maxWidth={900}>
+    <Modal onClose={onClose} maxWidth="80%">
       <div className="pl-modal" dir="rtl">
         <div className="pl-header">
           <h3 className="pl-title">רשימת פרויקטים</h3>

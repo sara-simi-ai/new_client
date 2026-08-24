@@ -12,10 +12,7 @@ export const GAP_STATUS = {
   GERAON: { value: "geraon", label: "פער במינוס", className: 'gap--over' },
 };
 
-export const GAP_STATUS_OPTIONS = [
-  { value: "__all__", label: "כל הפערים" },
-  ...Object.values(GAP_STATUS),
-];
+export const GAP_STATUS_OPTIONS = Object.values(GAP_STATUS);
 
 export const GAP_STATUS_BY_VALUE = Object.fromEntries(
   Object.values(GAP_STATUS).map((status) => [status.value, status])

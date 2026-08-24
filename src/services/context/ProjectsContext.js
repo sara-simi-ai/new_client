@@ -14,6 +14,9 @@ import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from
 import { useAgaff } from "./AgaffContext";
 import { useMachlaka } from "./MachlakaContext";
 import { useChativa } from "./ChativaContext";
+import ProjectDetailModal from '../../features/projects/ProjectDetail/ProjectDetailModal';
+
+// Note: GlobalProjectModalHost removed; modal is rendered where needed (ProjectsList)
 
 const ProjectsContext = createContext();
 
@@ -30,6 +33,8 @@ function normalizeProjectFromApi(project) {
     agaffName: project.agaffName || project.AgaffName || project.agaff || "",
     machlaka: project.machlaka || project.machlakaName || project.MachlakaName || "",
     machlakaName: project.machlakaName || project.MachlakaName || "",
+    yechidaMevatzat: project.yechidaMevatzat || project.machlaka || project.machlakaName || project.MachlakaName || "",
+    yechidaMevatzatName: project.yechidaMevatzat || project.machlakaName || project.MachlakaName || "",
     chativa: project.chativa || project.chativaName || project.ChativaName || "",
     chativaName: project.chativaName || project.ChativaName || project.chativa || "",
     totalTakzivCoachAdam,
@@ -165,9 +170,9 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
       chativaOptions,
       yechidaMevatzatOptions,
     );
-    const items = available.map((p) => ({ value: p.id, label: p.projectName || p.teur || "—" }));
-    return [{ value: "__all__", label: "כל הפרויקטים" }, ...items];
-  }, [projects, filters, projectFinanceMap]);
+
+    return available.map((p) => ({ value: p.id, label: p.projectName || p.teur || "—" }));
+  }, [projects, filters, projectFinanceMap, agaffOptions, chativaOptions, yechidaMevatzatOptions]);
 
   const filterOptions = useMemo(() => ({ ...getProjectFilterOptions(projects, agaffOptions, chativaOptions, yechidaMevatzatOptions), projects: projectOptions }), [projects, projectOptions, agaffOptions, chativaOptions, yechidaMevatzatOptions]);
 
@@ -189,9 +194,9 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ye
 
     filteredProjects.forEach((p) => {
       const financeData = projectFinanceMap[p.id] || {};
-      totalHR += financeData.totalTakzivCoachAdam || 0;
-      totalProc += financeData.totalTakzivRechesh || 0;
-      totalGap += financeData.pearim || 0;
+      totalHR += Number(financeData.totalTakzivCoachAdam ?? 0);
+      totalProc += Number(financeData.totalTakzivRechesh ?? 0);
+      totalGap += Number(financeData.pearim ?? 0);
     });
 
     return {

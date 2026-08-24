@@ -4,7 +4,7 @@ import ProjectDetail from './ProjectDetail';
 import ProjectFormModal from '../ProjectFormModal/ProjectFormModal';
 import { useProjectActions } from '../hooks/useProjectActions';
 
-export default function ProjectDetailModal({ project, onClose, maxWidth }) {
+export default function ProjectDetailModal({ project, onClose, maxWidth = '55vw' }) {
   const { isEditing, openEdit, closeEdit, handleDelete } = useProjectActions(project);
 
   if (!project) return null;

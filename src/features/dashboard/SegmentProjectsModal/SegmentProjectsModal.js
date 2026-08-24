@@ -6,7 +6,6 @@ import ProjectTable from '../../projects/ProjectTable/ProjectTable';
 import { filterProjects, getProjectFilterOptions, DEFAULT_PROJECT_FILTERS } from '../../../utils/projectFiltersHelper';
 
 export default function SegmentProjectsModal({ title, initialProjects, onClose }) {
-  
   const [filters, setFilters] = useState(() => ({ ...DEFAULT_PROJECT_FILTERS }));
 
   const updateFilter = (key, value) => {
@@ -20,7 +19,7 @@ export default function SegmentProjectsModal({ title, initialProjects, onClose }
   const filtered = useMemo(() => filterProjects(initialProjects, filters), [initialProjects, filters]);
 
   return (
-    <Modal onClose={onClose} maxWidth={980}>
+    <Modal onClose={onClose} maxWidth="80%">
       <div className="spm-root" dir="rtl">
         <div className="spm-header">
           <h3>{title}</h3>

@@ -33,12 +33,17 @@ export default function Modal({
     return () => document.removeEventListener("keydown", handleKey);
   }, [onClose, closeOnEscape]);
 
+  const style = {};
+  // allow numeric (px) or string (%, rem, px) values for maxWidth
+  if (typeof maxWidth === 'number') style.maxWidth = `${maxWidth}px`;
+  else if (typeof maxWidth === 'string') style.maxWidth = maxWidth;
+
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div
         className="modal"
         dir="rtl"
-        style={{ maxWidth }}
+        style={style}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

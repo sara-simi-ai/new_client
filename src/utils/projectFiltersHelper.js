@@ -6,6 +6,7 @@ export const DEFAULT_PROJECT_FILTERS = {
   agaff: [],
   chativa: [],
   yechidaMevatzat: [],
+  machlaka: [],
   project: [],
   maslol: "",
   logHemsheci: "",
@@ -58,6 +59,7 @@ export function getProjectFilterOptions(projects, agaffOptions = [], chativaOpti
     agaff: effectiveAgaffOptions,
     chativa: effectiveChativaOptions,
     yechidaMevatzat: effectiveYechidaOptions,
+    machlaka: effectiveYechidaOptions,
     statusPearim: GAP_STATUS_OPTIONS,
   };
 }
@@ -108,31 +110,86 @@ export function filterProjects(
   return projects.filter((project) => {
     if (!matchesSearch(project, filters.search)) return false;
     
-    // For agaff: if not empty and all items not selected, filter by agaff
+    // For agaff: if not empty and not all selected, filter by matching either
+    // agaff name or agaff id (options may be ids from AgaffContext or names derived from projects).
     const agaffFilter = Array.isArray(filters.agaff) ? filters.agaff : [];
     const agaffItems = effectiveAgaffOptions.filter((o) => (o.value || o) !== "__all__");
     const isAgaffAllSelected = isAllItemsSelected(agaffFilter, agaffItems);
     if (agaffFilter.length && !isAgaffAllSelected) {
-      const agaffValues = agaffFilter.map((a) => a.value || a);
-      if (!agaffValues.includes(project.agaffName || project.AgaffName || project.agaff)) return false;
+      const agaffValues = agaffFilter.map((a) => String(a.value ?? a));
+
+      const projectAgaffCandidates = [
+        project.agaffName || project.AgaffName || project.agaff,
+        project.agaff || project.AgaffName || project.agaffName,
+        project.idntAgaff || project.idntAgaff,
+      ]
+        .filter(Boolean)
+        .map(String);
+
+      const match = agaffValues.some((v) => projectAgaffCandidates.includes(v));
+      if (!match) return false;
     }
     
-    // For chativa: if not empty and all items not selected, filter by chativa
+    // For chativa: if not empty and not all selected, filter by matching either
+    // chativa name or chativa id (options may be ids from ChativaContext or names derived from projects).
     const chativaFilter = Array.isArray(filters.chativa) ? filters.chativa : [];
     const chativaItems = effectiveChativaOptions.filter((o) => (o.value || o) !== "__all__");
     const isChativaAllSelected = isAllItemsSelected(chativaFilter, chativaItems);
     if (chativaFilter.length && !isChativaAllSelected) {
-      const chativaValues = chativaFilter.map((c) => c.value || c);
-      if (!chativaValues.includes(project.chativaName || project.ChativaName || project.chativa)) return false;
+      const chativaValues = chativaFilter.map((c) => String(c.value ?? c));
+
+      const projectChativaCandidates = [
+        project.chativaName || project.ChativaName || project.chativa,
+        project.chativa || project.chativaName || project.ChativaName,
+        project.idntChativa || project.idntChativa,
+      ]
+        .filter(Boolean)
+        .map(String);
+
+      const match = chativaValues.some((v) => projectChativaCandidates.includes(v));
+      if (!match) return false;
     }
     
-    // For yechidaMevatzat: if not empty and all items not selected, filter by yechidaMevatzat
-    const yechidaFilter = Array.isArray(filters.yechidaMevatzat) ? filters.yechidaMevatzat : [];
+    // For yechidaMevatzat: if not empty and not all selected, filter by matching
+    // either the machlaka name or machlaka id (some options are ids, others are names).
+    // Accept either `yechidaMevatzat` or legacy/alternate `machlaka` key.
+    const yechidaFilter = Array.isArray(filters.yechidaMevatzat)
+      ? filters.yechidaMevatzat
+      : Array.isArray(filters.machlaka)
+      ? filters.machlaka
+      : [];
     const yechidaItems = effectiveYechidaOptions.filter((o) => (o.value || o) !== "__all__");
     const isYechidaAllSelected = isAllItemsSelected(yechidaFilter, yechidaItems);
     if (yechidaFilter.length && !isYechidaAllSelected) {
-      const yechidaValues = yechidaFilter.map((y) => y.value || y);
-      if (!yechidaValues.includes(project.machlakaName || project.MachlakaName )) return false;
+      // Build a set of selected ids/names and include option labels when
+      // options are id-based (so matching can succeed against project name).
+      const yechidaValuesSet = new Set();
+      yechidaFilter.forEach((y) => {
+        const key = String(y.value ?? y);
+        yechidaValuesSet.add(key);
+        const opt = effectiveYechidaOptions.find((o) => String(o.value ?? o) === key);
+        if (opt) {
+          yechidaValuesSet.add(String(opt.label ?? opt.value ?? key));
+        }
+      });
+      const yechidaValues = Array.from(yechidaValuesSet);
+
+      const projectYechidaCandidates = [
+        project.machlakaName,
+        project.MachlakaName,
+        project.machlaka,
+        project.Machlaka,
+        project.yechidaMevatzat,
+        project.idntMachlaka,
+        project.idntTsevetMevatsea,
+        project.IdntMachlaka,
+      ]
+        .filter(Boolean)
+        .map((s) => String(s).toLowerCase());
+
+      const yechidaValuesNormalized = yechidaValues.map((v) => String(v).toLowerCase());
+      const match = yechidaValuesNormalized.some((v) => projectYechidaCandidates.includes(v));
+      if (!match) return false;
     }
     
     const projectFilter = Array.isArray(filters.project) ? filters.project : [];

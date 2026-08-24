@@ -6,7 +6,7 @@ import { useProjects } from '../../../../services/context/ProjectsContext';
 import { formatGapDisplay, getGapStatus } from '../../../../utils/calculateProjectFinanceHelper';
 import { BUDGET_COLORS } from '../../constans/chartConstants';
 import { GAP_STATUS_BY_VALUE } from '../../../../utils/Dec';
-import SectorProjectsModal from './SectorProjectsModal/SectorProjectsModal';
+import SegmentProjectsModal from '../../SegmentProjectsModal/SegmentProjectsModal';
 
 const legendItems = [
   { label: 'כ"א', color: BUDGET_COLORS.HR },
@@ -50,7 +50,7 @@ export default function BudgetBySectorChart() {
           ...sectorItem,
           gapValue,
           gapStatus,
-          gapLabel: formatGapDisplay(gapValue, sectorItem.hrBudget)
+          gapLabel: formatGapDisplay(gapValue, sectorItem.hrBudget, { plannedValue: sectorItem.planningBudget })
         };
       });
   }, [filteredProjects]);
@@ -126,9 +126,9 @@ export default function BudgetBySectorChart() {
         ))}
       </div>
       {activeSector && (
-        <SectorProjectsModal
-          sectorName={activeSector}
-          projects={filteredProjects.filter(p => (p.agaffName || p.AgaffName || p.agaff) === activeSector)}
+        <SegmentProjectsModal
+          title={`פרויקטים באגף — ${activeSector}`}
+          initialProjects={filteredProjects.filter(p => (p.agaffName || p.AgaffName || p.agaff) === activeSector)}
           onClose={() => setActiveSector(null)}
         />
       )}

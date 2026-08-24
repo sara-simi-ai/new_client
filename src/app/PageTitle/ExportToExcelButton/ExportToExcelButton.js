@@ -3,7 +3,7 @@ import { useProjects } from "../../../services/context/ProjectsContext";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
 import { formatGapDisplay } from "../../../utils/calculateProjectFinanceHelper";
 import { getOptionLabelByValue } from "../../../utils/optionHelpers";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, MACHLAKA_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, MACHLAKA_LABEL, CHATIVA_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, GAPS_LABEL, TOTAL_GAPS_LABEL, MASLOL_OPTIONS, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
 import "./ExportToExcelButton.css";
@@ -41,6 +41,7 @@ export default function ExportToExcelButton() {
       const headers = [
         PROJECT_NAME_LABEL,
         AGAF_LABEL,
+        CHATIVA_LABEL,
         MACHLAKA_LABEL,
         CONTINUATION_LABEL,
         MASLOL_LABEL,
@@ -68,13 +69,14 @@ export default function ExportToExcelButton() {
         const row = projectsSheet.addRow([
           project.projectName || "",
           project.agaffName || "",
+          project.chativaName || "",
           project.machlakaName || "",
           project.logHemsheci ? CONTINUATION_TRUE_LABEL : CONTINUATION_FALSE_LABEL,
 
           getOptionLabelByValue(MASLOL_OPTIONS, project.maslol, project.maslol || ""),
           formatMoney(totalTakzivCoachAdam),
           formatMoney(totalTakzivRechesh),
-          formatGapDisplay(pearim, totalTakzivCoachAdam, { signStyle: "plusMinus" }),
+          formatGapDisplay(pearim, totalTakzivCoachAdam, { signStyle: "plusMinus", plannedValue: financeData.coachAdam ?? project.coachAdam ?? 0 }),
         ]);
 
         row.eachCell((cell, colNumber) => {
@@ -91,6 +93,7 @@ export default function ExportToExcelButton() {
       projectsSheet.columns = [
         { width: 25 }, // projectName
         { width: 15 }, // agaff
+        { width: 15 }, // chativa
         { width: 15 }, // yechidaMevatzat
         { width: 15 }, // hemsheci
         { width: 15 }, // maslol
@@ -123,7 +126,7 @@ export default function ExportToExcelButton() {
         [HR_BUDGET_LABEL, formatMoney(summaryData?.totalHR || 0)],
         [PROCUREMENT_BUDGET_LABEL, formatMoney(summaryData?.totalProc || 0)],
         [TOTAL_BUDGET_LABEL, formatMoney(summaryData?.totalBudget || 0)],
-        [TOTAL_GAPS_LABEL, formatGapDisplay(summaryData?.totalGap || 0, summaryData?.totalBudget || 0, { signStyle: "plusMinus" })],
+        [TOTAL_GAPS_LABEL, formatGapDisplay(summaryData?.totalGap || 0, summaryData?.totalBudget || 0, { signStyle: "plusMinus", plannedValue: summaryData?.totalPlanned || 0, showMissingPlanningPlaceholder: false })],
       ];
 
       summaryItems.forEach((item) => {

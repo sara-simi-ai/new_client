@@ -2,11 +2,8 @@ import React, { useMemo } from 'react';
 import './HRvsPlannedChart.css';
 import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-import Modal from '../../../../components/Modal/Modal';
-import ProjectDetail from '../../../projects/ProjectDetail/ProjectDetail';
-import { getGapStatus } from '../../../../utils/calculateProjectFinanceHelper';
-import { useProjectDetail } from '../../hooks/useProjectDetail';
-import { formatGapDisplay } from '../../../../utils/calculateProjectFinanceHelper';
+import SegmentProjectsModal from '../../SegmentProjectsModal/SegmentProjectsModal';
+import { getGapStatus, formatGapDisplay, hasMissingPlannedHrValue } from '../../../../utils/calculateProjectFinanceHelper';
 import { BUDGET_COLORS, INITIAL_VISIBLE_PROJECTS_COUNT } from '../../constans/chartConstants';
 
 const HRP_LEGEND_ITEMS = [
@@ -23,8 +20,8 @@ export default function HrVsPlannedChart({
   hasExpandableProjects,
   toggleShowMore,
 }) {
-  const { filteredProjects } = useProjects();
-  const { selectedProject, openProjectDetail, closeProjectDetail } = useProjectDetail(filteredProjects);
+  const { filteredProjects, setSelectedProjectId } = useProjects();
+  const openProjectDetail = (id) => setSelectedProjectId(id);
   const maxProjectBudget = useMemo(
     () => Math.max(...filteredProjects.map((p) => Math.max(p.totalTakzivCoachAdam || 0, p.totalTakzivRechesh || 0, p.coachAdam || 0)), 1),
     [filteredProjects],
@@ -76,9 +73,12 @@ export default function HrVsPlannedChart({
           const procBudget = project.totalTakzivRechesh || 0;
           const planned = project.coachAdam || 0;
           const difference = hrBudget - planned;
+          const plannedMissing = hasMissingPlannedHrValue(planned);
           const gapStatus = getGapStatus(difference, hrBudget); // 'takin' | 'odef' | 'geraon'
-          const differenceClass = gapStatus === 'takin' ? 'hrp-neutral' : gapStatus === 'odef' ? 'hrp-surplus' : 'hrp-over';
-          const differenceLabel = formatGapDisplay(difference, hrBudget);
+          const differenceClass = plannedMissing
+            ? 'hrp-missing'
+            : (gapStatus === 'takin' ? 'hrp-neutral' : gapStatus === 'odef' ? 'hrp-surplus' : 'hrp-over');
+          const differenceLabel = formatGapDisplay(difference, hrBudget, { plannedValue: planned });
 
           return (
             <div
@@ -115,11 +115,7 @@ export default function HrVsPlannedChart({
         })}
       </div>
 
-      {selectedProject && (
-        <Modal onClose={closeProjectDetail}>
-          <ProjectDetail project={selectedProject} onClose={closeProjectDetail} />
-        </Modal>
-      )}
+      {/* Modal rendered globally in App — chart only triggers selection */}
 
     </div>
   );

@@ -8,6 +8,7 @@ import "./ProjectCard.css";
 import ProjectFormModal from "../ProjectFormModal/ProjectFormModal";
 import { useProjectActions } from "../hooks/useProjectActions";
 import StatusGap, { getGapStatusMeta } from "../StatusGap/StatusGap";
+import { getProjectGapStatus } from "../../../utils/calculateProjectFinanceHelper";
 
 export default function ProjectCard({ project }) {
   const { projectFinanceMap, selectedProjectId, setSelectedProjectId } = useProjects();
@@ -18,7 +19,7 @@ export default function ProjectCard({ project }) {
   const onSelect = () => setSelectedProjectId(isSelected ? null : project.id);
 
   const description = isRealText(project.teur) ? project.teur : "";
-  const gapStatus = financeData?.statusPearim || "takin";
+  const gapStatus = getProjectGapStatus(financeData, project);
   const statusMeta = getGapStatusMeta(gapStatus);
   const metaRows = buildProjectMetaRows(project);
 

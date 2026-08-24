@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useProjects } from "../../services/context/ProjectsContext";
 import { formatMoney } from "../../utils/formatMoneyHelper";
-import { formatGapDisplay, getGapStatus } from "../../utils/calculateProjectFinanceHelper";
+import { formatGapDisplay, formatPlannedHrValue, getGapStatus } from "../../utils/calculateProjectFinanceHelper";
 import { GapElement } from "../../components/GapElement/GapElement";
 import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../utils/Dec";
 import GapDetailsModal from "./GapDetailsModal/GapDetailsModal";
@@ -17,14 +17,14 @@ export default function SummarySquares() {
   }, [totalGap, totalHR]);
 
   const totalPlanned = useMemo(() => {
-    return gapDetails.reduce((total, project) => total + (project.financeData.coachAdam || 0), 0);
+    return gapDetails.reduce((total, project) => total + Number(project.financeData?.coachAdam ?? 0), 0);
   }, [gapDetails]);
 
   const summaryCards = [
     { label: "פרויקטים", value: totalCount },
     { label: TOTAL_BUDGET_LABEL, value: formatMoney(totalBudget) },
     { label: PROCUREMENT_BUDGET_LABEL, value: formatMoney(totalProc) },
-    { label: PLANNED_HR_LABEL, value: formatMoney(totalPlanned) },
+    { label: PLANNED_HR_LABEL, value: formatPlannedHrValue(totalPlanned, { showPlaceholder: false }) },
     { label: HR_BUDGET_LABEL, value: formatMoney(totalHR) },
   ];
 
@@ -51,7 +51,15 @@ export default function SummarySquares() {
         >
           <div className="ss-title">{GAPS_LABEL}</div>
           <div className="ss-value">
-            <GapElement financeData={{ pearim: totalGap, statusPearim: totalGapStatus, totalTakzivCoachAdam: totalHR }} />
+            <GapElement
+              financeData={{
+                pearim: totalGap,
+                statusPearim: totalGapStatus,
+                totalTakzivCoachAdam: totalHR,
+                coachAdam: totalPlanned,
+              }}
+              showMissingPlanningPlaceholder={false}
+            />
           </div>
         </div>
       </div>

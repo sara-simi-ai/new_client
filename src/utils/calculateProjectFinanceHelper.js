@@ -4,14 +4,14 @@ const GAP_STATUS_THRESHOLD_PERCENT = Number(process.env.REACT_APP_GAP_STATUS_THR
 export const GAP_STATUS_THRESHOLD = GAP_STATUS_THRESHOLD_PERCENT / 100;
 
 export const computeProjectTotalBudget = (project) =>
-  (project?.totalTakzivCoachAdam || 0) + (project?.totalTakzivRechesh || 0);
+  coerceToNumber(project?.totalTakzivCoachAdam) + coerceToNumber(project?.totalTakzivRechesh);
 
 export const computeBudgetMinusPlanned = (project) =>
-  (project?.totalTakzivCoachAdam || 0) - (project?.coachAdam || 0);
+  coerceToNumber(project?.totalTakzivCoachAdam) - coerceToNumber(project?.coachAdam);
 
 export const computeRelativeGap = (project) => {
   const gap = computeBudgetMinusPlanned(project);
-  const budget = project?.totalTakzivCoachAdam || 0;
+  const budget = coerceToNumber(project?.totalTakzivCoachAdam);
   return budget > 0 ? Math.abs(gap) / budget : 0;
 };
 
@@ -48,34 +48,86 @@ export const getGapStatus = (gapValue, totalBudget) => {
   return 'takin';
 };
 
+export const coerceToNumber = (value) => {
+  if (value === null || value === undefined || value === '') return 0;
+
+  if (typeof value === 'string') {
+    const normalized = value.trim();
+    if (!normalized || normalized === '----' || normalized === 'לא הוכנס תכנון') return 0;
+
+    const parsed = Number(normalized.replace(/[$₪\s,]/g, '').replace('%', ''));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
+};
+
+export const hasMissingPlannedHrValue = (value) => {
+  const plannedHr = coerceToNumber(value);
+  return Number.isFinite(plannedHr) && plannedHr === 0;
+};
+
+export const isMissingPlannedHrValue = hasMissingPlannedHrValue;
+
+export const getProjectGapStatus = (financeData = {}, project = {}) => {
+  const plannedValue = Number(financeData?.coachAdam ?? project?.coachAdam ?? 0);
+
+  if (hasMissingPlannedHrValue(plannedValue)) {
+    return 'missing_planning';
+  }
+
+  return financeData?.statusPearim || 'takin';
+};
+
+/**
+ * Returns the display text for planned HR values.
+ * When the value is not entered, show the shared placeholder instead of 0.
+ */
+export const formatPlannedHrValue = (value, { showPlaceholder = true } = {}) => {
+  const numericValue = coerceToNumber(value);
+
+  if (showPlaceholder && hasMissingPlannedHrValue(numericValue)) {
+    return '----';
+  }
+
+  return formatMoney(numericValue);
+};
+
 /**
  * פורמט אחיד להצגת פערים
  * @param {number} gapValue - ערך הפער
  * @param {number} totalBudget - סכום התקציב (לחישוב %)
- * @param {{ signStyle?: 'arrow' | 'plusMinus' }} [options] - CHANGED: added signStyle option
- *   so this one function covers both UI display (▲/▼) and plain-text contexts like
- *   Excel export (+/-), instead of each caller writing its own near-copy of this function.
+ * @param {{ signStyle?: 'arrow' | 'plusMinus', plannedValue?: number, showMissingPlanningPlaceholder?: boolean }} [options]
  * @returns {string} - e.g. ₪0 (0%) or ▲ ₪100 (5%) / + ₪100 (5%) or ▼ ₪50 (10%) / - ₪50 (10%)
  */
-export const formatGapDisplay = (gapValue, totalBudget, { signStyle = 'arrow' } = {}) => {
-  const absValue = Math.abs(gapValue);
-  const signs = signStyle === 'plusMinus' ? { positive: '+ ', negative: '- ' } : { positive: '▲ ', negative: '▼ ' };
-  const displayValue = gapValue === 0
-    ? `₪${formatMoney(absValue)}`
-    : `${gapValue > 0 ? signs.positive : signs.negative}₪${formatMoney(absValue)}`;
-  
-  if (totalBudget && totalBudget > 0) {
-    const percent = Math.round(Math.abs(gapValue) / totalBudget * 100);
-    return `${displayValue} (${percent}%)`;
+export const formatGapDisplay = (gapValue, totalBudget, { signStyle = 'arrow', plannedValue, showMissingPlanningPlaceholder = true } = {}) => {
+  const safeGapValue = coerceToNumber(gapValue);
+  const safeTotalBudget = coerceToNumber(totalBudget);
+  const safePlannedValue = coerceToNumber(plannedValue);
+  const absValue = Math.abs(safeGapValue);
+  const numericPercent = safeTotalBudget && safeTotalBudget > 0 ? Math.round((absValue / safeTotalBudget) * 100) : 0;
+
+  if (showMissingPlanningPlaceholder && hasMissingPlannedHrValue(safePlannedValue)) {
+    return '----';
   }
-  
+
+  const signs = signStyle === 'plusMinus' ? { positive: '+ ', negative: '- ' } : { positive: '▲ ', negative: '▼ ' };
+  const displayValue = safeGapValue === 0
+    ? `₪${formatMoney(absValue)}`
+    : `${safeGapValue > 0 ? signs.positive : signs.negative}₪${formatMoney(absValue)}`;
+
+  if (safeTotalBudget && safeTotalBudget > 0) {
+    return `${displayValue} (${numericPercent}%)`;
+  }
+
   return displayValue;
 };
 
 export const calculateProjectFinance = (project) => {
-  const totalTakzivCoachAdam = project?.totalTakzivCoachAdam ?? 0;
-  const totalTakzivRechesh = project?.totalTakzivRechesh || 0;
-  const coachAdam = project?.coachAdam || 0;
+  const totalTakzivCoachAdam = coerceToNumber(project?.totalTakzivCoachAdam ?? 0);
+  const totalTakzivRechesh = coerceToNumber(project?.totalTakzivRechesh ?? 0);
+  const coachAdam = coerceToNumber(project?.coachAdam ?? 0);
 
   const totalTaktziv = totalTakzivCoachAdam + totalTakzivRechesh;
   const pearim = totalTakzivCoachAdam - coachAdam;
