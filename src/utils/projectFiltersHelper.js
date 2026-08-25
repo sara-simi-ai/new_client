@@ -5,7 +5,7 @@ export const DEFAULT_PROJECT_FILTERS = {
   search: "",
   agaff: [],
   chativa: [],
-  yechidaMevatzat: [],
+  // machlaka: [],
   machlaka: [],
   project: [],
   maslol: "",
@@ -15,7 +15,7 @@ export const DEFAULT_PROJECT_FILTERS = {
 
 const AGAFF_ALL_OPTION = { value: "__all__", label: "כל האגפים" };
 const CHATIVA_ALL_OPTION = { value: "__all__", label: "כל החטיבות" };
-const YECHIDA_ALL_OPTION = { value: "__all__", label: "כל יחידות המבצעות" };
+const MACHLAKA_ALL_OPTION = { value: "__all__", label: "כל יחידות המבצעות" };
 
 function buildOptionsFromProjects(projects, field) {
   const optionsMap = new Map();
@@ -39,7 +39,7 @@ function isAllItemsSelected(selected, allOptions) {
   );
 }
 
-export function getProjectFilterOptions(projects, agaffOptions = [], chativaOptions = [], yechidaMevatzatOptions = []) {
+export function getProjectFilterOptions(projects, agaffOptions = [], chativaOptions = [], machlakaOptions = []) {
   // Prefer explicit options passed from provider (ids + labels). When not
   // provided, derive options from project documents using the server-side
   // denormalized name fields: `agaffName`, `chativaName`, and `machlakaName`.
@@ -51,15 +51,15 @@ export function getProjectFilterOptions(projects, agaffOptions = [], chativaOpti
     ? chativaOptions
     : [CHATIVA_ALL_OPTION, ...buildOptionsFromProjects(projects, "chativaName")];
 
-  const effectiveYechidaOptions = (yechidaMevatzatOptions || []).length > 0
-    ? yechidaMevatzatOptions
-    : [YECHIDA_ALL_OPTION, ...buildOptionsFromProjects(projects, "machlakaName")];
+  const effectivemachlakaOptions = (machlakaOptions || []).length > 0
+    ? machlakaOptions
+    : [MACHLAKA_ALL_OPTION, ...buildOptionsFromProjects(projects, "machlakaName")];
 
   return {
     agaff: effectiveAgaffOptions,
     chativa: effectiveChativaOptions,
-    yechidaMevatzat: effectiveYechidaOptions,
-    machlaka: effectiveYechidaOptions,
+    machlaka: effectivemachlakaOptions,
+    // machlaka: effectivemachlakaOptions,
     statusPearim: GAP_STATUS_OPTIONS,
   };
 }
@@ -93,7 +93,7 @@ export function filterProjects(
   getProjectStatus = (project) => calculateProjectFinance(project).statusPearim,
   agaffOptions = [],
   chativaOptions = [],
-  yechidaMevatzatOptions = []
+  machlakaOptions = []
 ) {
   const effectiveAgaffOptions = (agaffOptions || []).length > 0
     ? agaffOptions
@@ -103,9 +103,9 @@ export function filterProjects(
     ? chativaOptions
     : buildOptionsFromProjects(projects, "chativa");
 
-  const effectiveYechidaOptions = (yechidaMevatzatOptions || []).length > 0
-    ? yechidaMevatzatOptions
-    : buildOptionsFromProjects(projects, "yechidaMevatzat");
+  const effectivemachlakaOptions = (machlakaOptions || []).length > 0
+    ? machlakaOptions
+    : buildOptionsFromProjects(projects, "machlaka");
 
   return projects.filter((project) => {
     if (!matchesSearch(project, filters.search)) return false;
@@ -150,36 +150,36 @@ export function filterProjects(
       if (!match) return false;
     }
     
-    // For yechidaMevatzat: if not empty and not all selected, filter by matching
+    // For machlaka: if not empty and not all selected, filter by matching
     // either the machlaka name or machlaka id (some options are ids, others are names).
-    // Accept either `yechidaMevatzat` or legacy/alternate `machlaka` key.
-    const yechidaFilter = Array.isArray(filters.yechidaMevatzat)
-      ? filters.yechidaMevatzat
+    // Accept either `machlaka` or legacy/alternate `machlaka` key.
+    const machlakaFilter = Array.isArray(filters.machlaka)
+      ? filters.machlaka
       : Array.isArray(filters.machlaka)
       ? filters.machlaka
       : [];
-    const yechidaItems = effectiveYechidaOptions.filter((o) => (o.value || o) !== "__all__");
-    const isYechidaAllSelected = isAllItemsSelected(yechidaFilter, yechidaItems);
-    if (yechidaFilter.length && !isYechidaAllSelected) {
+    const machlakaItem = effectivemachlakaOptions.filter((o) => (o.value || o) !== "__all__");
+    const isMachlakaAllSelected = isAllItemsSelected(machlakaFilter, machlakaItem);
+    if (machlakaFilter.length && !isMachlakaAllSelected) {
       // Build a set of selected ids/names and include option labels when
       // options are id-based (so matching can succeed against project name).
-      const yechidaValuesSet = new Set();
-      yechidaFilter.forEach((y) => {
+      const machlakaValuesSet = new Set();
+      machlakaFilter.forEach((y) => {
         const key = String(y.value ?? y);
-        yechidaValuesSet.add(key);
-        const opt = effectiveYechidaOptions.find((o) => String(o.value ?? o) === key);
+        machlakaValuesSet.add(key);
+        const opt = effectivemachlakaOptions.find((o) => String(o.value ?? o) === key);
         if (opt) {
-          yechidaValuesSet.add(String(opt.label ?? opt.value ?? key));
+          machlakaValuesSet.add(String(opt.label ?? opt.value ?? key));
         }
       });
-      const yechidaValues = Array.from(yechidaValuesSet);
+      const machlakaValues = Array.from(machlakaValuesSet);
 
-      const projectYechidaCandidates = [
+      const projectMachlakaCandidates = [
         project.machlakaName,
         project.MachlakaName,
         project.machlaka,
         project.Machlaka,
-        project.yechidaMevatzat,
+        project.machlaka,
         project.idntMachlaka,
         project.idntTsevetMevatsea,
         project.IdntMachlaka,
@@ -187,8 +187,8 @@ export function filterProjects(
         .filter(Boolean)
         .map((s) => String(s).toLowerCase());
 
-      const yechidaValuesNormalized = yechidaValues.map((v) => String(v).toLowerCase());
-      const match = yechidaValuesNormalized.some((v) => projectYechidaCandidates.includes(v));
+      const machlakaValuesNormalized = machlakaValues.map((v) => String(v).toLowerCase());
+      const match = machlakaValuesNormalized.some((v) => projectMachlakaCandidates.includes(v));
       if (!match) return false;
     }
     

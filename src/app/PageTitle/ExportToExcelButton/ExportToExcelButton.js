@@ -94,7 +94,7 @@ export default function ExportToExcelButton() {
         { width: 25 }, // projectName
         { width: 15 }, // agaff
         { width: 15 }, // chativa
-        { width: 15 }, // yechidaMevatzat
+        { width: 15 }, // machlaka
         { width: 15 }, // hemsheci
         { width: 15 }, // maslol
         { width: 15 }, // hrBudget

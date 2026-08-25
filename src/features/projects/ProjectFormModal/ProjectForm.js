@@ -10,7 +10,7 @@ import { getOptionKey, getOptionLabel } from "../../../utils/optionHelpers";
 import "./ProjectFormModal.css";
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
-  const { agaffOptions: fallbackAgaffOptions, yechidaMevatzatOptions: fallbackYechidaOptions } = useProjects();
+  const { agaffOptions: fallbackAgaffOptions, machlakaOptions: fallbackMachlakaOptions } = useProjects();
   const { agaffOptions } = useAgaff();
   const { machlakaOptions } = useMachlaka();
   const { chativaOptions } = useChativa();
@@ -22,12 +22,12 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     return fallbackAgaffOptions || [];
   }, [agaffOptions, fallbackAgaffOptions]);
 
-  const effectiveYechidaOptions = useMemo(() => {
+  const effectiveMachlakaOptions = useMemo(() => {
     if (machlakaOptions && machlakaOptions.length > 0) {
       return machlakaOptions;
     }
-    return fallbackYechidaOptions || [];
-  }, [machlakaOptions, fallbackYechidaOptions]);
+    return fallbackMachlakaOptions || [];
+  }, [machlakaOptions, fallbackMachlakaOptions]);
 
   const effectiveChativaOptions = useMemo(() => {
     return chativaOptions || [];
@@ -36,7 +36,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   const [form, setForm] = useState({
     projectName: "",
     agaff: "",
-    yechidaMevatzat: "",
+    machlaka: "",
     chativa: "",
     maslol: MASLOL_OPTIONS[0].value,
     logHemsheci: false,
@@ -77,7 +77,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         ...prev,
         projectName: initialData.projectName || "",
         agaff: initialData.agaff || initialData.agaffName || "",
-        yechidaMevatzat: initialData.yechidaMevatzat || initialData.machlakaName || "",
+        machlaka: initialData.machlaka || initialData.machlakaName || "",
         chativa: initialData.chativa || initialData.chativaName || initialData.ChativaName || "",
         maslol: initialData.maslol || MASLOL_OPTIONS[0].value,
         logHemsheci: initialData.logHemsheci || false,
@@ -99,10 +99,10 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         initialData.agaffName,
         effectiveAgaffOptions
       );
-      const resolvedYechida = resolveOptionValue(
-        initialData.yechidaMevatzat,
+      const resolvedMachlaka = resolveOptionValue(
+        initialData.machlaka,
         initialData.machlakaName,
-        effectiveYechidaOptions
+        effectiveMachlakaOptions
       );
       const resolvedChativa = resolveOptionValue(
         initialData.chativa,
@@ -112,7 +112,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
 
       if (
         prev.agaff === resolvedAgaff &&
-        prev.yechidaMevatzat === resolvedYechida &&
+        prev.machlaka === resolvedMachlaka &&
         prev.chativa === resolvedChativa
       ) {
         return prev;
@@ -121,11 +121,11 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
       return {
         ...prev,
         agaff: resolvedAgaff,
-        yechidaMevatzat: resolvedYechida,
+        machlaka: resolvedMachlaka,
         chativa: resolvedChativa,
       };
     });
-  }, [initialData, effectiveAgaffOptions, effectiveYechidaOptions, effectiveChativaOptions]);
+  }, [initialData, effectiveAgaffOptions, effectiveMachlakaOptions, effectiveChativaOptions]);
 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -195,7 +195,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   const handleSubmit = async () => {
     const newErrors = {};
     if (!form.projectName.trim()) newErrors.projectName = true;
-    if (!form.yechidaMevatzat.trim()) newErrors.yechidaMevatzat = true;
+    if (!form.machlaka.trim()) newErrors.machlaka = true;
     if (!form.agaff.trim()) newErrors.agaff = true;
     if (!form.chativa.trim()) newErrors.chativa = true;
     
@@ -203,7 +203,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     if (parsedProcurement === 0) newErrors.totalTakzivRechesh = true;
     if (parsedHr === 0) newErrors.totalTakzivCoachAdam = true;
 
-    const detailFields = ['projectName', 'yechidaMevatzat', 'agaff', 'chativa'];
+    const detailFields = ['projectName', 'machlaka', 'agaff', 'chativa'];
     const budgetFields = ['totalTakzivRechesh', 'totalTakzivCoachAdam'];
     const hasDetailError = Object.keys(newErrors).some((field) => detailFields.includes(field));
     const hasBudgetError = Object.keys(newErrors).some((field) => budgetFields.includes(field));
@@ -274,13 +274,13 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
               onChange: (next) => set('chativa', next),
             })}
             {renderSelectField({
-              key: 'yechidaMevatzat',
+              key: 'machlaka',
               label: 'מחלקה *',
               placeholder: 'בחר מחלקה',
-              errorKey: 'yechidaMevatzat',
-              options: effectiveYechidaOptions,
-              selected: form.yechidaMevatzat,
-              onChange: (next) => set('yechidaMevatzat', next),
+              errorKey: 'machlaka',
+              options: effectiveMachlakaOptions,
+              selected: form.machlaka,
+              onChange: (next) => set('machlaka', next),
             })}
           </div>
 

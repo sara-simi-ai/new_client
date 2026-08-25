@@ -47,13 +47,13 @@ export default function FilterBar({
       multi={true}
     />,
     <Dropdown
-      key="yechidaMevatzat"
+      key="machlaka"
       title="מחלקה"
       label="מחלקה"
       allLabel="כל המחלקות"
-      options={filterOptions?.yechidaMevatzat || machlakaOptions}
-      selected={filters.yechidaMevatzat || []}
-      onChange={(next) => updateFilter("yechidaMevatzat", next)}
+      options={filterOptions?.machlaka || machlakaOptions}
+      selected={filters.machlaka || []}
+      onChange={(next) => updateFilter("machlaka", next)}
       multi={true}
     />,
     <Dropdown
