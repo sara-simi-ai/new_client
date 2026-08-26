@@ -25,3 +25,12 @@
   background-color: rgba(30, 95, 142, 0.1);
   color: var(--accent);
 }
+
+.status-gap--missing-planning {
+  background-color: rgba(185, 28, 28, 0.12);
+  color: #b91c1c;
+}
+
+.pc-gap--missing-planning {
+  color: #000;
+}

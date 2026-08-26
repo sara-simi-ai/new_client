@@ -53,3 +53,6 @@
   color: var(--gap-neutral);
   font-weight: 600;
 }
+
+/* Missing planning placeholder style: ensure placeholder appears neutral/black */
+.hrp-missing { color: #0f1724; font-weight: 600; }

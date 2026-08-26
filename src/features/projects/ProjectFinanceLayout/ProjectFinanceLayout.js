@@ -1,5 +1,6 @@
 import React from "react";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
+import { formatPlannedHrValue } from "../../../utils/calculateProjectFinanceHelper";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import ProjectActionButtons from "../ProjectActionButtons/ProjectActionButtons";
@@ -17,10 +18,10 @@ export default function ProjectFinanceLayout({ financeData, mode = "card", onEdi
   const baseFields = [
     { label: HR_BUDGET_LABEL, value: totalTakzivCoachAdam },
     { label: PROCUREMENT_BUDGET_LABEL, value: totalTakzivRechesh },
-    { label: PLANNED_HR_LABEL, value: coachAdam },
+    { label: PLANNED_HR_LABEL, value: coachAdam, renderValue: () => formatPlannedHrValue(coachAdam) },
     {
       label: GAPS_LABEL,
-      renderValue: () => <GapElement financeData={financeData} />,
+      renderValue: () => <GapElement financeData={financeData} showMissingPlanningPlaceholder={true} />,
     },
   ];
 

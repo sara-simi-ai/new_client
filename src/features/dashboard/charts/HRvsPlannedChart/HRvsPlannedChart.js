@@ -1,9 +1,6 @@
 import React, { useMemo } from 'react';
 import './HRvsPlannedChart.css';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-import Modal from '../../../../components/Modal/Modal';
-import ProjectDetail from '../../../projects/ProjectDetail/ProjectDetail';
-import { useProjectDetail } from '../../hooks/useProjectDetail';
 import { formatMoney } from '../../../../utils/formatMoneyHelper';
 import { BUDGET_COLORS, INITIAL_VISIBLE_PROJECTS_COUNT } from '../../constans/chartConstants';
 
@@ -21,8 +18,8 @@ export default function HrVsPlannedChart({
   hasExpandableProjects,
   toggleShowMore,
 }) {
-  const { filteredProjects } = useProjects();
-  const { selectedProject, openProjectDetail, closeProjectDetail } = useProjectDetail(filteredProjects);
+  const { filteredProjects, setSelectedProjectId } = useProjects();
+  const openProjectDetail = (id) => setSelectedProjectId(id);
   const maxProjectBudget = useMemo(
     () => Math.max(...filteredProjects.map((p) => Math.max(p.totalTakzivCoachAdam || 0, p.totalTakzivRechesh || 0, p.coachAdam || 0)), 1),
     [filteredProjects],
@@ -142,11 +139,7 @@ export default function HrVsPlannedChart({
         })}
       </div>
 
-      {selectedProject && (
-        <Modal onClose={closeProjectDetail}>
-          <ProjectDetail project={selectedProject} onClose={closeProjectDetail} />
-        </Modal>
-      )}
+      {/* Modal rendered globally in App — chart only triggers selection */}
 
     </div>
   );

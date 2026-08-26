@@ -4,14 +4,13 @@ import { useAgaff } from "../../../services/context/AgaffContext";
 import { useMachlaka } from "../../../services/context/MachlakaContext";
 import { useChativa } from "../../../services/context/ChativaContext";
 import Dropdown from "../../../components/Dropdown/Dropdown";
-import { formatGapDisplay, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { GAP_STATUS_BY_VALUE, MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL, GAPS_LABEL, PLANNED_HR_LABEL } from "../../../utils/Dec";
+import { MASLOL_OPTIONS, PROCUREMENT_BUDGET_LABEL, HR_BUDGET_LABEL, TOTAL_BUDGET_LABEL } from "../../../utils/Dec";
 import { formatNumberWithSeparators, parseFormattedNumber } from "../../../utils/formatMoneyHelper";
 import { getOptionKey, getOptionLabel } from "../../../utils/optionHelpers";
 import "./ProjectFormModal.css";
 
 export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, onCancel }) {
-  const { agaffOptions: fallbackAgaffOptions, yechidaMevatzatOptions: fallbackYechidaOptions } = useProjects();
+  const { agaffOptions: fallbackAgaffOptions, machlakaOptions: fallbackMachlakaOptions } = useProjects();
   const { agaffOptions } = useAgaff();
   const { machlakaOptions } = useMachlaka();
   const { chativaOptions } = useChativa();
@@ -23,12 +22,12 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     return fallbackAgaffOptions || [];
   }, [agaffOptions, fallbackAgaffOptions]);
 
-  const effectiveYechidaOptions = useMemo(() => {
+  const effectiveMachlakaOptions = useMemo(() => {
     if (machlakaOptions && machlakaOptions.length > 0) {
       return machlakaOptions;
     }
-    return fallbackYechidaOptions || [];
-  }, [machlakaOptions, fallbackYechidaOptions]);
+    return fallbackMachlakaOptions || [];
+  }, [machlakaOptions, fallbackMachlakaOptions]);
 
   const effectiveChativaOptions = useMemo(() => {
     return chativaOptions || [];
@@ -37,7 +36,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   const [form, setForm] = useState({
     projectName: "",
     agaff: "",
-    yechidaMevatzat: "",
+    machlaka: "",
     chativa: "",
     maslol: MASLOL_OPTIONS[0].value,
     logHemsheci: false,
@@ -78,7 +77,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         ...prev,
         projectName: initialData.projectName || "",
         agaff: initialData.agaff || initialData.agaffName || "",
-        yechidaMevatzat: initialData.yechidaMevatzat || initialData.machlakaName || "",
+        machlaka: initialData.machlaka || initialData.machlakaName || "",
         chativa: initialData.chativa || initialData.chativaName || initialData.ChativaName || "",
         maslol: initialData.maslol || MASLOL_OPTIONS[0].value,
         logHemsheci: initialData.logHemsheci || false,
@@ -100,10 +99,10 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
         initialData.agaffName,
         effectiveAgaffOptions
       );
-      const resolvedYechida = resolveOptionValue(
-        initialData.yechidaMevatzat,
+      const resolvedMachlaka = resolveOptionValue(
+        initialData.machlaka,
         initialData.machlakaName,
-        effectiveYechidaOptions
+        effectiveMachlakaOptions
       );
       const resolvedChativa = resolveOptionValue(
         initialData.chativa,
@@ -113,7 +112,7 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
 
       if (
         prev.agaff === resolvedAgaff &&
-        prev.yechidaMevatzat === resolvedYechida &&
+        prev.machlaka === resolvedMachlaka &&
         prev.chativa === resolvedChativa
       ) {
         return prev;
@@ -122,11 +121,11 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
       return {
         ...prev,
         agaff: resolvedAgaff,
-        yechidaMevatzat: resolvedYechida,
+        machlaka: resolvedMachlaka,
         chativa: resolvedChativa,
       };
     });
-  }, [initialData, effectiveAgaffOptions, effectiveYechidaOptions, effectiveChativaOptions]);
+  }, [initialData, effectiveAgaffOptions, effectiveMachlakaOptions, effectiveChativaOptions]);
 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -140,7 +139,9 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
   };
 
   const handleNumChange = (field, value) => {
-    set(field, value);
+    // Parse input immediately for real-time budget calculation
+    const numValue = parseFormattedNumber(value);
+    set(field, numValue);
   };
 
   const getDisplayValue = (fieldValue) => {
@@ -148,30 +149,62 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
       return "";
     }
     
-    // If it looks like a raw number, format it
-    const numValue = parseFormattedNumber(fieldValue);
+    const numValue = Number(fieldValue) || 0;
     if (numValue === 0) return "";
     return formatNumberWithSeparators(numValue);
   };
 
-  const totalBudget = Number(form.totalTakzivCoachAdam) + Number(form.totalTakzivRechesh);
-  const gaps = Number(form.totalTakzivCoachAdam) - Number(form.coachAdam);
-  const gapNum = Number(gaps) || 0;
-  const gapDisplay = formatGapDisplay(gapNum, Number(form.totalTakzivCoachAdam));
-  const gapStatus = getGapStatus(gapNum, Number(form.totalTakzivCoachAdam));
+  // Automatic budget calculation
+  const parsedProcurement = parseFormattedNumber(form.totalTakzivRechesh);
+  const parsedHr = parseFormattedNumber(form.totalTakzivCoachAdam);
+  const totalBudget = parsedProcurement + parsedHr;
+  const isValidBudgets = parsedProcurement > 0 && parsedHr > 0;
+
+  const renderSelectField = ({ key, label, placeholder, errorKey, options, selected, onChange }) => (
+    <div className="np-field np-field--compact" key={key}>
+      <label className="np-label">{label}</label>
+      <Dropdown
+        className={errors[errorKey] ? 'np-input--error' : ''}
+        label={placeholder}
+        allLabel={placeholder}
+        options={options.filter((o) => o.value !== '__all__')}
+        selected={selected}
+        onChange={onChange}
+        multi={false}
+      />
+    </div>
+  );
+
+  const renderCurrencyField = ({ key, label, field, errorKey, readOnly = false, value }) => (
+    <div className="np-field" key={key}>
+      <label className="np-label">{label}</label>
+      <input
+        type="text"
+        inputMode="numeric"
+        className={`np-input${errors[errorKey] ? ' np-input--error' : ''}${readOnly ? ' np-input--readonly' : ''}`}
+        readOnly={readOnly}
+        value={readOnly ? value : getDisplayValue(form[field])}
+        onFocus={!readOnly ? () => handleNumFocus(field) : undefined}
+        onBlur={!readOnly ? () => handleNumBlur(field) : undefined}
+        onChange={!readOnly ? (event) => handleNumChange(field, event.target.value) : undefined}
+        style={readOnly ? { backgroundColor: '#f9fafb', color: '#374151' } : undefined}
+      />
+    </div>
+  );
 
   const handleSubmit = async () => {
     const newErrors = {};
     if (!form.projectName.trim()) newErrors.projectName = true;
-    if (!form.yechidaMevatzat.trim()) newErrors.yechidaMevatzat = true;
+    if (!form.machlaka.trim()) newErrors.machlaka = true;
     if (!form.agaff.trim()) newErrors.agaff = true;
     if (!form.chativa.trim()) newErrors.chativa = true;
-    if (Number(form.totalTakzivRechesh) === 0) newErrors.totalTakzivRechesh = true;
-    if (Number(form.totalTakzivCoachAdam) === 0) newErrors.totalTakzivCoachAdam = true;
-    if (Number(form.coachAdam) === 0) newErrors.coachAdam = true;
+    
+    // Validate budgets
+    if (parsedProcurement === 0) newErrors.totalTakzivRechesh = true;
+    if (parsedHr === 0) newErrors.totalTakzivCoachAdam = true;
 
-    const detailFields = ['projectName', 'yechidaMevatzat', 'agaff', 'chativa'];
-    const budgetFields = ['totalTakzivRechesh', 'totalTakzivCoachAdam', 'coachAdam'];
+    const detailFields = ['projectName', 'machlaka', 'agaff', 'chativa'];
+    const budgetFields = ['totalTakzivRechesh', 'totalTakzivCoachAdam'];
     const hasDetailError = Object.keys(newErrors).some((field) => detailFields.includes(field));
     const hasBudgetError = Object.keys(newErrors).some((field) => budgetFields.includes(field));
 
@@ -186,7 +219,13 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
     }
 
     setErrors({});
-    const { active, ...payload } = { ...initialData, ...form };
+    const { active, ...payload } = { 
+      ...initialData, 
+      ...form,
+      // Ensure we submit parsed numbers, not formatted strings
+      totalTakzivRechesh: parseFormattedNumber(form.totalTakzivRechesh),
+      totalTakzivCoachAdam: parseFormattedNumber(form.totalTakzivCoachAdam),
+    };
     await onSubmit(payload);
   };
 
@@ -208,48 +247,41 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
 
       <div className="np-panels">
         <div className={`np-panel${tab === 'פרטים' ? ' np-panel--active' : ''}`} aria-hidden={tab !== 'פרטים'}>
-          <div className="np-field">
-            <label className="np-label">שם הפרויקט *</label>
-            <input className={`np-input${errors.projectName ? ' np-input--error' : ''}`} value={form.projectName} onChange={(e) => set('projectName', e.target.value)} />
+          <div className="np-row np-row--two-col">
+            <div className="np-field">
+              <label className="np-label">שם הפרויקט *</label>
+              <input className={`np-input${errors.projectName ? ' np-input--error' : ''}`} value={form.projectName} onChange={(e) => set('projectName', e.target.value)} />
+            </div>
+            {renderSelectField({
+              key: 'agaff',
+              label: 'אגף מבצע *',
+              placeholder: 'בחר אגף',
+              errorKey: 'agaff',
+              options: effectiveAgaffOptions,
+              selected: form.agaff,
+              onChange: (next) => set('agaff', next),
+            })}
           </div>
 
-          <div className="np-row np-row--compact">
-            <div className="np-field np-field--compact">
-              <label className="np-label">אגף מבצע *</label>
-              <Dropdown
-                className={errors.agaff ? 'np-input--error' : ''}
-                label="בחר אגף"
-                allLabel="בחר אגף"
-                options={effectiveAgaffOptions.filter((o) => o.value !== '__all__')}
-                selected={form.agaff}
-                onChange={(next) => set('agaff', next)}
-                multi={false}
-              />
-            </div>
-            <div className="np-field np-field--compact">
-              <label className="np-label">חטיבה *</label>
-              <Dropdown
-                className={errors.chativa ? 'np-input--error' : ''}
-                label="בחר חטיבה"
-                allLabel="בחר חטיבה"
-                options={effectiveChativaOptions.filter((o) => o.value !== '__all__')}
-                selected={form.chativa}
-                onChange={(next) => set('chativa', next)}
-                multi={false}
-              />
-            </div>
-            <div className="np-field np-field--compact">
-              <label className="np-label">מחלקה *</label>
-              <Dropdown
-                className={errors.yechidaMevatzat ? 'np-input--error' : ''}
-                label="בחר מחלקה"
-                allLabel="בחר מחלקה"
-                options={effectiveYechidaOptions.filter((o) => o.value !== '__all__')}
-                selected={form.yechidaMevatzat}
-                onChange={(next) => set('yechidaMevatzat', next)}
-                multi={false}
-              />
-            </div>
+          <div className="np-row np-row--two-col">
+            {renderSelectField({
+              key: 'chativa',
+              label: 'חטיבה *',
+              placeholder: 'בחר חטיבה',
+              errorKey: 'chativa',
+              options: effectiveChativaOptions,
+              selected: form.chativa,
+              onChange: (next) => set('chativa', next),
+            })}
+            {renderSelectField({
+              key: 'machlaka',
+              label: 'מחלקה *',
+              placeholder: 'בחר מחלקה',
+              errorKey: 'machlaka',
+              options: effectiveMachlakaOptions,
+              selected: form.machlaka,
+              onChange: (next) => set('machlaka', next),
+            })}
           </div>
 
           <div className="np-row">
@@ -294,35 +326,29 @@ export default function ProjectForm({ initialData = {}, mode = "new", onSubmit, 
 
         <div className={`np-panel${tab === 'תקציב' ? ' np-panel--active' : ''}`} aria-hidden={tab !== 'תקציב'}>
           <div className="np-row">
-            <div className="np-field">
-              <label className="np-label">{PROCUREMENT_BUDGET_LABEL} (₪) *</label>
-              <input type="text" inputMode="numeric" className={`np-input${errors.totalTakzivRechesh ? ' np-input--error' : ''}`} value={getDisplayValue(form.totalTakzivRechesh)} onFocus={() => handleNumFocus('totalTakzivRechesh')} onBlur={() => handleNumBlur('totalTakzivRechesh')} onChange={(e) => handleNumChange('totalTakzivRechesh', e.target.value)} />
-            </div>
-            <div className="np-field">
-              <label className="np-label">{HR_BUDGET_LABEL} (₪) *</label>
-              <input type="text" inputMode="numeric" className={`np-input${errors.totalTakzivCoachAdam ? ' np-input--error' : ''}`} value={getDisplayValue(form.totalTakzivCoachAdam)} onFocus={() => handleNumFocus('totalTakzivCoachAdam')} onBlur={() => handleNumBlur('totalTakzivCoachAdam')} onChange={(e) => handleNumChange('totalTakzivCoachAdam', e.target.value)} />
-            </div>
+            {renderCurrencyField({
+              key: 'totalTakzivRechesh',
+              label: `${PROCUREMENT_BUDGET_LABEL} (₪) *`,
+              field: 'totalTakzivRechesh',
+              errorKey: 'totalTakzivRechesh',
+            })}
+            {renderCurrencyField({
+              key: 'totalTakzivCoachAdam',
+              label: `${HR_BUDGET_LABEL} (₪) *`,
+              field: 'totalTakzivCoachAdam',
+              errorKey: 'totalTakzivCoachAdam',
+            })}
           </div>
 
-          <div className="np-field">
-            <label className="np-label">{TOTAL_BUDGET_LABEL} (אוטומטי)</label>
-            <input className="np-input" readOnly value={`₪${formatNumberWithSeparators(totalBudget)}`} style={{ backgroundColor: "#f9fafb", color: "#374151" }} />
-          </div>
-
-          <div className="np-row np-field--last">
-            <div className="np-field" style={{ marginBottom: 0 }}>
-              <label className="np-label">{GAPS_LABEL} (אוטומטי)</label>
-              <input
-                className={`np-input pc-gap ${GAP_STATUS_BY_VALUE[gapStatus]?.className || ""}`}
-                readOnly
-                value={gapDisplay}
-                style={{ backgroundColor: "#f9fafb" }}
-              />
-            </div>
-            <div className="np-field" style={{ marginBottom: 0 }}>
-              <label className="np-label">{PLANNED_HR_LABEL} (₪) *</label>
-              <input type="text" inputMode="numeric" className={`np-input${errors.coachAdam ? ' np-input--error' : ''}`} value={getDisplayValue(form.coachAdam)} onFocus={() => handleNumFocus('coachAdam')} onBlur={() => handleNumBlur('coachAdam')} onChange={(e) => handleNumChange('coachAdam', e.target.value)} />
-            </div>
+          <div className="np-field np-field--last">
+            {renderCurrencyField({
+              key: 'totalBudget',
+              label: `${TOTAL_BUDGET_LABEL} (אוטומטי)`,
+              field: 'totalBudget',
+              errorKey: 'totalBudget',
+              readOnly: true,
+              value: `₪${formatNumberWithSeparators(totalBudget)}`,
+            })}
           </div>
         </div>
       </div>

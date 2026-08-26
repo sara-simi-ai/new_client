@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { getOptionKey, getOptionLabel } from '../../utils/optionHelpers';
+import { getOptionKey, getOptionLabel, isAllOption, isAllOptionsSelected, withoutAllOption } from '../../utils/optionHelpers';
 import { useClickOutside } from '../../utils/useClickOutside';
 import './Dropdown.css';
 
@@ -17,19 +17,16 @@ export default function Dropdown({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const visibleOptions = multi ? withoutAllOption(options) : options ?? [];
 
   useClickOutside(ref, () => setOpen(false));
 
   const isSelected = (option) => {
     const optionKey = getOptionKey(option);
 
-    if (optionKey === '__all__') {
+    if (isAllOption(option)) {
       if (!Array.isArray(selected) || selected.length === 0) return false;
-
-      const allItems = options.filter((o) => getOptionKey(o) !== '__all__');
-      return allItems.every((item) =>
-        selected.some((s) => getOptionKey(s) === getOptionKey(item))
-      );
+      return isAllOptionsSelected(selected, options);
     }
 
     if (multi) {
@@ -43,13 +40,9 @@ export default function Dropdown({
     if (multi) {
       const optionKey = getOptionKey(option);
 
-      if (optionKey === '__all__') {
-        const allItems = options.filter((o) => getOptionKey(o) !== '__all__');
-        const isCurrentlyAll =
-          Array.isArray(selected) &&
-          allItems.every((item) =>
-            selected.some((s) => getOptionKey(s) === getOptionKey(item))
-          );
+      if (isAllOption(option)) {
+        const allItems = withoutAllOption(options);
+        const isCurrentlyAll = isAllOptionsSelected(selected, options);
 
         onChange(isCurrentlyAll ? [] : allItems);
         return;
@@ -72,12 +65,7 @@ export default function Dropdown({
       const values = Array.isArray(selected) ? selected : [];
       if (values.length === 0) return allLabel || label;
 
-      const allItems = options.filter((o) => getOptionKey(o) !== '__all__');
-      const isAllSelected = allItems.length > 0 && allItems.every((item) =>
-        values.some((s) => getOptionKey(s) === getOptionKey(item))
-      );
-
-      if (isAllSelected) return allLabel || label;
+      if (isAllOptionsSelected(values, options)) return allLabel || label;
       return `נבחרו ${values.length}`;
     }
 
@@ -126,11 +114,9 @@ export default function Dropdown({
               </div>
             )}
 
-            {options?.map((option) => {
+            {visibleOptions.map((option) => {
               const optionLabel = getOptionLabel(option);
               const optionKey = getOptionKey(option);
-
-              if (!multi && optionKey === '__all__') return null;
 
               return (
                 <div key={optionKey} className="filter-option" onClick={() => handleSelect(option)}>

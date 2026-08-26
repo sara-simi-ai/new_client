@@ -6,6 +6,7 @@ import { isRealText } from "../../../utils/textHelpers";
 import "./ProjectDetail.css";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import StatusGap from "../StatusGap/StatusGap";
+import { getProjectGapStatus } from "../../../utils/calculateProjectFinanceHelper";
 
 export default function ProjectDetail({ project, onClose, onEdit, onDelete }) {
   const { projectFinanceMap } = useProjects();
@@ -16,7 +17,12 @@ export default function ProjectDetail({ project, onClose, onEdit, onDelete }) {
   const metaRows = buildProjectMetaRows(project);
   const projectDescription = isRealText(project.teur) ? project.teur : "";
   const hearot = isRealText(project.hearot) ? project.hearot : "";
-  const gapStatus = financeData?.statusPearim || "takin";
+  const gapStatus = getProjectGapStatus(financeData, project);
+
+  const detailSections = [
+    { label: "תיאור הפרויקט", value: projectDescription },
+    { label: "הערות", value: hearot },
+  ];
 
   return (
     <div className="det" dir="rtl">
@@ -39,22 +45,14 @@ export default function ProjectDetail({ project, onClose, onEdit, onDelete }) {
 
       <div className="det-body">
         <div className="det-lbl">נתוני תקציב</div>
-        <ProjectFinanceLayout
-          financeData={financeData}
-          mode="detail"
-        />
+        <ProjectFinanceLayout financeData={financeData} mode="detail" />
 
-        {projectDescription && (
-          <>
-            <div className="det-lbl">תיאור הפרויקט</div>
-            <div className="det-desc">{projectDescription}</div>
-          </>
-        )}
-
-        <>
-          <div className="det-lbl">הערות</div>
-          <div className="det-desc">{hearot}</div>
-        </>
+        {detailSections.map(({ label, value }) => (
+          <div key={label}>
+            <div className="det-lbl">{label}</div>
+            <div className="det-desc">{value}</div>
+          </div>
+        ))}
       </div>
     </div>
   );

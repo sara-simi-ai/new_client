@@ -5,7 +5,7 @@ import './SectorProjectsModal.css';
 
 export default function SectorProjectsModal({ sectorName, projects, onClose }) {
   return (
-    <Modal onClose={onClose} maxWidth={900}>
+    <Modal onClose={onClose} maxWidth="80%">
       <div className="spm-card">
         <div className="spm-header">
           <div className="spm-title">פרויקטים באגף — {sectorName}</div>

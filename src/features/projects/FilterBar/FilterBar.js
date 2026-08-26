@@ -1,159 +1,25 @@
-import React, { useState, useRef } from "react";
+﻿import React from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { useAgaff } from "../../../services/context/AgaffContext";
 import { useMachlaka } from "../../../services/context/MachlakaContext";
 import { useChativa } from "../../../services/context/ChativaContext";
 import { MASLOL_OPTIONS, CONTINUATION_LABEL, CONTINUATION_FALSE_LABEL, CONTINUATION_TRUE_LABEL } from "../../../utils/Dec";
-import { getOptionKey, getOptionLabel, getOptionLabelByValue } from "../../../utils/optionHelpers";
-import { useClickOutside } from '../../../utils/useClickOutside';
+import { getOptionLabelByValue } from "../../../utils/optionHelpers";
+import Dropdown from "../../../components/Dropdown/Dropdown";
 import "./FilterBar.css";
 
-
-
-function Dropdown({
-  label,
-  title,
-  allLabel,
-  options,
-  selected,
-  onChange,
-  multi = false,
-  valueToLabel,
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useClickOutside(ref, () => setOpen(false));
-
-  const isSelected = (option) => {
-    const optionKey = getOptionKey(option);
-    
-    if (optionKey === "__all__") {
-      if (!Array.isArray(selected) || selected.length === 0) return false;
-      
-      const allItems = options.filter((o) => getOptionKey(o) !== "__all__");
-      return allItems.every((item) =>
-        selected.some((s) => getOptionKey(s) === getOptionKey(item))
-      );
-    }
-    
-    if (multi) {
-      return Array.isArray(selected) && selected.some((item) => getOptionKey(item) === optionKey);
-    }
-    return selected === optionKey || selected === option;
-  };
-
-  const handleSelect = (option) => {
-    if (multi) {
-      const optionKey = getOptionKey(option);
-      
-      if (optionKey === "__all__") {
-        const allItems = options.filter((o) => getOptionKey(o) !== "__all__");
-        const isCurrentlyAll =
-          Array.isArray(selected) &&
-          allItems.every((item) =>
-            selected.some((s) => getOptionKey(s) === getOptionKey(item))
-          );
-        
-        onChange(isCurrentlyAll ? [] : allItems);
-        return;
-      }
-      
-      const selectedArray = Array.isArray(selected) ? [...selected] : [];
-      const next = selectedArray.some((item) => getOptionKey(item) === optionKey)
-        ? selectedArray.filter((item) => getOptionKey(item) !== optionKey)
-        : [...selectedArray, option];
-      onChange(next);
-      return;
-    }
-
-    onChange(getOptionKey(option));
-    setOpen(false);
-  };
-
-  const displayValue = (() => {
-    if (multi) {
-      const values = Array.isArray(selected) ? selected : [];
-      if (values.length === 0) return allLabel || label;
-      
-      const allItems = options.filter((o) => getOptionKey(o) !== "__all__");
-      const isAllSelected = allItems.length > 0 && allItems.every((item) =>
-        values.some((s) => getOptionKey(s) === getOptionKey(item))
-      );
-      
-      if (isAllSelected) return allLabel || label;
-      
-      return `נבחרו ${values.length}`;
-    }
-
-    if (!selected || selected === "") return allLabel || label;
-    if (valueToLabel) return valueToLabel(selected);
-    return typeof selected === "object" ? getOptionLabel(selected) : selected;
-  })();
-
-  const hasSelection = multi 
-    ? (Array.isArray(selected) && selected.length > 0)
-    : (selected && selected !== "");
-
-  return (
-    <div className="filter-dropdown" ref={ref}>
-      {title && hasSelection && <span className="filter-dropdown-title">{title}</span>}
-      <button
-        type="button"
-        className="filter-button"
-        onClick={() => setOpen((o) => !o)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-      >
-        <span className="filter-button-value">{displayValue}</span>
-        <span className="filter-button-arrow" aria-hidden="true" />
-      </button>
-
-      {open && (
-        <div className="filter-popover" role="listbox">
-          {multi && Array.isArray(selected) && selected.length > 0 && (
-            <div className="filter-popover-header">
-              <button type="button" className="btn" onClick={() => onChange([])}>
-                נקה
-              </button>
-            </div>
-          )}
-          <div className="filter-options">
-            {!multi && (
-              <div key="__all__" className="filter-option" onClick={() => handleSelect("")}>
-                <span className="filter-option-text">{allLabel || label}</span>
-              </div>
-            )}
-
-            {options?.map((option) => {
-              const optionLabel = getOptionLabel(option);
-              const optionKey = getOptionKey(option);
-              
-              if (!multi && optionKey === "__all__") return null;
-              
-              return (
-                <div key={optionKey} className="filter-option" onClick={() => handleSelect(option)}>
-                  {multi && (
-                    <input
-                      type="checkbox"
-                      checked={isSelected(option)}
-                      onChange={() => handleSelect(option)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  )}
-                  <span className="filter-option-text">{optionLabel}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function FilterBar() {
-  const { filters, filterOptions, updateFilter, clearFilters } = useProjects();
+export default function FilterBar({
+  filters: localFilters,
+  filterOptions: localFilterOptions,
+  updateFilter: localUpdateFilter,
+  clearFilters: localClearFilters,
+} = {}) {
+  // Prefer local (modal) props when provided, otherwise fall back to global ProjectsContext
+  const { filters: ctxFilters, filterOptions: ctxFilterOptions, updateFilter: ctxUpdateFilter, clearFilters: ctxClearFilters } = useProjects();
+  const filters = localFilters ?? ctxFilters;
+  const filterOptions = localFilterOptions ?? ctxFilterOptions;
+  const updateFilter = localUpdateFilter ?? ctxUpdateFilter;
+  const clearFilters = localClearFilters ?? ctxClearFilters;
   const { agaffOptions } = useAgaff();
   const { chativaOptions } = useChativa();
   const { machlakaOptions } = useMachlaka();
@@ -165,7 +31,7 @@ export default function FilterBar() {
       title="אגף"
       label="אגף"
       allLabel="כל האגפים"
-      options={agaffOptions}
+      options={filterOptions?.agaff || agaffOptions}
       selected={filters.agaff || []}
       onChange={(next) => updateFilter("agaff", next)}
       multi={true}
@@ -175,19 +41,19 @@ export default function FilterBar() {
       title="חטיבה"
       label="חטיבה"
       allLabel="כל החטיבות"
-      options={chativaOptions}
+      options={filterOptions?.chativa || chativaOptions}
       selected={filters.chativa || []}
       onChange={(next) => updateFilter("chativa", next)}
       multi={true}
     />,
     <Dropdown
-      key="yechidaMevatzat"
+      key="machlaka"
       title="מחלקה"
       label="מחלקה"
       allLabel="כל המחלקות"
-      options={machlakaOptions}
-      selected={filters.yechidaMevatzat || []}
-      onChange={(next) => updateFilter("yechidaMevatzat", next)}
+      options={filterOptions?.machlaka || machlakaOptions}
+      selected={filters.machlaka || []}
+      onChange={(next) => updateFilter("machlaka", next)}
       multi={true}
     />,
     <Dropdown

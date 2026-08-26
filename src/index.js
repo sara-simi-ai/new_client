@@ -7,6 +7,7 @@ import { AgaffProvider } from './services/context/AgaffContext';
 import { MachlakaProvider } from './services/context/MachlakaContext';
 import { ChativaProvider } from './services/context/ChativaContext';
 import { ProjectsProviderWithSync } from './services/context/ProjectsContext';
+import ModalRoot from './components/ModalRoot/ModalRoot';
 import { BUDGET_COLORS } from './features/dashboard/constans/chartConstants';
 
 ReactDOM.render(
@@ -17,6 +18,7 @@ ReactDOM.render(
           <ChativaProvider>
             <ProjectsProviderWithSync>
               <App />
+              <ModalRoot />
             </ProjectsProviderWithSync>
           </ChativaProvider>
         </MachlakaProvider>

@@ -2,8 +2,8 @@ import React from "react";
 import { useProjects } from "../../../services/context/ProjectsContext";
 import { GapElement } from "../../../components/GapElement/GapElement";
 import { formatMoney } from "../../../utils/formatMoneyHelper";
-import { getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
-import { PROJECT_NAME_LABEL, AGAF_LABEL, MACHLAKA_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, MASLOL_OPTIONS, MASLOL } from "../../../utils/Dec";
+import { formatPlannedHrValue, getGapStatus } from "../../../utils/calculateProjectFinanceHelper";
+import { PROJECT_NAME_LABEL, AGAF_LABEL, MACHLAKA_LABEL, CONTINUATION_LABEL, CONTINUATION_TRUE_LABEL, CONTINUATION_FALSE_LABEL, MASLOL_LABEL, HR_BUDGET_LABEL, PROCUREMENT_BUDGET_LABEL, PLANNED_HR_LABEL, GAPS_LABEL, MASLOL_OPTIONS, CHATIVA_LABEL } from "../../../utils/Dec";
 import { getOptionLabelByValue } from "../../../utils/optionHelpers";
 import GenericTable from "../../../components/GenericTable/GenericTable";
 import "../ProjectsList/Project.css";
@@ -37,6 +37,12 @@ const columns = [
     render: (row) => row.agaffName,
   },
   {
+    key: "chativa",
+    label: CHATIVA_LABEL,
+    cellClassName: "tr-chativa",
+    render: (row) => row.chativaName,
+  },
+  {
     key: "unit",
     label: MACHLAKA_LABEL,
     cellClassName: "tr-unit",
@@ -65,8 +71,8 @@ const columns = [
     key: "plannedHr",
     label: PLANNED_HR_LABEL,
     cellClassName: "tr-num",
-    render: (row) => formatMoney(row.financeData?.coachAdam || 0),
-    renderTotal: (totals) => formatMoney(totals.totalPlannedHr),
+    render: (row) => formatPlannedHrValue(row.financeData?.coachAdam || 0),
+    renderTotal: (totals) => formatPlannedHrValue(totals.totalPlannedHr, { showPlaceholder: false }),
   },
   {
     key: "hrBudget",
@@ -94,6 +100,7 @@ const columns = [
           statusPearim: getGapStatus(totals.totalGap, totals.totalHR),
           totalTakzivCoachAdam: totals.totalHR,
         }}
+        showMissingPlanningPlaceholder={false}
       />
     ),
   },
@@ -110,18 +117,16 @@ export default function ProjectTable({ projects, onRowClick }) {
   const totals = rowsWithFinance.reduce(
     (acc, project) => {
       const financeData = project.financeData || {};
-      acc.totalHR += financeData.totalTakzivCoachAdam || 0;
-      acc.totalPlannedHr += financeData.coachAdam || 0;
-      acc.totalProcurement += financeData.totalTakzivRechesh || 0;
-      acc.totalGap += financeData.pearim || 0;
+      acc.totalHR += Number(financeData.totalTakzivCoachAdam ?? 0);
+      acc.totalPlannedHr += Number(financeData.coachAdam ?? 0);
+      acc.totalProcurement += Number(financeData.totalTakzivRechesh ?? 0);
+      acc.totalGap += Number(financeData.pearim ?? 0);
       return acc;
     },
     { totalHR: 0, totalPlannedHr: 0, totalProcurement: 0, totalGap: 0 }
   );
 
   const columnsWithoutCheckbox = columns.filter((col) => col.key !== "checkbox");
-
-  const getRowClassName = () => "tr-item";
 
   const handleRowClick = (row) => {
     if (onRowClick) {

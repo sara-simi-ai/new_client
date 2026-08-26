@@ -36,7 +36,7 @@ export default function ProjectsListModal({ projects, onClose, initialFilters = 
   if (!projects) return null;
 
   return (
-    <Modal onClose={onClose} maxWidth={900}>
+    <Modal onClose={onClose} maxWidth="80%">
       <div className="pl-modal" dir="rtl">
         <div className="pl-header">
           <h3 className="pl-title">רשימת פרויקטים</h3>
@@ -87,7 +87,7 @@ export default function ProjectsListModal({ projects, onClose, initialFilters = 
                     <div key={p.id} className="pl-row" role="button" tabIndex={0} onClick={() => setSelectedId(p.id)}>
                       <div className="pl-row-left">
                         <div className="pl-name">{p.projectName}</div>
-                        <div className="pl-meta">{MASLOL_OPTIONS.find((o) => o.value === p.maslol)?.label || ''} • {p.yechidaMevatzat || ''}</div>
+                        <div className="pl-meta">{MASLOL_OPTIONS.find((o) => o.value === p.maslol)?.label || ''} • {p.machlaka || ''}</div>
                       </div>
                       <div className="pl-row-right"><GapElement financeData={{ pearim: gap, totalTakzivCoachAdam: p.totalTakzivCoachAdam }} /></div>
                     </div>
