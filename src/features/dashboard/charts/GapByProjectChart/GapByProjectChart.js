@@ -7,7 +7,6 @@ import { computeBudgetMinusPlanned, computeRelativeGap, isGapStatusExceeded, for
 import { useProjectDetail } from '../../hooks/useProjectDetail';
 
 const MAX_BAR_PERCENT = 42;
-const LABEL_OFFSET_REM = 1.1;
 
 const GAP_COLORS = {
   negative: 'var(--gap-negative)',
@@ -40,8 +39,8 @@ export default function GapByProjectChart({
   return (
     <div className="gap-card">
       <div className="gap-header">
-        <div>
-          <span className="gap-title">פערים לפי פרויקט (תקציב כ"א − תכנון)</span>
+        <div className="gap-header-main">
+          <span className="gap-title">פערים לפי פרויקט (תקציב כ&quot;א − תכנון)</span>
           <div className="gap-legend">
             {gapLegend.map((item) => (
               <span key={item.label} className="gap-legend-item">
@@ -51,30 +50,6 @@ export default function GapByProjectChart({
             ))}
           </div>
         </div>
-        <div className="gap-header-right">
-          <div className="gap-actions">
-            {hasExpandableProjects ? (
-              <button
-                type="button"
-                className="gap-action-btn"
-                onClick={toggleShowMore}
-                aria-label={showMore ? 'הצג פחות פרויקטים' : 'הצג פרויקטים נוספים'}
-              >
-                {showMore ? 'הסתר' : 'הצג עוד'}
-              </button>
-            ) : (
-              <span className="gap-action-btn" aria-hidden="true">הכל מוצג</span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="gap-info flex flex-col gap-2 mb-3">
-        {sorted.length === 0 ? (
-          <div className="text-right text-sm text-slate-600">אין כרגע פרויקטים להצגה.</div>
-        ) : (
-          <div className="text-right text-sm text-slate-600">הפרויקטים מוצגים לפי הפער היחסי הגדול ביותר. לחץ על פרויקט לקבלת פרטים נוספים.</div>
-        )}
       </div>
 
       <div className="gap-rows">
@@ -87,7 +62,6 @@ export default function GapByProjectChart({
           let barColor = GAP_COLORS.none;
           if (isExceed) barColor = isPos ? GAP_COLORS.positive : GAP_COLORS.negative;
 
-          const relativePercent = Math.round(rel * 100);
           const valueLabel = formatGapDisplay(g, p.totalTakzivCoachAdam);
           const effPct = Math.min(pct, MAX_BAR_PERCENT);
 
@@ -107,6 +81,7 @@ export default function GapByProjectChart({
               aria-label={`פתח פרטי פרויקט ${p.projectName}`}
             >
               <div className="gap-lbl" title={p.projectName}>{p.projectName}</div>
+
               <div className="gap-axis">
                 <div className="gap-zero" />
                 <div
@@ -117,15 +92,9 @@ export default function GapByProjectChart({
                     background: barColor,
                   }}
                 />
-                <span
-                  className="gap-val"
-                  style={{
-                    [isPos ? 'left' : 'right']: `calc(50% + ${effPct}% + ${LABEL_OFFSET_REM}rem)`,
-                  }}
-                >
-                  {valueLabel}
-                </span>
               </div>
+
+              <div className="gap-value">{valueLabel}</div>
             </div>
           );
         })}

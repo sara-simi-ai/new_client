@@ -1,11 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import './BudgetBySectorChart.css';
-import BudgetNumbers from '../BudgetNumbers/BudgetNumbers';
 import { useProjects } from '../../../../services/context/ProjectsContext';
-// Using direct project properties for backward compatibility (helper removed).
 import { formatGapDisplay, getGapStatus } from '../../../../utils/calculateProjectFinanceHelper';
-import { BUDGET_COLORS } from '../../constans/chartConstants';
-import { GAP_STATUS_BY_VALUE } from '../../../../utils/Dec';
+import { BUDGET_COLORS, INITIAL_VISIBLE_PROJECTS_COUNT } from '../../constans/chartConstants';
+import { formatMoney } from '../../../../utils/formatMoneyHelper';
 import SectorProjectsModal from './SectorProjectsModal/SectorProjectsModal';
 
 const legendItems = [
@@ -17,12 +15,12 @@ const legendItems = [
 export default function BudgetBySectorChart() {
   const { filteredProjects } = useProjects();
   const [activeSector, setActiveSector] = useState(null);
+  const [showMore, setShowMore] = useState(false);
 
   const sectorsData = useMemo(() => {
     const sectorMap = new Map();
 
     filteredProjects.forEach(project => {
-      // Use helper to read canonical agaff name with fallbacks.
       const sector = project.agaffName || project.AgaffName || project.agaff || "";
       if (!sector) return;
 
@@ -41,33 +39,24 @@ export default function BudgetBySectorChart() {
     });
 
     return Array.from(sectorMap.values())
-      .sort((a, b) => a.sector.localeCompare(b.sector))
-      .map(sectorItem => {
-        const gapValue = sectorItem.hrBudget - sectorItem.planningBudget;
-        const gapStatus = getGapStatus(gapValue, sectorItem.hrBudget);
-
-        return {
-          ...sectorItem,
-          gapValue,
-          gapStatus,
-          gapLabel: formatGapDisplay(gapValue, sectorItem.hrBudget)
-        };
+      .sort((a, b) => {
+        const gapA = (a.hrBudget - a.planningBudget) / Math.max(a.hrBudget, 1);
+        const gapB = (b.hrBudget - b.planningBudget) / Math.max(b.hrBudget, 1);
+        return Math.abs(gapB) - Math.abs(gapA);
       });
   }, [filteredProjects]);
 
-  const maxTotal = useMemo(() => {
-    if (!sectorsData.length) {
-      return 1;
-    }
+  const visibleSectors = useMemo(
+    () => (showMore ? sectorsData : sectorsData.slice(0, INITIAL_VISIBLE_PROJECTS_COUNT)),
+    [showMore, sectorsData],
+  );
 
-    const perSectorMaxes = sectorsData.map(item => Math.max(
-      item.hrBudget || 0,
-      item.procurementBudget || 0,
-      item.planningBudget || 0
-    ));
+  const hasExpandableSectors = sectorsData.length > INITIAL_VISIBLE_PROJECTS_COUNT;
 
-    return Math.max(...perSectorMaxes, 1);
-  }, [sectorsData]);
+  const maxSectorBudget = useMemo(
+    () => Math.max(...sectorsData.map((s) => Math.max(s.hrBudget || 0, s.procurementBudget || 0, s.planningBudget || 0)), 1),
+    [sectorsData],
+  );
 
   return (
     <div className="bbs-card">
@@ -75,56 +64,105 @@ export default function BudgetBySectorChart() {
         <div>
           <span className="bbs-title">תקציב לפי אגף</span>
           <div className="bbs-legend">
-            {legendItems.map(item => (
-              <span key={item.label} className="bbs-legend-item">
-                <span className="bbs-legend-dot" style={{ background: item.color }} />{item.label}
+            {legendItems.map(({ label, color }) => (
+              <span key={label} className="bbs-legend-item">
+                <span className="bbs-legend-dot" style={{ background: color }} />{label}
               </span>
             ))}
+          </div>
+        </div>
+
+        <div className="bbs-header-right">
+          <div className="bbs-actions">
+            {hasExpandableSectors ? (
+              <button
+                type="button"
+                className="gap-action-btn"
+                onClick={() => setShowMore((prev) => !prev)}
+                aria-label={showMore ? 'הצג פחות אגפים' : 'הצג אגפים נוספים'}
+              >
+                {showMore ? 'הסתר' : 'הצג עוד'}
+              </button>
+            ) : (
+              <span className="gap-action-btn" aria-hidden="true">הכל מוצג</span>
+            )}
           </div>
         </div>
       </div>
 
       <div className="bbs-info">
-        <div className="bbs-note">האגפים מוצגים לפי הפער היחסי הגדול ביותר. לחץ על אגף לקבלת פרטים נוספים.</div>
+        {sectorsData.length === 0 ? (
+          <div className="bbs-note">אין אגפים להצגה.</div>
+        ) : (
+          <div className="bbs-note"> לחץ על אגף לקבלת פרטים נוספים.</div>
+        )}
       </div>
 
       <div className="bbs-rows">
-        {sectorsData.map(sectorItem => (
-          <div
-            key={sectorItem.sector}
-            className="bbs-row"
-            onClick={() => setActiveSector(sectorItem.sector)}
-            role="button"
-            tabIndex={0}
-          >
-            <div className="bbs-lbl" title={sectorItem.sector}>{sectorItem.sector}</div>
-            <div className="bbs-bars">
-              {[
-                { label: 'hr', value: sectorItem.hrBudget, color: BUDGET_COLORS.HR },
-                { label: 'procurement', value: sectorItem.procurementBudget, color: BUDGET_COLORS.PROC },
-                { label: 'planning', value: sectorItem.planningBudget, color: BUDGET_COLORS.PLANNED }
-              ].map(item => {
-                const widthPercent = Math.round((item.value / maxTotal) * 100);
-                return (
-                  <div key={`${sectorItem.sector}-${item.label}`} className="bbs-track">
+        {visibleSectors.map(sector => {
+          const hrBudget = sector.hrBudget || 0;
+          const procBudget = sector.procurementBudget || 0;
+          const planned = sector.planningBudget || 0;
+
+          return (
+            <div
+              key={sector.sector}
+              className="bbs-row"
+              role="button"
+              tabIndex={0}
+              onClick={() => setActiveSector(sector.sector)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setActiveSector(sector.sector);
+                }
+              }}
+              aria-label={`פתח פרטי אגף ${sector.sector}`}
+            >
+              <div className="bbs-lbl" title={sector.sector}>{sector.sector}</div>
+              <div className="bbs-bars">
+                <div className="bbs-bar-group">
+                  <div className="bbs-bar-info">כ"א ₪{formatMoney(hrBudget)}</div>
+                  <div className="bbs-track">
                     <div
                       className="bbs-fill"
-                      style={{ width: `${widthPercent}%`, background: item.color }}
+                      style={{
+                        width: `${Math.max((hrBudget / maxSectorBudget) * 100, 0)}%`,
+                        background: BUDGET_COLORS.HR,
+                      }}
                     />
                   </div>
-                );
-              })}
-                <BudgetNumbers
-                  gapLabel={sectorItem.gapLabel}
-                  gapClass={GAP_STATUS_BY_VALUE[sectorItem.gapStatus]?.className || ""}
-                  hrBudget={sectorItem.hrBudget}
-                  procurementBudget={sectorItem.procurementBudget}
-                  planningBudget={sectorItem.planningBudget}
-                />
+                </div>
+                <div className="bbs-bar-group">
+                  <div className="bbs-bar-info">תכנון ₪{formatMoney(planned)}</div>
+                  <div className="bbs-track">
+                    <div
+                      className="bbs-fill"
+                      style={{
+                        width: `${Math.max((planned / maxSectorBudget) * 100, 0)}%`,
+                        background: BUDGET_COLORS.PLANNED,
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="bbs-bar-group">
+                  <div className="bbs-bar-info">רכש ₪{formatMoney(procBudget)}</div>
+                  <div className="bbs-track">
+                    <div
+                      className="bbs-fill"
+                      style={{
+                        width: `${Math.max((procBudget / maxSectorBudget) * 100, 0)}%`,
+                        background: BUDGET_COLORS.PROC,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
       {activeSector && (
         <SectorProjectsModal
           sectorName={activeSector}

@@ -1,11 +1,11 @@
-.bbs-card {
+.bdc-card {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 1px 4px rgba(0,0,0,.07);
   padding: 20px;
 }
 
-.bbs-header {
+.bdc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,13 +15,13 @@
   min-width: 0;
 }
 
-.bbs-header > div {
+.bdc-header > div {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.bbs-title {
+.bdc-title {
   font-size: 14px;
   font-weight: 600;
   color: #1e293b;
@@ -33,43 +33,48 @@
   flex: 0 0 auto;
 }
 
-.bbs-legend {
+.bdc-legend {
   display: flex;
   gap: 12px;
   font-size: 11px;
   color: #64748b;
 }
 
-.bbs-legend-item {
+.bdc-legend-item {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.bbs-legend-dot {
+.bdc-legend-dot {
   width: 10px;
   height: 10px;
   border-radius: 3px;
   display: inline-block;
 }
 
-.bbs-info {
+.bdc-info {
   margin-bottom: 14px;
 }
 
-.bbs-note {
+.bdc-note {
   font-size: 12px;
   color: #475569;
   text-align: right;
 }
 
-.bbs-rows {
+.bdc-rows {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.bbs-row {
+:root {
+  --bdc-left-offset: 8px;
+  --dashboard-label-width: 56px; /* compact width (~"חטיבה") */
+}
+
+.bdc-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -81,15 +86,15 @@
   cursor: pointer;
 }
 
-.bbs-row:hover {
+.bdc-row:hover {
   background-color: #f8fafc;
 }
 
-.bbs-row:last-child {
+.bdc-row:last-child {
   border-bottom: none;
 }
 
-.bbs-lbl {
+.bdc-lbl {
   flex: 0 0 120px;
   width: 120px;
   font-size: 14px;
@@ -104,7 +109,7 @@
   min-width: 0;
 }
 
-.bbs-bars {
+.bdc-bars {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -112,38 +117,40 @@
   min-width: 0;
 }
 
-.bbs-bar-group {
+.bdc-bar-group {
   display: flex;
   align-items: center;
   gap: 8px;
   width: 100%;
   min-width: 0;
+  /* keep internal layout LTR so DOM order (info then track) is preserved visually */
   direction: ltr;
 }
 
-.bbs-bar-info {
+.bdc-bar-info {
   flex: 0 0 auto;
   min-width: 90px;
   max-width: 120px;
   font-size: 11px;
   font-weight: 600;
   color: #64748b;
+  /* align numbers close to the bar when placed on the left */
   text-align: right;
   direction: ltr;
   white-space: nowrap;
 }
 
-.bbs-track {
+.bdc-track {
   flex: 1 1 auto;
   min-width: 0;
   height: 12px;
   background: #f1f5f9;
   border-radius: 99px;
   overflow: hidden;
-  position: relative;
+  position: relative; /* anchor the fill absolutely */
 }
 
-.bbs-fill {
+.bdc-fill {
   position: absolute;
   right: 0;
   top: 0;
@@ -152,14 +159,14 @@
   transition: width .3s ease;
 }
 
-.bbs-header-right {
+.bdc-header-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   min-width: 0;
 }
 
-.bbs-actions {
+.bdc-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -188,14 +195,14 @@
 }
 
 @media (max-width: 900px) {
-  .bbs-row {
+  .bdc-row {
     align-items: flex-start;
     gap: 8px;
     flex-wrap: wrap;
     min-height: auto;
   }
 
-  .bbs-lbl {
+  .bdc-lbl {
     width: 100%;
     flex-basis: 100%;
     white-space: normal;
@@ -203,7 +210,7 @@
     text-overflow: unset;
   }
 
-  .bbs-bars {
+  .bdc-bars {
     width: 100%;
     flex: 1 1 100%;
   }

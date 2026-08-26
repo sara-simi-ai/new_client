@@ -1,82 +1,88 @@
 .donut-body {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 20px;
-  padding: 8px 0;
+  width: 100%;
   direction: rtl;
 }
 
 /* עיגול — מימין (כבר flex-shrink:0 ב-svg) */
+.donut-svg {
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+  display: block;
+  order: 1;
+}
 
 /* לג'נד — dot + שם */
 .donut-legend {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
+  flex: 1;
+  order: 2;
+  align-items: stretch;
 }
 
 .donut-leg-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   direction: rtl;
-  padding: 0.3rem 0.4rem;
-  border-radius: 10px;
+  min-width: 0;
 }
 
-.donut-leg-row.clickable:hover {
-  background: rgba(59,130,246,0.08);
-}
-
-.donut-leg-row.clickable:focus-visible {
-  outline: 2px solid var(--color-proc);
-  outline-offset: 2px;
+.donut-leg-label-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
 }
 
 .donut-leg-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.04);
 }
 
 .donut-leg-lbl {
-  font-size: 13px;
+  font-size: 12px;
   color: #475569;
-  /* allow label wrapping for longer names */
-  white-space: normal;
-  word-break: break-word;
-  direction: rtl;
+  white-space: nowrap;
   text-align: right;
+  direction: rtl;
 }
 
-/* עמודת ערכים — משמאל */
-.donut-vals {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-right: auto;
-}
-
-.donut-val-row {
-  font-size: 13px;
+.donut-leg-value {
+  font-size: 12px;
   font-weight: 600;
   color: #1e293b;
-  white-space: normal;
-  word-break: break-word;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
 }
 
 .donut-extra {
-  font-size: 11px;
-  color: #94a3b8;
-  margin-top: 2px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 6px;
+  direction: rtl;
+  width: 100%;
 }
 
 .donut-hint {
-  margin-top: 0.5rem;
-  font-size: 0.82rem;
-  color: #475569;
+  margin-top: 10px;
+  font-size: 11px;
+  color: #64748b;
   text-align: center;
   direction: rtl;
 }

@@ -40,7 +40,7 @@ export default function ContinuationVsNewBudgetDonut() {
 
   return (
     <div className="cdd-card">
-      <div className="cdd-title">תקציב פרויקטים המשכיים VS חדשים</div>
+      <div className="cdd-title">תקציב פרויקטים המשכיים לעומת חדשים</div>
       <DonutChart segments={chartSegments} items={legendItems} label="המשכי" onSegmentClick={handleSegmentClick} />
 
       {modalOpen && (

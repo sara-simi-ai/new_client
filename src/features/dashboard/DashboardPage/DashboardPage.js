@@ -5,6 +5,8 @@ import { useExpandableProjectList } from '../hooks/useExpandableProjectList';
 import { compareByRelativeGap } from '../../../utils/calculateProjectFinanceHelper';
 import { INITIAL_VISIBLE_PROJECTS_COUNT } from '../constans/chartConstants';
 import BudgetBySectorChart from '../charts/BudgetBySectorChart/BudgetBySectorChart';
+import BudgetByUnitChart from '../charts/BudgetByUnitChart/BudgetByUnitChart';
+import BudgetByDepartmentChart from '../charts/BudgetByDepartmentChart/BudgetByDepartmentChart';
 import GapByProjectChart from '../charts/GapByProjectChart/GapByProjectChart';
 import HRvsPlannedChart from '../charts/HRvsPlannedChart/HRvsPlannedChart';
 import BudgetDistributionDonut from '../charts/BudgetDistributionDonut/BudgetDistributionDonut';
@@ -34,23 +36,29 @@ export default function DashboarPage() {
   return (
     <div className="dashboard" dir="rtl">
       <FilterBar />
-      <GapByProjectChart
-        sorted={sorted}
-        visibleProjects={visibleProjects}
-        showMore={showMore}
-        hiddenCount={hiddenCount}
-        hasExpandableProjects={hasExpandableProjects}
-        toggleShowMore={toggleShowMore}
-      />
-      <HRvsPlannedChart
-        sorted={sorted}
-        visibleProjects={visibleProjects}
-        showMore={showMore}
-        hiddenCount={hiddenCount}
-        hasExpandableProjects={hasExpandableProjects}
-        toggleShowMore={toggleShowMore}
-      />
-      <BudgetBySectorChart />
+      <div className="dashboard-top-grid">
+        <HRvsPlannedChart
+          sorted={sorted}
+          visibleProjects={visibleProjects}
+          showMore={showMore}
+          hiddenCount={hiddenCount}
+          hasExpandableProjects={hasExpandableProjects}
+          toggleShowMore={toggleShowMore}
+        />
+        <GapByProjectChart
+          sorted={sorted}
+          visibleProjects={visibleProjects}
+          showMore={showMore}
+          hiddenCount={hiddenCount}
+          hasExpandableProjects={hasExpandableProjects}
+          toggleShowMore={toggleShowMore}
+        />
+      </div>
+      <div className="dashboard-budget-grid">
+        <BudgetBySectorChart />
+        <BudgetByUnitChart />
+        <BudgetByDepartmentChart />
+      </div>
       <div className="dashboard-row-2">
         <BudgetDistributionDonut />
         <MaslolTrackDistributionDonut />

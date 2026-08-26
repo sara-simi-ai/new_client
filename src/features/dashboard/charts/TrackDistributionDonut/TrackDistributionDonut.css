@@ -1,8 +1,9 @@
 .tdd-card {
   background: #fff;
-  border-radius: 16px;
+  border: 1px solid #dfe3ea;
+  border-radius: 20px;
+  padding: 18px 20px 16px;
   box-shadow: 0 1px 4px rgba(0,0,0,.07);
-  padding: 20px;
 }
 
 .tdd-title {
@@ -11,6 +12,11 @@
   color: #1e293b;
   margin-bottom: 12px;
   text-align: right;
+  direction: rtl;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .tdd-body {

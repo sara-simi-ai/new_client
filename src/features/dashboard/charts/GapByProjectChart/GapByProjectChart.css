@@ -1,32 +1,39 @@
 .gap-card {
   background: #fff;
+  border: 1px solid #dfe2e5;
   border-radius: 16px;
   box-shadow: 0 1px 4px rgba(0,0,0,.07);
-  padding: 20px;
-  overflow: visible;
-
+  padding: 18px 20px 10px;
+  width: 100%;
+  min-width: 0;
 }
 
 .gap-header {
+  margin-bottom: 10px;
+}
+
+.gap-header-main {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 16px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  direction: rtl;
 }
 
 .gap-title {
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: #1f2937;
+  white-space: nowrap;
 }
 
 .gap-legend {
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 12px;
   font-size: 11px;
-  color: #64748b;
+  color: #475569;
   direction: rtl;
   flex-wrap: wrap;
 }
@@ -35,6 +42,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 
 .gap-legend-dot {
@@ -44,153 +52,48 @@
   display: inline-block;
 }
 
-.gap-hint {
-  margin-top: 0.5rem;
-  font-size: 11px;
-  color: #64748b;
-}
-
-.gap-header-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.75rem;
-}
-
-.gap-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  direction: rtl;
-}
-
-.gap-action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #1f2937;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
-}
-
-.gap-action-btn:hover,
-.gap-action-btn:focus-visible {
-  background: #eff6ff;
-  border-color: var(--color-planned);
-  color: #1e40af;
-}
-
-.gap-action-btn {
-  flex: 0 1 auto;
-  min-width: 100px;
-}
-
-@media (max-width: 900px) {
-  .gap-action-btn {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.76rem;
-  }
-}
-
 .gap-rows {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  min-width: 0;
 }
 
 .gap-row {
   display: grid;
-  grid-template-columns: minmax(160px, 24%) 1fr; /* label | axis */
+  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr) minmax(150px, 210px);
   align-items: center;
-  gap: 1rem;
-  min-height: 2.2rem;
-  position: relative;
-  z-index: 1;
+  column-gap: 12px;
+  height: 72px;
+  padding: 8px 4px 8px 8px;
   cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  background: #ffffff;
-  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  direction: rtl;
+  border-bottom: 1px solid #dfe5ea;
 }
 
-.gap-row:not(:last-child) {
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.gap-row .gap-axis {
-  cursor: pointer;
-}
-
-.gap-row:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
-}
-
-.gap-row:hover {
-  background: #f8fafc;
-}
-
-.gap-detail-btn {
-  justify-self: end;
-  align-self: center;
-  padding: 0.45rem 0.85rem;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #1e3a8a;
-  font-size: 0.82rem;
-  font-weight: 600;
-  border-radius: 999px;
-  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
-}
-
-.gap-detail-btn:hover,
-.gap-detail-btn:focus-visible {
-  background: #eff6ff;
-  border-color: var(--color-planned);
-  color: #1e40af;
-}
-
-.gap-info {
-  padding: 0 0 8px 0;
-}
-
-.gap-card button {
-  cursor: pointer;
+.gap-row:last-child {
+  border-bottom: none;
 }
 
 .gap-lbl {
-  font-size: 0.95rem;
+  order: 1;
+  justify-self: stretch;
+  font-size: 14px;
   line-height: 1.3;
   font-weight: 600;
-  color: #475569;
+  color: #1f2937;
   text-align: right;
-  white-space: normal;
-  overflow: visible;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   direction: rtl;
-  padding: 0 0.6rem;
-  transition: color .2s ease, transform .2s ease, font-size .2s ease;
 }
 
 .gap-axis {
-  grid-column: 2;
-  overflow: visible;
-  min-width: 0;
-}
-
-.gap-axis {
+  order: 2;
   position: relative;
-  min-height: 2rem;
-  display: flex;
-  align-items: center;
-  padding: 0.3rem 4%; /* keep bars/labels away from card edge */
-  box-sizing: border-box;
+  width: 100%;
+  min-height: 24px;
+  direction: ltr;
 }
 
 .gap-zero {
@@ -199,166 +102,64 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: #e2e8f0;
+  background: #d4d9df;
 }
 
 .gap-bar {
   position: absolute;
-  height: 1rem;
-  border-radius: 99px;
-  transition: width .3s ease;
-  max-width: calc(50% - 2rem); /* don't allow bar to cross past the centerline/label area */
-}
-
-.gap-val {
-  position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 11px;
-  line-height: 1.3;
-  font-weight: 600;
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  max-width: 42%;
-  z-index: 6;
-  padding: 0;
-  background: transparent;
-  color: #0f1724;
-  transition: color .2s ease, font-weight .2s ease, text-shadow .2s ease;
+  height: 18px;
+  border-radius: 999px;
 }
 
-/* Hover highlight: when hovering a row, emphasize both the bar and the label */
-.gap-row:hover .gap-bar {
-  box-shadow: 0 6px 18px rgba(16,24,40,0.06), 0 0 0 4px rgba(30,95,142,0.06);
-  transform: translateY(-1px);
-}
-
-.gap-row:hover .gap-lbl {
-  color: #000000;
-  font-size: 0.98rem;
-  transform: scale(1.02);
-}
-
-/* Emphasize the numeric label (value) on hover as well */
-.gap-row:hover .gap-val {
+.gap-value {
+  order: 3;
+  justify-self: end;
+  direction: ltr;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.4;
   font-weight: 700;
-  text-shadow: 0 0 0.4px rgba(30,95,142,0.25);
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
+  white-space: nowrap;
+  color: #000;
 }
 
-/* Make label feel interactive and strengthen connector on hover */
-.gap-lbl {
-  cursor: pointer;
-}
-
-/* Connector line from label to bar (keeps RTL layout) */
-.gap-lbl::before {
-  content: '';
-  position: absolute;
-  right: 100%; /* start immediately left of the label */
-  top: 50%;
-  transform: translateY(-50%);
-  width: 36px; /* connector length (increased for better visibility) */
-  height: 2px;
-  background: rgba(71,85,105,0.14);
-  border-radius: 1px;
-  margin-right: 8px; /* space between label and connector */
-  transition: background .15s ease, width .15s ease;
-}
-
-.gap-lbl::after {
-  content: '';
-  position: absolute;
-  right: calc(100% + 26px);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(71,85,105,0.14);
-  transition: background .15s ease;
-}
-
-/* Hide connector line and dot — these created the unwanted small grey marks */
 .gap-lbl::before,
 .gap-lbl::after {
   display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
 }
 
-.gap-row.selected .gap-bar,
-.gap-row.selected .gap-lbl {
-  box-shadow: 0 6px 20px rgba(30,95,142,0.18);
-}
-
-.gap-row.selected .gap-bar {
-  transform: translateY(-1px);
-  border: 1px solid rgba(30,95,142,0.16);
-}
-
-.gap-row.selected .gap-lbl {
-  color: #0f172a;
-  transform: scale(1.03);
-}
-
-.gap-row:hover .gap-lbl::before,
-.gap-row:hover .gap-lbl::after {
-  background: rgba(30,95,142,0.22);
-}
-
-.gap-footer {
-  position: relative;
-  z-index: 2;
-  margin-top: 1rem;
-  padding-top: 0.75rem;
-  background: #fff;
-  border-top: 1px solid #e2e8f0;
-}
-
-.gap-legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 1rem;
-  color: #64748b;
-  font-size: 0.8rem;
-  line-height: 1.4;
-}
-
-.gap-legend span {
-  white-space: nowrap;
-}
-
-.gap-row:hover {
-  z-index: 1;
-}
-
-/* Responsive: stack label above axis on small screens so bars are not compressed */
 @media (max-width: 900px) {
+  .gap-header-main {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
   .gap-row {
-    grid-template-columns: 1fr; /* single column: label above axis */
-    align-items: flex-start;
-    gap: 0.5rem;
+    grid-template-columns: minmax(100px, 150px) minmax(0, 1fr) minmax(120px, 180px);
+    column-gap: 8px;
+  }
+
+  .gap-title,
+  .gap-lbl,
+  .gap-value {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .gap-row {
+    grid-template-columns: minmax(90px, 120px) minmax(0, 1fr) minmax(100px, 135px);
+  }
+
+  .gap-title {
+    white-space: normal;
   }
 
   .gap-lbl {
-    grid-column: 1;
-    padding: 0 0 6px 0;
     white-space: normal;
     overflow: visible;
-  }
-
-  .gap-axis {
-    grid-column: 1;
-    padding: 0.3rem 3%;
-  }
-
-  .gap-val {
-    max-width: 55%;
+    text-overflow: unset;
   }
 }

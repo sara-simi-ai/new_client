@@ -42,35 +42,7 @@ export default function DonutChart({ segments, items, label, extra, onSegmentCli
   return (
     <>
       <div className="donut-body">
-
-        <div className="donut-vals">
-          {safeItems.map((item) => (item.displayValue ? (
-            <div key={item.label} className="donut-val-row">{item.displayValue}</div>
-          ) : null))}
-          {extra && <div className="donut-extra">{extra}</div>}
-        </div>
-
-        <div className="donut-legend">
-          {safeItems.map((item, idx) => (
-            <div key={item.label} className={`donut-leg-row${onSegmentClick ? ' clickable' : ''}`} role={onSegmentClick ? 'button' : undefined}
-              onClick={onSegmentClick ? () => onSegmentClick(idx) : undefined}
-              tabIndex={onSegmentClick ? 0 : undefined}
-              onKeyDown={onSegmentClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onSegmentClick(idx); } : undefined}
-              style={onSegmentClick ? { cursor: 'pointer' } : {}}
-            >
-              <span
-                className="donut-leg-dot"
-                style={item.color === 'none'
-                  ? { background: 'transparent', border: `2px solid ${item.outline || '#94a3b8'}` }
-                  : { background: item.color }
-                }
-              />
-              <span className="donut-leg-lbl">{item.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <svg width="112" height="112" viewBox="0 0 112 112" style={{ flexShrink: 0 }}>
+        <svg className="donut-svg" width="130" height="130" viewBox="0 0 112 112" aria-label="donut chart">
           <circle cx={CIRCLE_CENTER_X} cy={CIRCLE_CENTER_Y} r={CIRCLE_RADIUS} fill="none" stroke="#e5e7eb" strokeWidth="13" />
           {hasData ? arcElements : null}
           {hasData ? (
@@ -92,6 +64,29 @@ export default function DonutChart({ segments, items, label, extra, onSegmentCli
           )}
         </svg>
 
+        <div className="donut-legend">
+          {safeItems.map((item, idx) => (
+            <div key={item.label} className={`donut-leg-row${onSegmentClick ? ' clickable' : ''}`} role={onSegmentClick ? 'button' : undefined}
+              onClick={onSegmentClick ? () => onSegmentClick(idx) : undefined}
+              tabIndex={onSegmentClick ? 0 : undefined}
+              onKeyDown={onSegmentClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onSegmentClick(idx); } : undefined}
+              style={onSegmentClick ? { cursor: 'pointer' } : {}}
+            >
+              <div className="donut-leg-label-group">
+                <span
+                  className="donut-leg-dot"
+                  style={item.color === 'none'
+                    ? { background: 'transparent', border: `2px solid ${item.outline || '#94a3b8'}` }
+                    : { background: item.color }
+                  }
+                />
+                <span className="donut-leg-lbl">{item.label}</span>
+              </div>
+              {item.displayValue && <span className="donut-leg-value">{item.displayValue}</span>}
+            </div>
+          ))}
+          {extra && <div className="donut-extra">{extra}</div>}
+        </div>
       </div>
       {onSegmentClick && (
         <div className="donut-hint">לחץ על העיגול או על שם הקטגוריה כדי לראות את הפרויקטים.</div>
