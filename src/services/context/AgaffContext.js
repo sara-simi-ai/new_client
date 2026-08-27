@@ -108,6 +108,9 @@ export function AgaffProvider({ children }) {
     setAgaffList((prev) =>
       prev.map((a) => (a.id === normalizedUpdated.id ? normalizedUpdated : a))
     );
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('portfolio:metadataUpdated', { detail: { entity: 'agaff' } }));
+    }
     return normalizedUpdated;
   }, []);
 

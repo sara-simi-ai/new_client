@@ -104,6 +104,9 @@ export function ChativaProvider({ children }) {
     setChativaList((prev) =>
       prev.map((item) => (item.id === normalizedUpdated.id ? normalizedUpdated : item))
     );
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('portfolio:metadataUpdated', { detail: { entity: 'chativa' } }));
+    }
     return normalizedUpdated;
   }, []);
 

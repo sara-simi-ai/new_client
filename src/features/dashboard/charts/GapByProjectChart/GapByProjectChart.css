@@ -9,40 +9,51 @@
 }
 
 .gap-header {
-  margin-bottom: 10px;
-}
-
-.gap-header-main {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  min-width: 0;
   direction: rtl;
 }
 
+.gap-title-wrap {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
 .gap-title {
+  display: block;
   font-size: 14px;
   font-weight: 600;
   color: #1f2937;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+  text-align: right;
+  flex: 0 0 auto;
 }
 
 .gap-legend {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
   gap: 12px;
   font-size: 11px;
   color: #475569;
-  direction: rtl;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .gap-legend-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  white-space: nowrap;
+  gap: 4px;
 }
 
 .gap-legend-dot {
@@ -56,6 +67,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  padding-top: 30px;
 }
 
 .gap-row {
@@ -63,11 +75,15 @@
   grid-template-columns: minmax(120px, 180px) minmax(0, 1fr) minmax(150px, 210px);
   align-items: center;
   column-gap: 12px;
-  height: 72px;
-  padding: 8px 4px 8px 8px;
+  height: 74px;
+  min-height: 66px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
   cursor: pointer;
   direction: rtl;
   border-bottom: 1px solid #dfe5ea;
+  line-height: 1.2;
 }
 
 .gap-row:last-child {
@@ -78,7 +94,7 @@
   order: 1;
   justify-self: stretch;
   font-size: 14px;
-  line-height: 1.3;
+  line-height: 1.2;
   font-weight: 600;
   color: #1f2937;
   text-align: right;
@@ -131,11 +147,6 @@
 }
 
 @media (max-width: 900px) {
-  .gap-header-main {
-    flex-direction: column;
-    align-items: flex-end;
-  }
-
   .gap-row {
     grid-template-columns: minmax(100px, 150px) minmax(0, 1fr) minmax(120px, 180px);
     column-gap: 8px;

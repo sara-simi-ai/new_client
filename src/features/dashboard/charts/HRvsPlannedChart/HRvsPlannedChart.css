@@ -7,7 +7,7 @@
 
 .hrp-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
@@ -16,9 +16,17 @@
   direction: rtl;
 }
 
+.hrp-title-wrap {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
 .hrp-header-right {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-end;
   min-width: 0;
 }
@@ -71,7 +79,7 @@
   gap: 12px;
   font-size: 11px;
   color: #64748b;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
   margin-top: 8px;
 }

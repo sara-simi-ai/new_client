@@ -66,7 +66,7 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ma
   const [filters, setFilters] = useState(() => ({ ...DEFAULT_PROJECT_FILTERS }));
 
   // Use provided options or fallback to localStorage when available.
-  const [agaffOptions] = useState(() => propsAgaffOptions || (() => {
+  const [agaffOptions, setAgaffOptions] = useState(() => propsAgaffOptions || (() => {
     try {
       const saved = window.localStorage.getItem("agaffOptions");
       return saved ? JSON.parse(saved) : [];
@@ -75,7 +75,7 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ma
     }
   })());
 
-  const [machlakaOptions] = useState(() => propsMachlakaOptions || (() => {
+  const [machlakaOptions, setMachlakaOptions] = useState(() => propsMachlakaOptions || (() => {
     try {
       const saved = window.localStorage.getItem("machlakaOptions");
       return saved ? JSON.parse(saved) : [];
@@ -84,7 +84,26 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ma
     }
   })());
 
-  const [chativaOptions] = useState(() => propsChativaOptions || []);
+  const [chativaOptions, setChativaOptions] = useState(() => propsChativaOptions || []);
+
+  // Keep option snapshots in sync with the live management contexts.
+  useEffect(() => {
+    if (propsAgaffOptions) {
+      setAgaffOptions(propsAgaffOptions);
+    }
+  }, [propsAgaffOptions]);
+
+  useEffect(() => {
+    if (propsMachlakaOptions) {
+      setMachlakaOptions(propsMachlakaOptions);
+    }
+  }, [propsMachlakaOptions]);
+
+  useEffect(() => {
+    if (propsChativaOptions) {
+      setChativaOptions(propsChativaOptions);
+    }
+  }, [propsChativaOptions]);
 
   // Update internal state when props change
   useEffect(() => {
@@ -132,6 +151,40 @@ export function ProjectsProvider({ children, agaffOptions: propsAgaffOptions, ma
     fetchProjects();
     return () => {
       mounted = false;
+    };
+  }, [selectedYear]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const refreshProjects = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getProjectByYear(selectedYear);
+        const normalized = (data || []).map(normalizeProjectFromApi);
+        if (!mounted) return;
+        setProjects(normalized);
+        setSelectedProjectId(null);
+      } catch (err) {
+        console.error("שגיאה בטעינת פרויקטים לשנה הנבחרת לאחר עדכון שם:", err);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    const onMetadataUpdated = () => {
+      refreshProjects();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('portfolio:metadataUpdated', onMetadataUpdated);
+    }
+
+    return () => {
+      mounted = false;
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('portfolio:metadataUpdated', onMetadataUpdated);
+      }
     };
   }, [selectedYear]);
 

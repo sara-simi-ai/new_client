@@ -28,7 +28,7 @@ export default function HrVsPlannedChart({
   return (
     <div className="hrp-card">
       <div className="hrp-header">
-        <div>
+        <div className="hrp-title-wrap">
           <span className="hrp-title">תקציב כ"א ורכש לעומת תכנון כ"א לפי פרויקט</span>
           <div className="hrp-legend">
             {HRP_LEGEND_ITEMS.map(({ label, color }) => (

@@ -104,6 +104,9 @@ export function MachlakaProvider({ children }) {
     setMachlakaList((prev) =>
       prev.map((t) => (t.id === normalizedUpdated.id ? normalizedUpdated : t))
     );
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('portfolio:metadataUpdated', { detail: { entity: 'machlaka' } }));
+    }
     return normalizedUpdated;
   }, []);
 

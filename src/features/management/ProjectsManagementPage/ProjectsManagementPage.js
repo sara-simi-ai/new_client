@@ -1,6 +1,7 @@
 import React from 'react';
 import ManagementOptionsPage from '../ManagementOptionsPage/ManagementOptionsPage';
 import { useProjectsManagement } from '../ManagementOptionsPage/useProjectsManagement';
+import ProjectFormModal from '../../projects/ProjectFormModal/ProjectFormModal';
 import {
   PROJECTS_TITLE,
   PROJECTS_SUBTITLE,
@@ -38,6 +39,8 @@ export default function ProjectsManagementPage({ onBack }) {
       duplicateErrorMessage={DUPLICATE_NAME_ERROR}
       asyncHook={hook}
       isAsync={true}
+      customAddComponent={ProjectFormModal}
+      customAddComponentProps={{ mode: 'new', initialData: {} }}
     />
   );
 }

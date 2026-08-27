@@ -39,7 +39,7 @@ export default function GapByProjectChart({
   return (
     <div className="gap-card">
       <div className="gap-header">
-        <div className="gap-header-main">
+        <div className="gap-title-wrap">
           <span className="gap-title">פערים לפי פרויקט (תקציב כ&quot;א − תכנון)</span>
           <div className="gap-legend">
             {gapLegend.map((item) => (
@@ -63,7 +63,7 @@ export default function GapByProjectChart({
           let barColor = GAP_COLORS.none;
           if (isExceed) barColor = isPos ? GAP_COLORS.positive : GAP_COLORS.negative;
 
-          const valueLabel = formatGapDisplay(g, p.totalTakzivCoachAdam);
+          const valueLabel = formatGapDisplay(g, p.totalTakzivCoachAdam, { plannedValue: p.coachAdam, showMissingPlanningPlaceholder: false });
           const effPct = Math.min(pct, MAX_BAR_PERCENT);
 
           return (
@@ -95,24 +95,13 @@ export default function GapByProjectChart({
                     }}
                   />
                 )}
-                <span
-                  className="gap-val"
-                  style={{
-                    [isPos ? 'left' : 'right']: `calc(50% + ${effPct}% + ${LABEL_OFFSET_REM}rem)`,
-                  }}
-                >
-                  {valueLabel}
-                </span>
               </div>
 
               <div className="gap-value">{valueLabel}</div>
             </div>
           );
         })}
-      </div>
-
-      {/* Modal rendered globally in App — chart only triggers selection */}
-      
+      </div>      
 
     </div>
   );

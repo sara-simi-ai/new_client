@@ -3,7 +3,7 @@ import "./StatusGap.css";
 
 export const GAP_STATUS_META = {
   odef: {
-    label: "עודף",
+    label: "יתרה",
     className: "status-gap--odef",
     accentClass: "card-accent--odef",
     tooltip: "",

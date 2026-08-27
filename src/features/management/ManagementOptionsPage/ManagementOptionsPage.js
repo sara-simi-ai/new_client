@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { EditIcon } from '../../../components/ActionIcons/ActionIcons';
 import Modal from '../../../components/Modal/Modal';
 import BackButton from '../../../components/BackButton/BackButton';
@@ -68,8 +68,10 @@ export default function ManagementOptionsPage({
   onToggleOptionActive,
   duplicateErrorMessage,
   allValue = '__all__',
-  asyncHook = null, 
+  asyncHook = null,
   isAsync = false,
+  customAddComponent = null,
+  customAddComponentProps = {},
 }) {
   const syncHook = useManagementOptions({
     options,
@@ -104,6 +106,21 @@ export default function ManagementOptionsPage({
     isLoading = false,
   } = hook;
 
+  const [customAddOpen, setCustomAddOpen] = useState(false);
+
+  const handleAddClick = () => {
+    if (customAddComponent) {
+      setCustomAddOpen(true);
+      return;
+    }
+
+    openAddModal();
+  };
+
+  const handleCustomAddClose = () => {
+    setCustomAddOpen(false);
+  };
+
   return (
     <div className="mgmt-page no-card-bg" dir="rtl">
       <div className="mgmt-page-header">
@@ -130,7 +147,7 @@ export default function ManagementOptionsPage({
                 </svg>
               </button>
             </div>
-            <button className="agaff-add-btn" type="button" onClick={openAddModal} disabled={isLoading}>
+            <button className="agaff-add-btn" type="button" onClick={handleAddClick} disabled={isLoading}>
               {addButtonLabel}
             </button>
           </div>
@@ -155,7 +172,15 @@ export default function ManagementOptionsPage({
           </div>
         </div>
 
-        {addModalOpen && (
+        {customAddComponent && customAddOpen && React.createElement(customAddComponent, {
+          open: true,
+          onClose: handleCustomAddClose,
+          mode: 'new',
+          initialData: {},
+          ...customAddComponentProps,
+        })}
+
+        {addModalOpen && !customAddComponent && (
           <ManagementModal
             title={addModalTitle}
             description={addModalDescription}
