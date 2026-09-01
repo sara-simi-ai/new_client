@@ -52,11 +52,6 @@ export default function BudgetByDepartmentChart() {
 
   const hasExpandableDepartments = departmentsData.length > INITIAL_VISIBLE_PROJECTS_COUNT;
 
-  const maxDepartmentBudget = useMemo(
-    () => Math.max(...departmentsData.map((d) => Math.max(d.hrBudget || 0, d.procurementBudget || 0, d.planningBudget || 0)), 1),
-    [departmentsData],
-  );
-
   return (
     <div className="bdc-card">
       <div className="bdc-header">
@@ -102,6 +97,7 @@ export default function BudgetByDepartmentChart() {
           const hrBudget = department.hrBudget || 0;
           const procBudget = department.procurementBudget || 0;
           const planned = department.planningBudget || 0;
+          const maxDepartmentBudget = Math.max(hrBudget, procBudget, planned, 1);
 
           return (
             <div

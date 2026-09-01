@@ -52,11 +52,6 @@ export default function BudgetBySectorChart() {
 
   const hasExpandableSectors = sectorsData.length > INITIAL_VISIBLE_PROJECTS_COUNT;
 
-  const maxSectorBudget = useMemo(
-    () => Math.max(...sectorsData.map((s) => Math.max(s.hrBudget || 0, s.procurementBudget || 0, s.planningBudget || 0)), 1),
-    [sectorsData],
-  );
-
   return (
     <div className="bbs-card">
       <div className="bbs-header">
@@ -102,6 +97,7 @@ export default function BudgetBySectorChart() {
           const hrBudget = sector.hrBudget || 0;
           const procBudget = sector.procurementBudget || 0;
           const planned = sector.planningBudget || 0;
+          const maxSectorBudget = Math.max(hrBudget, procBudget, planned, 1);
 
           return (
             <div
